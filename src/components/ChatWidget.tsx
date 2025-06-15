@@ -80,42 +80,70 @@ const ChatWidget = () => {
     <>
       {chatState === 'horizontal' && (
         <div className="fixed bottom-0 left-0 right-0 z-50 animate-fade-in">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 mx-4 mb-4 rounded-lg shadow-xl">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  <MessageCircle className="w-4 h-4" />
+          <div className="bg-white border-t border-gray-200 shadow-lg">
+            <div className="max-w-7xl mx-auto px-4 py-3">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-800">Ask me about products, features, and pricing, or connect to a sales rep.</span>
                 </div>
-                <span className="font-medium">Ask me about products, features, and pricing, or connect to a sales rep.</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClose}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleClose}
-                className="text-white hover:bg-white/20"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                onClick={() => handleSuggestedAction('Show me an Agentforce demo')}
-                className="bg-blue-700 hover:bg-blue-800 text-white border-none"
-              >
-                Show me an Agentforce demo
-              </Button>
-              <Button
-                onClick={() => handleSuggestedAction('How can Salesforce help my business')}
-                className="bg-blue-700 hover:bg-blue-800 text-white border-none"
-              >
-                How can Salesforce help my business
-              </Button>
-              <Button
-                onClick={() => handleSuggestedAction('Connect me with a sales rep')}
-                className="bg-blue-700 hover:bg-blue-800 text-white border-none"
-              >
-                Connect me with a sales rep
-              </Button>
+              
+              <div className="flex items-center space-x-3">
+                <div className="flex-1 relative">
+                  <Input
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Ask me anything..."
+                    className="w-full pr-10 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                  />
+                  <Button
+                    onClick={sendMessage}
+                    size="sm"
+                    className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 h-8 w-8 p-0"
+                  >
+                    <Send className="w-3 h-3" />
+                  </Button>
+                </div>
+                
+                <div className="flex space-x-2">
+                  <Button
+                    onClick={() => handleSuggestedAction('Show me an Agentforce demo')}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs px-3 py-1 h-8 border-blue-200 text-blue-700 hover:bg-blue-50"
+                  >
+                    Demo
+                  </Button>
+                  <Button
+                    onClick={() => handleSuggestedAction('How can Salesforce help my business')}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs px-3 py-1 h-8 border-blue-200 text-blue-700 hover:bg-blue-50"
+                  >
+                    How it helps
+                  </Button>
+                  <Button
+                    onClick={() => handleSuggestedAction('Connect me with a sales rep')}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs px-3 py-1 h-8 border-blue-200 text-blue-700 hover:bg-blue-50"
+                  >
+                    Sales rep
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
