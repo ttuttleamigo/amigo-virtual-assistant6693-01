@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ const ChatWidget = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hi, I'm Agentforce, an AI agent that can answer your Salesforce questions and connect you with our Sales Experts. This experience, powered entirely by Agentforce, keeps improving daily! Ask me things like, 'Can I chat with a Sales Expert?' or 'What is CRM?'",
+      text: "Hi, I'm AMIGA Assistant, an AI agent that can answer your questions and connect you with our experts. This experience keeps improving daily! Ask me things like, 'Can I chat with an expert?' or 'What services do you offer?'",
       sender: 'agent',
       timestamp: new Date()
     }
@@ -68,7 +69,7 @@ const ChatWidget = () => {
     return (
       <Button
         onClick={() => setChatState('horizontal')}
-        className="fixed bottom-4 right-4 rounded-full w-16 h-16 bg-blue-600 hover:bg-blue-700 shadow-lg z-50"
+        className="fixed bottom-4 right-4 rounded-full w-16 h-16 bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 shadow-lg z-50"
       >
         <MessageCircle className="w-6 h-6 text-white" />
       </Button>
@@ -83,10 +84,10 @@ const ChatWidget = () => {
             <div className="px-4 py-3">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-green-500 rounded-full flex items-center justify-center">
                     <MessageCircle className="w-4 h-4 text-white" />
                   </div>
-                  <span className="text-sm font-medium text-gray-800">Ask me about products, features, and pricing, or connect to a sales rep.</span>
+                  <span className="text-sm font-medium text-gray-800">Ask me about our services, features, and pricing, or connect to an expert.</span>
                 </div>
                 <Button
                   variant="ghost"
@@ -110,7 +111,7 @@ const ChatWidget = () => {
                   <Button
                     onClick={sendMessage}
                     size="sm"
-                    className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 h-8 w-8 p-0"
+                    className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 h-8 w-8 p-0"
                   >
                     <Send className="w-3 h-3" />
                   </Button>
@@ -118,7 +119,7 @@ const ChatWidget = () => {
                 
                 <div className="flex space-x-2">
                   <Button
-                    onClick={() => handleSuggestedAction('Show me an Agentforce demo')}
+                    onClick={() => handleSuggestedAction('Show me a demo')}
                     variant="outline"
                     size="sm"
                     className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
@@ -126,7 +127,7 @@ const ChatWidget = () => {
                     Demo
                   </Button>
                   <Button
-                    onClick={() => handleSuggestedAction('How can Salesforce help my business')}
+                    onClick={() => handleSuggestedAction('How can AMIGA help my business')}
                     variant="outline"
                     size="sm"
                     className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
@@ -134,12 +135,12 @@ const ChatWidget = () => {
                     How it helps
                   </Button>
                   <Button
-                    onClick={() => handleSuggestedAction('Connect me with a sales rep')}
+                    onClick={() => handleSuggestedAction('Connect me with an expert')}
                     variant="outline"
                     size="sm"
                     className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
                   >
-                    Sales rep
+                    Expert
                   </Button>
                 </div>
               </div>
@@ -153,10 +154,10 @@ const ChatWidget = () => {
           <div className="bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 animate-scale-in">
             <div className="flex items-center justify-between p-4 border-b">
               <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+                <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-green-500 rounded-full flex items-center justify-center">
                   <MessageCircle className="w-3 h-3 text-white" />
                 </div>
-                <span className="font-semibold text-gray-800">Agentforce</span>
+                <span className="font-semibold text-gray-800">AMIGA Assistant</span>
               </div>
               <div className="flex space-x-1">
                 <Button
@@ -180,14 +181,14 @@ const ChatWidget = () => {
             
             <div className="text-center p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                How can <span className="text-blue-600">Agentforce</span> help?
+                How can <span className="text-blue-600">AMIGA</span> help?
               </h2>
-              <p className="text-gray-600 text-sm mb-4">Agentforce joined • 5:43 PM</p>
+              <p className="text-gray-600 text-sm mb-4">AMIGA Assistant joined • 5:43 PM</p>
               
               <div className="space-y-3">
                 {messages.slice(-1).map(message => (
                   <div key={message.id} className="flex items-start space-x-2">
-                    <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-green-500 rounded-full flex items-center justify-center flex-shrink-0">
                       <MessageCircle className="w-3 h-3 text-white" />
                     </div>
                     <div className="text-left text-gray-700 text-sm">
@@ -199,9 +200,9 @@ const ChatWidget = () => {
               
               <Button
                 onClick={handleModalToSidebar}
-                className="mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                className="mt-4 bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 text-white"
               >
-                Show me an Agentforce demo
+                Show me a demo
               </Button>
             </div>
 
@@ -210,14 +211,14 @@ const ChatWidget = () => {
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Message Agentforce"
+                  placeholder="Message AMIGA Assistant"
                   className="flex-1"
                   onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                 />
                 <Button
                   onClick={sendMessage}
                   size="sm"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  className="bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600"
                 >
                   <Send className="w-4 h-4" />
                 </Button>
@@ -229,12 +230,12 @@ const ChatWidget = () => {
 
       {chatState === 'sidebar' && (
         <div className="fixed right-0 top-0 bottom-0 w-80 bg-white shadow-2xl z-50 animate-slide-in-right">
-          <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+          <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-600 to-green-500 text-white">
             <div className="flex items-center space-x-2">
               <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
                 <MessageCircle className="w-3 h-3" />
               </div>
-              <span className="font-semibold">Agentforce</span>
+              <span className="font-semibold">AMIGA Assistant</span>
             </div>
             <div className="flex space-x-1">
               <Button
@@ -258,9 +259,9 @@ const ChatWidget = () => {
           
           <div className="text-center p-4 bg-blue-50 border-b">
             <h2 className="text-lg font-semibold text-gray-800 mb-1">
-              How can <span className="text-blue-600">Agentforce</span> help?
+              How can <span className="text-blue-600">AMIGA</span> help?
             </h2>
-            <p className="text-gray-600 text-xs">Agentforce joined • 5:43 PM</p>
+            <p className="text-gray-600 text-xs">AMIGA Assistant joined • 5:43 PM</p>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4 h-96">
@@ -268,7 +269,7 @@ const ChatWidget = () => {
               <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`flex items-start space-x-2 max-w-[80%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    message.sender === 'agent' ? 'bg-gradient-to-r from-blue-600 to-purple-600' : 'bg-gray-600'
+                    message.sender === 'agent' ? 'bg-gradient-to-r from-blue-600 to-green-500' : 'bg-gray-600'
                   }`}>
                     <MessageCircle className="w-3 h-3 text-white" />
                   </div>
@@ -289,14 +290,14 @@ const ChatWidget = () => {
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Message Agentforce"
+                placeholder="Message AMIGA Assistant"
                 className="flex-1"
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               />
               <Button
                 onClick={sendMessage}
                 size="sm"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                className="bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600"
               >
                 <Send className="w-4 h-4" />
               </Button>
@@ -307,12 +308,12 @@ const ChatWidget = () => {
 
       {chatState === 'minimized' && (
         <div className="fixed bottom-4 right-4 w-80 bg-white rounded-lg shadow-xl z-50 animate-scale-in">
-          <div className="flex items-center justify-between p-3 border-b bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
+          <div className="flex items-center justify-between p-3 border-b bg-gradient-to-r from-blue-600 to-green-500 text-white rounded-t-lg">
             <div className="flex items-center space-x-2">
               <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
                 <MessageCircle className="w-3 h-3" />
               </div>
-              <span className="font-semibold text-sm">Agentforce</span>
+              <span className="font-semibold text-sm">AMIGA Assistant</span>
             </div>
             <div className="flex space-x-1">
               <Button
@@ -353,14 +354,14 @@ const ChatWidget = () => {
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Message Agentforce"
+                placeholder="Message AMIGA Assistant"
                 className="flex-1 text-sm"
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               />
               <Button
                 onClick={sendMessage}
                 size="sm"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 p-2"
+                className="bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 p-2"
               >
                 <Send className="w-3 h-3" />
               </Button>
