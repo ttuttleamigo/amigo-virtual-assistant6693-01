@@ -84,6 +84,14 @@ const HorizontalChat = ({
                 ValueShopper
               </Button>
               <Button
+                onClick={() => onSuggestedAction('Start troubleshooting', 'vista')}
+                variant="outline"
+                size="sm"
+                className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
+              >
+                Vista
+              </Button>
+              <Button
                 onClick={() => onSuggestedAction('Connect me with support')}
                 variant="outline"
                 size="sm"

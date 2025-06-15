@@ -1,8 +1,8 @@
-
 import { useState } from 'react';
 import { conversationFlow, ConversationStep } from '@/data/conversationFlow';
 import { smartShopperFlow } from '@/data/smartShopperFlow';
 import { valueShopperFlow } from '@/data/valueShopperFlow';
+import { vistaFlow } from '@/data/vistaFlow';
 
 export interface ConversationMessage {
   id: string;
@@ -12,12 +12,13 @@ export interface ConversationMessage {
   isFlowMessage?: boolean;
 }
 
-export type FlowType = 'general' | 'smartShopper' | 'valueShopper';
+export type FlowType = 'general' | 'smartShopper' | 'valueShopper' | 'vista';
 
 const flowMap = {
   general: conversationFlow,
   smartShopper: smartShopperFlow,
-  valueShopper: valueShopperFlow
+  valueShopper: valueShopperFlow,
+  vista: vistaFlow
 };
 
 export const useConversationFlow = () => {
