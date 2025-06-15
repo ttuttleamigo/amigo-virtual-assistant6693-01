@@ -26,17 +26,35 @@ export const formatSerialNumber = (userInput: string): string => {
 export const lookupSerialNumber = async (serialNumber: string): Promise<ProductInfo | null> => {
   try {
     const formattedSerial = formatSerialNumber(serialNumber);
+    console.log('Formatted serial number:', formattedSerial);
     
     // Replace with your actual API endpoint
     const response = await axios.get(`https://4086366.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=6223&deploy=1&compid=4086366&ns-at=AAEJ7tMQZmDLpO0msvndzhyIbhPPdD7U3fcHROrep1qJ6u8nu-w&snar=${formattedSerial}`);
     
-    if (response.data) {
-      return response.data as ProductInfo;
+    console.log('API Response status:', response.status);
+    console.log('API Response data:', response.data);
+    console.log('API Response data type:', typeof response.data);
+    
+    if (response.data && typeof response.data === 'object') {
+      // Check if the response has the expected properties
+      if (response.data.name || response.data.model) {
+        console.log('Valid product data found:', response.data);
+        return response.data as ProductInfo;
+      } else {
+        console.log('Response data does not contain expected product fields');
+        return null;
+      }
     }
     
+    console.log('No valid data in response');
     return null;
   } catch (error) {
     console.error('Error looking up serial number:', error);
+    console.error('Error details:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status
+    });
     return null;
   }
 };
