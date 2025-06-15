@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,7 @@ const ChatWidget = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hi, I'm AMIGA Assistant, an AI agent that can answer your questions and connect you with our experts. This experience keeps improving daily! Ask me things like, 'Can I chat with an expert?' or 'What services do you offer?'",
+      text: "Hi, I'm Amigo Assistant, an AI agent that can answer your questions and connect you with our experts. This experience keeps improving daily! Ask me things like, 'Can I chat with an expert?' or 'What services do you offer?'",
       sender: 'agent',
       timestamp: new Date()
     }
@@ -79,15 +78,15 @@ const ChatWidget = () => {
   return (
     <>
       {chatState === 'horizontal' && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
-          <div className="bg-white rounded-lg shadow-xl border border-gray-200 min-w-[600px] max-w-4xl">
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
+          <div className="bg-gradient-to-r from-blue-600 to-green-500 rounded-lg shadow-xl border border-gray-200 min-w-[600px] max-w-4xl">
             <div className="px-4 py-3">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-green-500 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                     <MessageCircle className="w-4 h-4 text-white" />
                   </div>
-                  <span className="text-sm font-medium text-gray-800">Ask me about our services, features, and pricing, or connect to an expert.</span>
+                  <span className="text-sm font-medium text-white">Ask me about our services, features, and pricing, or connect to an expert.</span>
                 </div>
                 <Button
                   variant="ghost"
@@ -127,7 +126,7 @@ const ChatWidget = () => {
                     Demo
                   </Button>
                   <Button
-                    onClick={() => handleSuggestedAction('How can AMIGA help my business')}
+                    onClick={() => handleSuggestedAction('How can Amigo help my business')}
                     variant="outline"
                     size="sm"
                     className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
@@ -157,7 +156,7 @@ const ChatWidget = () => {
                 <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-green-500 rounded-full flex items-center justify-center">
                   <MessageCircle className="w-3 h-3 text-white" />
                 </div>
-                <span className="font-semibold text-gray-800">AMIGA Assistant</span>
+                <span className="font-semibold text-gray-800">Amigo Assistant</span>
               </div>
               <div className="flex space-x-1">
                 <Button
@@ -181,9 +180,9 @@ const ChatWidget = () => {
             
             <div className="text-center p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                How can <span className="text-blue-600">AMIGA</span> help?
+                How can <span className="text-blue-600">Amigo</span> help?
               </h2>
-              <p className="text-gray-600 text-sm mb-4">AMIGA Assistant joined • 5:43 PM</p>
+              <p className="text-gray-600 text-sm mb-4">Amigo Assistant joined • 5:43 PM</p>
               
               <div className="space-y-3">
                 {messages.slice(-1).map(message => (
@@ -211,7 +210,7 @@ const ChatWidget = () => {
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Message AMIGA Assistant"
+                  placeholder="Message Amigo Assistant"
                   className="flex-1"
                   onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                 />
@@ -235,7 +234,7 @@ const ChatWidget = () => {
               <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
                 <MessageCircle className="w-3 h-3" />
               </div>
-              <span className="font-semibold">AMIGA Assistant</span>
+              <span className="font-semibold">Amigo Assistant</span>
             </div>
             <div className="flex space-x-1">
               <Button
@@ -259,9 +258,9 @@ const ChatWidget = () => {
           
           <div className="text-center p-4 bg-blue-50 border-b">
             <h2 className="text-lg font-semibold text-gray-800 mb-1">
-              How can <span className="text-blue-600">AMIGA</span> help?
+              How can <span className="text-blue-600">Amigo</span> help?
             </h2>
-            <p className="text-gray-600 text-xs">AMIGA Assistant joined • 5:43 PM</p>
+            <p className="text-gray-600 text-xs">Amigo Assistant joined • 5:43 PM</p>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4 h-96">
@@ -290,7 +289,7 @@ const ChatWidget = () => {
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Message AMIGA Assistant"
+                placeholder="Message Amigo Assistant"
                 className="flex-1"
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               />
@@ -313,7 +312,7 @@ const ChatWidget = () => {
               <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
                 <MessageCircle className="w-3 h-3" />
               </div>
-              <span className="font-semibold text-sm">AMIGA Assistant</span>
+              <span className="font-semibold text-sm">Amigo Assistant</span>
             </div>
             <div className="flex space-x-1">
               <Button
@@ -354,7 +353,7 @@ const ChatWidget = () => {
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Message AMIGA Assistant"
+                placeholder="Message Amigo Assistant"
                 className="flex-1 text-sm"
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               />
