@@ -302,7 +302,7 @@ const ChatWidget = () => {
               </div>
             ))}
             
-            {/* Show current step options */}
+            {/* Show current step options with improved styling */}
             {isInFlow && currentStep && currentStep.userOptions.length > 0 && (
               <div className="space-y-2">
                 {currentStep.userOptions.map((option, index) => (
@@ -311,7 +311,7 @@ const ChatWidget = () => {
                     onClick={() => handleFlowChoice(option.text, option.nextStep)}
                     variant="outline"
                     size="sm"
-                    className="w-full text-left justify-start text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
+                    className="w-full text-left justify-start text-xs border-blue-200 text-blue-700 hover:bg-blue-50 min-h-[2.5rem] h-auto py-2 px-3 whitespace-normal leading-tight"
                   >
                     {option.text}
                   </Button>
