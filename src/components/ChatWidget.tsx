@@ -1,38 +1,43 @@
+
 import React, { useState } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useConversationFlow } from '@/hooks/useConversationFlow';
 
 type ChatState = 'hidden' | 'horizontal' | 'modal' | 'sidebar' | 'minimized';
 
-interface Message {
-  id: string;
-  text: string;
-  sender: 'user' | 'agent';
-  timestamp: Date;
-}
-
 const ChatWidget = () => {
   const [chatState, setChatState] = useState<ChatState>('horizontal');
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: "Hi, I'm Amigo Assistant, an AI agent that can answer your questions and connect you with our experts. This experience keeps improving daily! Ask me things like, 'Can I chat with an expert?' or 'What services do you offer?'",
-      sender: 'agent',
-      timestamp: new Date()
-    }
-  ]);
   const [inputValue, setInputValue] = useState('');
+  const { 
+    currentStep, 
+    conversationHistory, 
+    isInFlow, 
+    startFlow, 
+    handleUserChoice, 
+    resetFlow,
+    addRegularMessage 
+  } = useConversationFlow();
 
   const handleSuggestedAction = (action: string) => {
     setChatState('modal');
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      text: action,
-      sender: 'user',
-      timestamp: new Date()
-    };
-    setMessages(prev => [...prev, newMessage]);
+    if (action === 'Start troubleshooting') {
+      startFlow();
+    } else {
+      // Handle other suggested actions as regular messages
+      const newMessage = {
+        id: Date.now().toString(),
+        text: action,
+        sender: 'user' as const,
+        timestamp: new Date()
+      };
+      addRegularMessage(newMessage);
+    }
+  };
+
+  const handleFlowChoice = (choice: string, nextStep: string) => {
+    handleUserChoice(choice, nextStep);
   };
 
   const handleModalToSidebar = () => {
@@ -49,19 +54,33 @@ const ChatWidget = () => {
 
   const handleClose = () => {
     setChatState('hidden');
+    resetFlow();
   };
 
   const sendMessage = () => {
     if (!inputValue.trim()) return;
     
-    const newMessage: Message = {
+    const newMessage = {
       id: Date.now().toString(),
       text: inputValue,
-      sender: 'user',
+      sender: 'user' as const,
       timestamp: new Date()
     };
-    setMessages(prev => [...prev, newMessage]);
+    addRegularMessage(newMessage);
     setInputValue('');
+
+    // Simple auto-response for non-flow messages
+    if (!isInFlow) {
+      setTimeout(() => {
+        const botResponse = {
+          id: (Date.now() + 1).toString(),
+          text: "I can help you troubleshoot your Amigo cart. Would you like to start our guided troubleshooting process?",
+          sender: 'agent' as const,
+          timestamp: new Date()
+        };
+        addRegularMessage(botResponse);
+      }, 1000);
+    }
   };
 
   if (chatState === 'hidden') {
@@ -86,7 +105,7 @@ const ChatWidget = () => {
                   <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                     <MessageCircle className="w-4 h-4 text-white" />
                   </div>
-                  <span className="text-sm font-medium text-white">Ask me about our services, features, and pricing, or connect to an expert.</span>
+                  <span className="text-sm font-medium text-white">Get help with your Amigo cart troubleshooting and support</span>
                 </div>
                 <Button
                   variant="ghost"
@@ -118,28 +137,28 @@ const ChatWidget = () => {
                 
                 <div className="flex space-x-2">
                   <Button
-                    onClick={() => handleSuggestedAction('Show me a demo')}
+                    onClick={() => handleSuggestedAction('Start troubleshooting')}
                     variant="outline"
                     size="sm"
                     className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
                   >
-                    Demo
+                    Troubleshoot
                   </Button>
                   <Button
-                    onClick={() => handleSuggestedAction('How can Amigo help my business')}
+                    onClick={() => handleSuggestedAction('How can Amigo help my mobility needs')}
                     variant="outline"
                     size="sm"
                     className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
                   >
-                    How it helps
+                    Learn more
                   </Button>
                   <Button
-                    onClick={() => handleSuggestedAction('Connect me with an expert')}
+                    onClick={() => handleSuggestedAction('Connect me with support')}
                     variant="outline"
                     size="sm"
                     className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
                   >
-                    Expert
+                    Support
                   </Button>
                 </div>
               </div>
@@ -182,10 +201,10 @@ const ChatWidget = () => {
               <h2 className="text-xl font-semibold text-gray-800 mb-2">
                 How can <span className="text-blue-600">Amigo</span> help?
               </h2>
-              <p className="text-gray-600 text-sm mb-4">Amigo Assistant joined • 5:43 PM</p>
+              <p className="text-gray-600 text-sm mb-4">Amigo Assistant joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
               
-              <div className="space-y-3">
-                {messages.slice(-1).map(message => (
+              <div className="space-y-3 max-h-60 overflow-y-auto">
+                {conversationHistory.slice(-3).map(message => (
                   <div key={message.id} className="flex items-start space-x-2">
                     <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-green-500 rounded-full flex items-center justify-center flex-shrink-0">
                       <MessageCircle className="w-3 h-3 text-white" />
@@ -201,7 +220,7 @@ const ChatWidget = () => {
                 onClick={handleModalToSidebar}
                 className="mt-4 bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 text-white"
               >
-                Show me a demo
+                Continue conversation
               </Button>
             </div>
 
@@ -260,11 +279,11 @@ const ChatWidget = () => {
             <h2 className="text-lg font-semibold text-gray-800 mb-1">
               How can <span className="text-blue-600">Amigo</span> help?
             </h2>
-            <p className="text-gray-600 text-xs">Amigo Assistant joined • 5:43 PM</p>
+            <p className="text-gray-600 text-xs">Amigo Assistant joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 h-96">
-            {messages.map(message => (
+          <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ height: 'calc(100vh - 200px)' }}>
+            {conversationHistory.map(message => (
               <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`flex items-start space-x-2 max-w-[80%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
@@ -282,6 +301,23 @@ const ChatWidget = () => {
                 </div>
               </div>
             ))}
+            
+            {/* Show current step options */}
+            {isInFlow && currentStep && currentStep.userOptions.length > 0 && (
+              <div className="space-y-2">
+                {currentStep.userOptions.map((option, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => handleFlowChoice(option.text, option.nextStep)}
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-left justify-start text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
+                  >
+                    {option.text}
+                  </Button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="p-4 border-t">
@@ -335,7 +371,7 @@ const ChatWidget = () => {
           </div>
           
           <div className="p-3 max-h-60 overflow-y-auto">
-            {messages.slice(-3).map(message => (
+            {conversationHistory.slice(-3).map(message => (
               <div key={message.id} className={`flex mb-2 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`text-xs p-2 rounded max-w-[85%] ${
                   message.sender === 'user' 
