@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -79,12 +78,12 @@ const ChatWidget = () => {
   return (
     <>
       {chatState === 'horizontal' && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 animate-fade-in">
-          <div className="bg-white border-t border-gray-200 shadow-lg">
-            <div className="max-w-7xl mx-auto px-4 py-3">
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
+          <div className="bg-white rounded-lg shadow-xl border border-gray-200 min-w-[600px] max-w-4xl">
+            <div className="px-4 py-3">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
                     <MessageCircle className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-sm font-medium text-gray-800">Ask me about products, features, and pricing, or connect to a sales rep.</span>
@@ -105,7 +104,7 @@ const ChatWidget = () => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder="Ask me anything..."
-                    className="w-full pr-10 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="w-full pr-10 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-10"
                     onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                   />
                   <Button
@@ -122,7 +121,7 @@ const ChatWidget = () => {
                     onClick={() => handleSuggestedAction('Show me an Agentforce demo')}
                     variant="outline"
                     size="sm"
-                    className="text-xs px-3 py-1 h-8 border-blue-200 text-blue-700 hover:bg-blue-50"
+                    className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
                   >
                     Demo
                   </Button>
@@ -130,7 +129,7 @@ const ChatWidget = () => {
                     onClick={() => handleSuggestedAction('How can Salesforce help my business')}
                     variant="outline"
                     size="sm"
-                    className="text-xs px-3 py-1 h-8 border-blue-200 text-blue-700 hover:bg-blue-50"
+                    className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
                   >
                     How it helps
                   </Button>
@@ -138,7 +137,7 @@ const ChatWidget = () => {
                     onClick={() => handleSuggestedAction('Connect me with a sales rep')}
                     variant="outline"
                     size="sm"
-                    className="text-xs px-3 py-1 h-8 border-blue-200 text-blue-700 hover:bg-blue-50"
+                    className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
                   >
                     Sales rep
                   </Button>
@@ -154,7 +153,7 @@ const ChatWidget = () => {
           <div className="bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 animate-scale-in">
             <div className="flex items-center justify-between p-4 border-b">
               <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
+                <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
                   <MessageCircle className="w-3 h-3 text-white" />
                 </div>
                 <span className="font-semibold text-gray-800">Agentforce</span>
@@ -188,7 +187,7 @@ const ChatWidget = () => {
               <div className="space-y-3">
                 {messages.slice(-1).map(message => (
                   <div key={message.id} className="flex items-start space-x-2">
-                    <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
                       <MessageCircle className="w-3 h-3 text-white" />
                     </div>
                     <div className="text-left text-gray-700 text-sm">
@@ -200,7 +199,7 @@ const ChatWidget = () => {
               
               <Button
                 onClick={handleModalToSidebar}
-                className="mt-4 bg-blue-600 hover:bg-blue-700 text-white"
+                className="mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
               >
                 Show me an Agentforce demo
               </Button>
@@ -218,7 +217,7 @@ const ChatWidget = () => {
                 <Button
                   onClick={sendMessage}
                   size="sm"
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                 >
                   <Send className="w-4 h-4" />
                 </Button>
@@ -269,7 +268,7 @@ const ChatWidget = () => {
               <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`flex items-start space-x-2 max-w-[80%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    message.sender === 'agent' ? 'bg-blue-600' : 'bg-gray-600'
+                    message.sender === 'agent' ? 'bg-gradient-to-r from-blue-600 to-purple-600' : 'bg-gray-600'
                   }`}>
                     <MessageCircle className="w-3 h-3 text-white" />
                   </div>
@@ -297,7 +296,7 @@ const ChatWidget = () => {
               <Button
                 onClick={sendMessage}
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 <Send className="w-4 h-4" />
               </Button>
@@ -361,7 +360,7 @@ const ChatWidget = () => {
               <Button
                 onClick={sendMessage}
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700 p-2"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 p-2"
               >
                 <Send className="w-3 h-3" />
               </Button>
