@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useConversationFlow } from '@/hooks/useConversationFlow';
+import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import ChatButton from './chat/ChatButton';
 import HorizontalChat from './chat/HorizontalChat';
 import ModalChat from './chat/ModalChat';
@@ -16,16 +16,17 @@ const ChatWidget = () => {
     currentStep, 
     conversationHistory, 
     isInFlow, 
+    activeFlow,
     startFlow, 
     handleUserChoice, 
     resetFlow,
     addRegularMessage 
   } = useConversationFlow();
 
-  const handleSuggestedAction = (action: string) => {
+  const handleSuggestedAction = (action: string, flowType?: FlowType) => {
     setChatState('modal');
-    if (action === 'Start troubleshooting') {
-      startFlow();
+    if (action === 'Start troubleshooting' && flowType) {
+      startFlow(flowType);
     } else {
       const newMessage = {
         id: Date.now().toString(),

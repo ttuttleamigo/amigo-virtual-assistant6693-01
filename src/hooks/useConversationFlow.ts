@@ -1,6 +1,8 @@
 
 import { useState } from 'react';
 import { conversationFlow, ConversationStep } from '@/data/conversationFlow';
+import { smartShopperFlow } from '@/data/smartShopperFlow';
+import { valueShopperFlow } from '@/data/valueShopperFlow';
 
 export interface ConversationMessage {
   id: string;
@@ -10,19 +12,31 @@ export interface ConversationMessage {
   isFlowMessage?: boolean;
 }
 
+export type FlowType = 'general' | 'smartShopper' | 'valueShopper';
+
+const flowMap = {
+  general: conversationFlow,
+  smartShopper: smartShopperFlow,
+  valueShopper: valueShopperFlow
+};
+
 export const useConversationFlow = () => {
   const [currentStep, setCurrentStep] = useState<string>('greeting');
   const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
   const [isInFlow, setIsInFlow] = useState(false);
+  const [activeFlow, setActiveFlow] = useState<FlowType>('general');
 
   const getCurrentStep = (): ConversationStep | null => {
-    return conversationFlow[currentStep] || null;
+    const flow = flowMap[activeFlow];
+    return flow[currentStep] || null;
   };
 
-  const startFlow = () => {
+  const startFlow = (flowType: FlowType = 'general') => {
+    setActiveFlow(flowType);
     setIsInFlow(true);
     setCurrentStep('greeting');
-    const greetingStep = conversationFlow.greeting;
+    const flow = flowMap[flowType];
+    const greetingStep = flow.greeting;
     
     // Add bot messages
     const botMessages = Array.isArray(greetingStep.botMessage) 
@@ -57,7 +71,8 @@ export const useConversationFlow = () => {
     
     // Add bot response after a short delay
     setTimeout(() => {
-      const nextStepData = conversationFlow[nextStep];
+      const flow = flowMap[activeFlow];
+      const nextStepData = flow[nextStep];
       if (nextStepData) {
         const botMessages = Array.isArray(nextStepData.botMessage) 
           ? nextStepData.botMessage 
@@ -80,6 +95,7 @@ export const useConversationFlow = () => {
     setIsInFlow(false);
     setCurrentStep('greeting');
     setConversationHistory([]);
+    setActiveFlow('general');
   };
 
   const addRegularMessage = (message: ConversationMessage) => {
@@ -90,6 +106,7 @@ export const useConversationFlow = () => {
     currentStep: getCurrentStep(),
     conversationHistory,
     isInFlow,
+    activeFlow,
     startFlow,
     handleUserChoice,
     resetFlow,

@@ -9,7 +9,7 @@ interface HorizontalChatProps {
   setInputValue: (value: string) => void;
   sendMessage: () => void;
   onClose: () => void;
-  onSuggestedAction: (action: string) => void;
+  onSuggestedAction: (action: string, flowType?: 'general' | 'smartShopper' | 'valueShopper') => void;
 }
 
 const HorizontalChat = ({
@@ -21,7 +21,7 @@ const HorizontalChat = ({
 }: HorizontalChatProps) => {
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
-      <div className="bg-gradient-to-r from-blue-600 to-green-500 rounded-lg shadow-xl border border-gray-200 min-w-[600px] max-w-4xl">
+      <div className="bg-gradient-to-r from-blue-600 to-green-500 rounded-lg shadow-xl border border-gray-200 min-w-[700px] max-w-4xl">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-3">
@@ -60,20 +60,28 @@ const HorizontalChat = ({
             
             <div className="flex space-x-2">
               <Button
-                onClick={() => onSuggestedAction('Start troubleshooting')}
+                onClick={() => onSuggestedAction('Start troubleshooting', 'general')}
                 variant="outline"
                 size="sm"
                 className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
               >
-                Troubleshoot
+                General Amigo
               </Button>
               <Button
-                onClick={() => onSuggestedAction('How can Amigo help my mobility needs')}
+                onClick={() => onSuggestedAction('Start troubleshooting', 'smartShopper')}
                 variant="outline"
                 size="sm"
                 className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
               >
-                Learn more
+                SmartShopper
+              </Button>
+              <Button
+                onClick={() => onSuggestedAction('Start troubleshooting', 'valueShopper')}
+                variant="outline"
+                size="sm"
+                className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
+              >
+                ValueShopper
               </Button>
               <Button
                 onClick={() => onSuggestedAction('Connect me with support')}
