@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,8 @@ interface HorizontalChatProps {
   setInputValue: (value: string) => void;
   sendMessage: () => void;
   onClose: () => void;
-  onSuggestedAction: (action: string, flowType?: 'general' | 'smartShopper' | 'valueShopper') => void;
+  onSuggestedAction: (action: string, flowType?: 'general' | 'smartShopper' | 'valueShopper' | 'vista') => void;
+  onSerialNumberSubmit: (serialNumber: string) => void;
 }
 
 const HorizontalChat = ({
@@ -17,8 +18,24 @@ const HorizontalChat = ({
   setInputValue,
   sendMessage,
   onClose,
-  onSuggestedAction
+  onSuggestedAction,
+  onSerialNumberSubmit
 }: HorizontalChatProps) => {
+  const [serialNumber, setSerialNumber] = useState('');
+  const [isSerialNumberMode, setIsSerialNumberMode] = useState(false);
+
+  const handleSerialSubmit = () => {
+    if (serialNumber.trim()) {
+      onSerialNumberSubmit(serialNumber.trim());
+      setSerialNumber('');
+      setIsSerialNumberMode(false);
+    }
+  };
+
+  const handleSerialNumberModeToggle = () => {
+    setIsSerialNumberMode(true);
+  };
+
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
       <div className="bg-gradient-to-r from-blue-600 to-green-500 rounded-lg shadow-xl border border-gray-200 min-w-[700px] max-w-4xl">
@@ -34,7 +51,7 @@ const HorizontalChat = ({
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-white hover:bg-white/20"
             >
               <X className="w-4 h-4" />
             </Button>
@@ -42,15 +59,25 @@ const HorizontalChat = ({
           
           <div className="flex items-center space-x-3">
             <div className="flex-1 relative">
-              <Input
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask me anything..."
-                className="w-full pr-10 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-10"
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-              />
+              {isSerialNumberMode ? (
+                <Input
+                  value={serialNumber}
+                  onChange={(e) => setSerialNumber(e.target.value)}
+                  placeholder="Enter your serial number (e.g., AMI12345678)"
+                  className="w-full pr-10 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-10"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSerialSubmit()}
+                />
+              ) : (
+                <Input
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="Ask me anything..."
+                  className="w-full pr-10 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-10"
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                />
+              )}
               <Button
-                onClick={sendMessage}
+                onClick={isSerialNumberMode ? handleSerialSubmit : sendMessage}
                 size="sm"
                 className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 h-8 w-8 p-0"
               >
@@ -60,36 +87,12 @@ const HorizontalChat = ({
             
             <div className="flex space-x-2">
               <Button
-                onClick={() => onSuggestedAction('Start troubleshooting', 'general')}
+                onClick={handleSerialNumberModeToggle}
                 variant="outline"
                 size="sm"
                 className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
               >
-                General Amigo
-              </Button>
-              <Button
-                onClick={() => onSuggestedAction('Start troubleshooting', 'smartShopper')}
-                variant="outline"
-                size="sm"
-                className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
-              >
-                SmartShopper
-              </Button>
-              <Button
-                onClick={() => onSuggestedAction('Start troubleshooting', 'valueShopper')}
-                variant="outline"
-                size="sm"
-                className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
-              >
-                ValueShopper
-              </Button>
-              <Button
-                onClick={() => onSuggestedAction('Start troubleshooting', 'vista')}
-                variant="outline"
-                size="sm"
-                className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
-              >
-                Vista
+                Enter Serial #
               </Button>
               <Button
                 onClick={() => onSuggestedAction('Connect me with support')}
