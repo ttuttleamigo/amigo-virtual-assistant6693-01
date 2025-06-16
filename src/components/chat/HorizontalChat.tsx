@@ -51,7 +51,7 @@ const HorizontalChat = ({
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask me about your Amigo cart troubleshooting or connect to support."
+                placeholder="Hello, I'm Amigo Mobility's virtual assistant, an AI powered tool designed to help with your customer support needs. How can I help you today?"
                 className="w-full bg-white border-0 rounded-lg pl-12 pr-4 py-3 text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-transparent"
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               />
@@ -73,22 +73,22 @@ const HorizontalChat = ({
             {/* Action Buttons */}
             <div className="flex space-x-3">
               <Button
-                onClick={() => onSuggestedAction('Start troubleshooting')}
+                onClick={() => onSuggestedAction('I need help with an Amigo cart repair')}
                 className="bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
               >
-                Start troubleshooting
+                I need help with an Amigo cart repair
               </Button>
               <Button
-                onClick={() => onSuggestedAction('Connect me with support')}
+                onClick={() => onSuggestedAction('I need to buy a part for an Amigo cart')}
                 className="bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
               >
-                Connect me with support
+                I need to buy a part for an Amigo cart
               </Button>
               <Button
-                onClick={() => onSerialNumberSubmit(prompt('Enter your Amigo serial number:') || '')}
+                onClick={() => onSuggestedAction('I have a different customer service need')}
                 className="bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
               >
-                Enter Serial #
+                I have a different customer service need
               </Button>
             </div>
           </div>
