@@ -23,7 +23,7 @@ const HorizontalChat = ({
 }: HorizontalChatProps) => {
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
-      <div className="bg-blue-600 rounded-lg shadow-xl min-w-[700px] max-w-5xl">
+      <div className="bg-blue-600 rounded-lg shadow-xl min-w-[800px] max-w-6xl">
         {/* Header with close button */}
         <div className="flex items-center justify-between p-3">
           <div className="flex items-center space-x-2">
@@ -52,10 +52,10 @@ const HorizontalChat = ({
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Hello, I'm Amigo Mobility's virtual assistant, an AI powered tool designed to help with your customer support needs. How can I help you today?"
-                className="w-full bg-white border-0 rounded-lg pl-12 pr-16 py-4 text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-transparent text-sm leading-relaxed"
+                className="w-full bg-white border-0 rounded-lg pl-12 pr-16 py-4 text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-white focus:border-transparent text-sm leading-relaxed min-h-[60px] resize-none"
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               />
-              <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+              <div className="absolute left-4 top-5">
                 <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
                   <MessageCircle className="w-4 h-4 text-white" />
                 </div>
@@ -63,7 +63,7 @@ const HorizontalChat = ({
               <Button
                 onClick={sendMessage}
                 size="sm"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent hover:bg-blue-500 text-blue-600 hover:text-white border-0 h-8 w-8 p-0"
+                className="absolute right-2 top-5 bg-transparent hover:bg-blue-500 text-blue-600 hover:text-white border-0 h-8 w-8 p-0"
                 disabled={!inputValue.trim()}
               >
                 <Send className="w-4 h-4" />
