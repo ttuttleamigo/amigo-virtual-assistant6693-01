@@ -86,7 +86,11 @@ const SidebarChat = ({
         {isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && (
           <div className="space-y-2">
             {currentStep.userOptions.map((option, index) => (
-              <Button key={index} onClick={() => onFlowChoice(option.text, option.nextStep)} className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-md px-4 py-2 text-sm font-medium">
+              <Button 
+                key={index} 
+                onClick={() => onFlowChoice(option.text, option.nextStep)} 
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-md px-4 py-3 text-sm font-medium whitespace-normal text-left leading-relaxed min-h-[44px] h-auto"
+              >
                 {option.text}
               </Button>
             ))}
