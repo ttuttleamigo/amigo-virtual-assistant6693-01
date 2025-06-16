@@ -1,67 +1,163 @@
 
 /* Scoped styles for Amigo Widget to prevent conflicts with host site */
-#amigo-widget-container * {
-  box-sizing: border-box;
+#amigo-widget-container {
+  /* Reset all inherited styles */
+  all: initial;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  line-height: 1.5 !important;
+  -webkit-text-size-adjust: 100% !important;
+  -moz-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+  -moz-tab-size: 4 !important;
+  tab-size: 4 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 999999 !important;
+  color: initial !important;
+  background: transparent !important;
 }
 
-/* Reset styles within widget container */
-#amigo-widget-container {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  line-height: 1.5;
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  -moz-tab-size: 4;
-  tab-size: 4;
+/* Reset and ensure all child elements inherit proper styles */
+#amigo-widget-container *,
+#amigo-widget-container *::before,
+#amigo-widget-container *::after {
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  font-size: 100% !important;
+  font: inherit !important;
+  vertical-align: baseline !important;
 }
 
 /* Ensure widget elements have pointer events */
 #amigo-widget-container > * {
-  pointer-events: auto;
+  pointer-events: auto !important;
 }
 
-/* Override any potential conflicts */
+/* Force proper text colors and fonts */
 #amigo-widget-container button {
-  font-family: inherit;
-  font-feature-settings: inherit;
-  font-variation-settings: inherit;
-  font-size: 100%;
-  font-weight: inherit;
-  line-height: inherit;
-  color: inherit;
-  margin: 0;
-  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-feature-settings: inherit !important;
+  font-variation-settings: inherit !important;
+  font-size: 100% !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+  color: inherit !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
 }
 
-#amigo-widget-container input {
-  font-family: inherit;
-  font-feature-settings: inherit;
-  font-variation-settings: inherit;
-  font-size: 100%;
-  font-weight: inherit;
-  line-height: inherit;
-  color: inherit;
-  margin: 0;
-  padding: 0;
+#amigo-widget-container input,
+#amigo-widget-container textarea {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-feature-settings: inherit !important;
+  font-variation-settings: inherit !important;
+  font-size: 100% !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+  color: inherit !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: white !important;
+  border: 1px solid #ccc !important;
+}
+
+/* Force text colors for all text elements */
+#amigo-widget-container p,
+#amigo-widget-container h1,
+#amigo-widget-container h2,
+#amigo-widget-container h3,
+#amigo-widget-container h4,
+#amigo-widget-container h5,
+#amigo-widget-container h6,
+#amigo-widget-container span,
+#amigo-widget-container div {
+  color: inherit !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+/* Ensure images display properly */
+#amigo-widget-container img {
+  display: block !important;
+  max-width: 100% !important;
+  height: auto !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Fix for logo images specifically */
+#amigo-widget-container img[alt*="Amigo"] {
+  object-fit: contain !important;
+  object-position: center !important;
 }
 
 /* Animations for widget */
 @keyframes amigo-slide-in-right {
   from {
-    transform: translateX(100%);
-    opacity: 0;
+    transform: translateX(100%) !important;
+    opacity: 0 !important;
   }
   to {
-    transform: translateX(0);
-    opacity: 1;
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+  }
+}
+
+@keyframes amigo-fade-in {
+  from {
+    opacity: 0 !important;
+  }
+  to {
+    opacity: 1 !important;
   }
 }
 
 #amigo-widget-container .animate-slide-in-right {
-  animation: amigo-slide-in-right 0.3s ease-out;
+  animation: amigo-slide-in-right 0.3s ease-out !important;
 }
 
-/* Ensure proper z-index layering */
-#amigo-widget-container {
-  z-index: 999999 !important;
+#amigo-widget-container .animate-fade-in {
+  animation: amigo-fade-in 0.3s ease-out !important;
+}
+
+/* Force proper background colors */
+#amigo-widget-container .bg-blue-600 {
+  background-color: #2563eb !important;
+}
+
+#amigo-widget-container .bg-blue-500 {
+  background-color: #3b82f6 !important;
+}
+
+#amigo-widget-container .bg-white {
+  background-color: #ffffff !important;
+}
+
+/* Force proper text colors */
+#amigo-widget-container .text-white {
+  color: #ffffff !important;
+}
+
+#amigo-widget-container .text-gray-800 {
+  color: #1f2937 !important;
+}
+
+#amigo-widget-container .text-gray-700 {
+  color: #374151 !important;
+}
+
+#amigo-widget-container .text-blue-500 {
+  color: #3b82f6 !important;
+}
+
+#amigo-widget-container .text-black {
+  color: #000000 !important;
 }

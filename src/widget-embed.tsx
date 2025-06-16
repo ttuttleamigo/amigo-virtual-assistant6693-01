@@ -44,13 +44,16 @@ const initWidget = (config: WidgetConfig = {}) => {
     if (!container) {
       container = document.createElement('div');
       container.id = containerId;
-      container.style.position = 'fixed';
-      container.style.zIndex = '999999';
-      container.style.pointerEvents = 'none';
-      container.style.top = '0';
-      container.style.left = '0';
-      container.style.width = '100%';
-      container.style.height = '100%';
+      container.style.cssText = `
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        pointer-events: none !important;
+        z-index: 999999 !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+      `;
       document.body.appendChild(container);
     }
 
