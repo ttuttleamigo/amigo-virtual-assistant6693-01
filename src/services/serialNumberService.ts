@@ -1,4 +1,3 @@
-
 import { FlowType } from '@/hooks/useConversationFlow';
 
 export interface ProductInfo {
@@ -35,33 +34,61 @@ export const lookupSerialNumber = async (serialNumber: string): Promise<ProductI
     // NetSuite endpoint URL
     const netsuiteUrl = `https://4086366.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=6223&deploy=1&compid=4086366&ns-at=AAEJ7tMQZmDLpO0msvndzhyIbhPPdD7U3fcHROrep1qJ6u8nu-w&snar=${formattedSerialNumber}`;
     
-    // Use CORS proxy to bypass CORS restrictions
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(netsuiteUrl)}`;
+    // Try multiple CORS proxy services for better reliability
+    const proxies = [
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(netsuiteUrl)}`,
+      `https://cors-anywhere.herokuapp.com/${netsuiteUrl}`,
+      `https://thingproxy.freeboard.io/fetch/${netsuiteUrl}`
+    ];
     
-    const response = await fetch(proxyUrl, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-      }
-    });
+    let lastError;
+    
+    for (const proxyUrl of proxies) {
+      try {
+        console.log(`Attempting request with proxy: ${proxyUrl}`);
+        
+        const response = await fetch(proxyUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
 
-    if (response.ok) {
-      const proxyData = await response.json();
-      
-      // The actual data is in the 'contents' field when using allorigins
-      const data = JSON.parse(proxyData.contents);
-      
-      // Extract the required fields from the response
-      return {
-        model: data.model || '',
-        serialNumber: data.name || formattedSerialNumber,
-        purchaseDate: data.purchdate || '',
-        itemNumber: data.itemnumber || '',
-        itemDescription: data.itemdescription || ''
-      };
+        if (response.ok) {
+          let data;
+          
+          // Handle different proxy response formats
+          if (proxyUrl.includes('codetabs.com')) {
+            data = await response.json();
+          } else {
+            const responseText = await response.text();
+            data = JSON.parse(responseText);
+          }
+          
+          console.log('Successfully retrieved data:', data);
+          
+          // Extract the required fields from the response
+          return {
+            model: data.model || '',
+            serialNumber: data.name || formattedSerialNumber,
+            purchaseDate: data.purchdate || '',
+            itemNumber: data.itemnumber || '',
+            itemDescription: data.itemdescription || ''
+          };
+        }
+        
+        console.log(`Proxy ${proxyUrl} returned status: ${response.status}`);
+      } catch (proxyError) {
+        console.log(`Proxy ${proxyUrl} failed:`, proxyError);
+        lastError = proxyError;
+        continue;
+      }
     }
     
-    return null;
+    // If all proxies failed, throw the last error
+    throw lastError || new Error('All CORS proxies failed');
+    
   } catch (error) {
     console.error('Error looking up serial number:', error);
     throw error;
