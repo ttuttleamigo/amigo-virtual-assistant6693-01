@@ -3,9 +3,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ConversationMessage } from '@/hooks/useConversationFlow';
 import { ConversationStep } from '@/data/conversationFlow';
+import TypingIndicator from './TypingIndicator';
 
 interface ModalChatProps {
   conversationHistory: ConversationMessage[];
@@ -20,42 +20,6 @@ interface ModalChatProps {
   isTyping?: boolean;
   isInputDisabled?: boolean;
 }
-
-const SkeletonLoader = () => (
-  <div className="flex justify-start">
-    <div className="flex items-start space-x-3 max-w-[85%]">
-      <div className="w-10 h-10 rounded-full bg-white border-2 border-blue-100 flex items-center justify-center flex-shrink-0 shadow-sm">
-        <img 
-          src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" 
-          alt="Amigo" 
-          className="w-6 h-6 object-contain"
-        />
-      </div>
-      <div className="space-y-3 flex-1">
-        <Skeleton className="h-4 w-4/5 bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse" />
-        <Skeleton className="h-4 w-3/5 bg-gradient-to-r from-gray-300 to-gray-400 animate-pulse" />
-        <Skeleton className="h-4 w-2/3 bg-gradient-to-r from-gray-200 to-gray-350 animate-pulse" />
-      </div>
-    </div>
-  </div>
-);
-
-const StreamingPlaceholder = () => {
-  const [dots, setDots] = useState('');
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDots(prev => {
-        if (prev === '...') return '';
-        return prev + '.';
-      });
-    }, 500);
-    
-    return () => clearInterval(interval);
-  }, []);
-  
-  return `Hang on while I check${dots}`;
-};
 
 const ModalChat = ({
   conversationHistory,
@@ -183,7 +147,7 @@ const ModalChat = ({
             </div>
           ))}
 
-          {isTyping && <SkeletonLoader />}
+          {isTyping && <TypingIndicator />}
 
           {isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && onFlowChoice && (
             <div className="space-y-3 mt-6">
