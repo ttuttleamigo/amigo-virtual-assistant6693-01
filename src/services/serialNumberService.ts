@@ -32,8 +32,13 @@ export const lookupSerialNumber = async (serialNumber: string): Promise<ProductI
     // Format the serial number according to requirements
     const formattedSerialNumber = formatSerialNumber(serialNumber);
     
-    // Make GET request to NetSuite endpoint
-    const response = await fetch(`https://4086366.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=6223&deploy=1&compid=4086366&ns-at=AAEJ7tMQZmDLpO0msvndzhyIbhPPdD7U3fcHROrep1qJ6u8nu-w&snar=${formattedSerialNumber}`, {
+    // NetSuite endpoint URL
+    const netsuiteUrl = `https://4086366.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=6223&deploy=1&compid=4086366&ns-at=AAEJ7tMQZmDLpO0msvndzhyIbhPPdD7U3fcHROrep1qJ6u8nu-w&snar=${formattedSerialNumber}`;
+    
+    // Use CORS proxy to bypass CORS restrictions
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(netsuiteUrl)}`;
+    
+    const response = await fetch(proxyUrl, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -41,7 +46,10 @@ export const lookupSerialNumber = async (serialNumber: string): Promise<ProductI
     });
 
     if (response.ok) {
-      const data = await response.json();
+      const proxyData = await response.json();
+      
+      // The actual data is in the 'contents' field when using allorigins
+      const data = JSON.parse(proxyData.contents);
       
       // Extract the required fields from the response
       return {
