@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -31,69 +32,81 @@ interface WidgetConfig {
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
 }
 
-// Global widget object
-declare global {
-  interface Window {
-    AmigoWidget: {
-      init: (config?: WidgetConfig) => void;
-      destroy: () => void;
-    };
-  }
-}
-
 let widgetRoot: any = null;
 
 // Widget initialization function
 const initWidget = (config: WidgetConfig = {}) => {
-  const { containerId = 'amigo-widget-container' } = config;
-  
-  // Create container if it doesn't exist
-  let container = document.getElementById(containerId);
-  if (!container) {
-    container = document.createElement('div');
-    container.id = containerId;
-    container.style.position = 'fixed';
-    container.style.zIndex = '999999';
-    container.style.pointerEvents = 'none';
-    container.style.top = '0';
-    container.style.left = '0';
-    container.style.width = '100%';
-    container.style.height = '100%';
-    document.body.appendChild(container);
-  }
+  try {
+    const { containerId = 'amigo-widget-container' } = config;
+    
+    // Create container if it doesn't exist
+    let container = document.getElementById(containerId);
+    if (!container) {
+      container = document.createElement('div');
+      container.id = containerId;
+      container.style.position = 'fixed';
+      container.style.zIndex = '999999';
+      container.style.pointerEvents = 'none';
+      container.style.top = '0';
+      container.style.left = '0';
+      container.style.width = '100%';
+      container.style.height = '100%';
+      document.body.appendChild(container);
+    }
 
-  // Mount the widget
-  if (!widgetRoot) {
-    widgetRoot = createRoot(container);
-    widgetRoot.render(<AmigoWidget />);
+    // Mount the widget
+    if (!widgetRoot) {
+      widgetRoot = createRoot(container);
+      widgetRoot.render(<AmigoWidget />);
+    }
+    
+    console.log('AmigoWidget initialized successfully');
+  } catch (error) {
+    console.error('Error initializing AmigoWidget:', error);
   }
 };
 
 // Widget destruction function
 const destroyWidget = () => {
-  if (widgetRoot) {
-    widgetRoot.unmount();
-    widgetRoot = null;
+  try {
+    if (widgetRoot) {
+      widgetRoot.unmount();
+      widgetRoot = null;
+    }
+    
+    const container = document.getElementById('amigo-widget-container');
+    if (container) {
+      container.remove();
+    }
+    
+    console.log('AmigoWidget destroyed successfully');
+  } catch (error) {
+    console.error('Error destroying AmigoWidget:', error);
   }
-  
-  const container = document.getElementById('amigo-widget-container');
-  if (container) {
-    container.remove();
-  }
+};
+
+// Create the global widget object
+const AmigoWidgetGlobal = {
+  init: initWidget,
+  destroy: destroyWidget,
+  version: '1.0.0'
 };
 
 // Expose global widget object
-window.AmigoWidget = {
-  init: initWidget,
-  destroy: destroyWidget,
-};
+if (typeof window !== 'undefined') {
+  (window as any).AmigoWidget = AmigoWidgetGlobal;
+}
 
 // Auto-initialize if data attribute is present
-document.addEventListener('DOMContentLoaded', () => {
-  const autoInit = document.querySelector('[data-amigo-widget="auto"]');
-  if (autoInit) {
-    initWidget();
-  }
-});
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    const autoInit = document.querySelector('[data-amigo-widget="auto"]');
+    if (autoInit) {
+      initWidget();
+    }
+  });
+}
 
+// Export for module usage
 export { AmigoWidget, initWidget, destroyWidget };
+export default AmigoWidgetGlobal;

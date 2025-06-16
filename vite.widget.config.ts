@@ -37,6 +37,12 @@ export default defineConfig({
     },
   },
   define: {
+    'process.env.NODE_ENV': '"production"',
+    'process.env': '{}',
     global: 'globalThis',
+  },
+  esbuild: {
+    // Fix CSS issues
+    legalComments: 'none',
   },
 });
