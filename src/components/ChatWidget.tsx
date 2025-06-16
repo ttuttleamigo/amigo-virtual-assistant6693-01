@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
@@ -179,17 +178,25 @@ const ChatWidget = () => {
       addRegularMessageWithTyping([
         "Great! Please enter your serial number. You can find it on a label, usually on the back or bottom of your cart."
       ], 1000);
-      setExpectingSerialNumber(true);
-      setAllowSerialNumberEntry(true);
-      setTextInputAllowed(true);
-      setShowInitialButtons(false);
+      
+      setTimeout(() => {
+        setExpectingSerialNumber(true);
+        setAllowSerialNumberEntry(true);
+        setTextInputAllowed(true);
+        setShowInitialButtons(false);
+      }, 1500);
+      
     } else if (action === 'Enter model name') {
       addRegularMessageWithTyping([
         "Perfect! Please enter your model name. Common models include SmartShopper, ValueShopper, Vista, or Max CR."
       ], 1000);
-      setExpectingModel(true);
-      setTextInputAllowed(true);
-      setShowInitialButtons(false);
+      
+      setTimeout(() => {
+        setExpectingModel(true);
+        setTextInputAllowed(true);
+        setShowInitialButtons(false);
+      }, 1500);
+      
     } else if (action === "I'm not sure") {
       addRegularMessageWithTyping([
         "No problem! I can help you find the information we need. Here are some options:\n\nI can guide you on where to find your serial number\nI can help you identify your model\nYou can contact our support team at 1-800-692-6446\n\nWhat would you prefer?"
@@ -280,6 +287,7 @@ const ChatWidget = () => {
       return;
     }
 
+    // Only trigger the general flow if we're not already expecting input
     if (!isInFlow && !expectingSerialNumber && !expectingModel) {
       addRegularMessageWithTyping([
         "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I can work with either:\n\nSerial number - for precise troubleshooting\nModel name - for general guidance\n\nWhich would you prefer to provide? Or if you need help finding either, just let me know!"
