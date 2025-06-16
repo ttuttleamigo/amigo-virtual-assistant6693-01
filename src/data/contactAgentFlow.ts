@@ -1,6 +1,17 @@
+
 import { ConversationFlow } from './conversationFlow';
 
 export const contactAgentFlow: ConversationFlow = {
+  greeting: {
+    id: 'greeting',
+    botMessage: [
+      "I'd be happy to help you with your customer service need! To provide you with the best assistance, I can connect you with one of our service agents."
+    ],
+    userOptions: [
+      { text: "Continue", nextStep: "contact_agent" }
+    ]
+  },
+
   contact_agent: {
     id: 'contact_agent',
     botMessage: [
