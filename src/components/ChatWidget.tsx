@@ -152,7 +152,7 @@ const ChatWidget = () => {
   };
 
   const handleClose = () => {
-    // Store current state as previous before closing
+    // Store current state as previous before closing (but only if it's not horizontal)
     if (chatState !== 'hidden' && chatState !== 'horizontal') {
       setPreviousState(chatState);
     }
@@ -163,8 +163,8 @@ const ChatWidget = () => {
   };
 
   const handleChatButtonClick = () => {
-    // If there's conversation history, restore to previous state, otherwise start with horizontal
-    if (conversationHistory.length > 0) {
+    // Always restore to previous state if it's not horizontal, otherwise default to horizontal
+    if (previousState !== 'horizontal') {
       setChatState(previousState);
     } else {
       setChatState('horizontal');
