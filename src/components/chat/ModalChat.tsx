@@ -3,9 +3,9 @@ import React, { useEffect, useRef } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ConversationMessage } from '@/hooks/useConversationFlow';
 import { ConversationStep } from '@/data/conversationFlow';
-import TypingIndicator from './TypingIndicator';
 
 interface ModalChatProps {
   conversationHistory: ConversationMessage[];
@@ -20,6 +20,25 @@ interface ModalChatProps {
   isTyping?: boolean;
   isInputDisabled?: boolean;
 }
+
+const SkeletonLoader = () => (
+  <div className="flex justify-start">
+    <div className="flex items-start space-x-3 max-w-[85%]">
+      <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center flex-shrink-0 shadow-sm">
+        <img 
+          src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" 
+          alt="Amigo" 
+          className="w-6 h-6 object-contain"
+        />
+      </div>
+      <div className="space-y-2 flex-1">
+        <Skeleton className="h-4 w-3/4 bg-blue-200" />
+        <Skeleton className="h-4 w-1/2 bg-blue-200" />
+        <Skeleton className="h-4 w-2/3 bg-blue-200" />
+      </div>
+    </div>
+  </div>
+);
 
 const ModalChat = ({
   conversationHistory,
@@ -46,54 +65,52 @@ const ModalChat = ({
   }, [conversationHistory, isTyping, currentStep]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-gradient-to-b from-blue-50 via-blue-25 to-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[85vh] flex flex-col overflow-hidden border border-blue-100">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600">
-          <div className="flex items-center space-x-3">
+        <div className="flex items-center justify-between px-8 py-6 border-b border-blue-100 bg-gradient-to-r from-blue-100 via-blue-50 to-white">
+          <div className="flex items-center space-x-4">
             <img 
               src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
               alt="Amigo Virtual Assistant" 
-              className="h-8 object-contain"
+              className="h-10 object-contain"
             />
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-800">
+                How can <span className="text-blue-600">Amigo</span> help?
+              </h2>
+              <p className="text-blue-600 text-sm font-medium">
+                Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+              </p>
+            </div>
           </div>
           <div className="flex items-center space-x-2">
             <Button
               variant="ghost"
               size="sm"
               onClick={onModalToSidebar}
-              className="text-white hover:text-white hover:bg-white/20 h-8 w-8 p-0"
+              className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 h-10 w-10 p-0 rounded-full"
             >
-              <Minimize2 className="w-4 h-4" />
+              <Minimize2 className="w-5 h-5" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="text-white hover:text-white hover:bg-white/20 h-8 w-8 p-0"
+              className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 h-10 w-10 p-0 rounded-full"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </Button>
           </div>
         </div>
-        
-        {/* Title Section */}
-        <div className="px-6 py-4 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600 border-b border-blue-400">
-          <h2 className="text-xl font-semibold text-white mb-1">
-            How can <span className="text-blue-100">Amigo</span> help?
-          </h2>
-          <p className="text-blue-100 text-sm">
-            Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-          </p>
-        </div>
 
         {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 min-h-0 bg-gradient-to-b from-blue-50 to-white">
+        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6 min-h-0">
           {conversationHistory.filter(msg => msg.text !== 'typing').slice(-10).map(message => (
             <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`flex items-start space-x-3 max-w-[80%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  message.sender === 'agent' ? 'bg-white border border-gray-200 shadow-sm' : 'bg-blue-600'
+              <div className={`flex items-start space-x-4 max-w-[75%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  message.sender === 'agent' ? 'bg-white border-2 border-blue-100 shadow-sm' : 'bg-blue-600'
                 }`}>
                   {message.sender === 'agent' ? (
                     <img 
@@ -102,13 +119,13 @@ const ModalChat = ({
                       className="w-6 h-6 object-contain"
                     />
                   ) : (
-                    <MessageCircle className="w-4 h-4 text-white" />
+                    <MessageCircle className="w-5 h-5 text-white" />
                   )}
                 </div>
-                <div className={`px-4 py-2 rounded-lg text-sm whitespace-pre-wrap shadow-sm ${
+                <div className={`px-6 py-4 rounded-2xl text-sm whitespace-pre-wrap shadow-sm leading-relaxed ${
                   message.sender === 'user' 
-                    ? 'bg-blue-600 text-white rounded-tr-sm' 
-                    : 'bg-white text-gray-900 rounded-tl-sm border border-gray-200'
+                    ? 'bg-blue-600 text-white rounded-tr-md' 
+                    : 'bg-white text-gray-800 rounded-tl-md border border-blue-100'
                 }`}>
                   {message.text}
                 </div>
@@ -116,15 +133,15 @@ const ModalChat = ({
             </div>
           ))}
 
-          {isTyping && <TypingIndicator />}
+          {isTyping && <SkeletonLoader />}
 
           {isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && onFlowChoice && (
-            <div className="space-y-2 mt-4">
+            <div className="space-y-3 mt-6">
               {currentStep.userOptions.map((option, index) => (
                 <Button
                   key={index}
                   onClick={() => onFlowChoice(option.text, option.nextStep)}
-                  className="w-full justify-start text-left h-auto p-3 bg-blue-600 hover:bg-blue-700 text-white border-0 whitespace-normal break-words shadow-md"
+                  className="w-full justify-start text-left h-auto p-4 bg-blue-600 hover:bg-blue-700 text-white border-0 whitespace-normal break-words shadow-md rounded-xl font-medium"
                 >
                   {option.text}
                 </Button>
@@ -137,21 +154,21 @@ const ModalChat = ({
 
         {/* Input Section */}
         {!hasOnlyButtonOptions && (
-          <div className="px-6 py-4 border-t border-gray-200 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600">
-            <div className="flex items-center space-x-2">
+          <div className="px-8 py-6 border-t border-blue-100 bg-gradient-to-r from-blue-50 via-blue-25 to-white">
+            <div className="flex items-center space-x-3">
               <div className="flex-1 relative">
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder={isInputDisabled ? "Please select an option above" : "Type your message here..."}
-                  className="w-full pr-12 bg-white border-0 focus:ring-2 focus:ring-white text-gray-700 placeholder-gray-500"
+                  className="w-full pr-14 py-4 text-base bg-white border-2 border-blue-100 focus:border-blue-300 focus:ring-2 focus:ring-blue-100 text-gray-700 placeholder-gray-500 rounded-xl"
                   onKeyPress={(e) => e.key === 'Enter' && !isInputDisabled && sendMessage()}
                   disabled={isInputDisabled}
                 />
                 <Button
                   onClick={sendMessage}
                   size="sm"
-                  className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-blue-700 hover:bg-blue-800 text-white h-8 w-8 p-0 border-0"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white h-10 w-10 p-0 border-0 rounded-lg"
                   disabled={!inputValue.trim() || isInputDisabled}
                 >
                   <Send className="w-4 h-4" />
