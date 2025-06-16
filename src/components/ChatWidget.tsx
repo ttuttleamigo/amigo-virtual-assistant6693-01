@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
@@ -67,7 +66,6 @@ const ChatWidget = () => {
         if (productData.purchaseDate) {
           successText += ` (Purchased: ${productData.purchaseDate})`;
         }
-        successText += ` Let me start the appropriate troubleshooting guide for you.`;
         
         // Add success message with typing delay
         setTimeout(() => {
