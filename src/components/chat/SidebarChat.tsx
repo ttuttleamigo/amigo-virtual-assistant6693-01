@@ -34,20 +34,11 @@ const SidebarChat = ({
   const isLoading = conversationHistory.some(msg => msg.text.includes("Looking up") || msg.text.includes("loading"));
 
   return (
-    <div className="fixed right-0 top-0 bottom-0 w-96 bg-white shadow-2xl z-50 animate-slide-in-right border-l border-gray-300 flex flex-col">
+    <div className="fixed right-0 top-0 bottom-0 w-96 bg-white shadow-2xl z-50 animate-slide-in-right border-l border-gray-200 flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white flex-shrink-0">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-            <MessageCircle className="w-4 h-4 text-white" />
-          </div>
-          <div>
-            <span className="font-medium text-gray-900 text-sm">Amigo Assistant</span>
-            <div className="flex items-center space-x-1">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-xs text-gray-500">Online</span>
-            </div>
-          </div>
+          <span className="font-medium text-gray-700 text-sm">Agentforce</span>
         </div>
         <div className="flex space-x-1">
           <Button
@@ -70,12 +61,12 @@ const SidebarChat = ({
       </div>
       
       {/* Title */}
-      <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex-shrink-0">
-        <h2 className="text-lg font-medium text-gray-900 mb-1">
-          How can <span className="text-blue-500">Amigo</span> help?
+      <div className="px-6 py-4 text-center border-b border-gray-100 flex-shrink-0">
+        <h2 className="text-xl font-light text-gray-900 mb-2">
+          How can <span className="text-blue-600 font-medium">Agentforce</span> help?
         </h2>
-        <p className="text-gray-600 text-sm">
-          Amigo Assistant joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+        <p className="text-gray-500 text-sm">
+          Agentforce joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} PM
         </p>
       </div>
 
@@ -85,14 +76,14 @@ const SidebarChat = ({
           <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`flex items-start space-x-3 max-w-[85%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                message.sender === 'agent' ? 'bg-blue-500' : 'bg-gray-600'
+                message.sender === 'agent' ? 'bg-blue-600' : 'bg-gray-600'
               }`}>
                 <MessageCircle className="w-4 h-4 text-white" />
               </div>
               <div className={`text-sm p-3 rounded-lg whitespace-pre-wrap ${
                 message.sender === 'user' 
-                  ? 'bg-blue-500 text-white rounded-br-none' 
-                  : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'
+                  ? 'bg-blue-600 text-white rounded-br-none' 
+                  : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none shadow-sm'
               }`}>
                 {message.text}
               </div>
@@ -103,22 +94,14 @@ const SidebarChat = ({
         {isLoading && (
           <div className="flex justify-start">
             <div className="flex items-start space-x-3 max-w-[85%]">
-              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
                 <MessageCircle className="w-4 h-4 text-white" />
               </div>
-              <div className="bg-white border border-gray-200 rounded-lg rounded-bl-none p-3 shadow-sm">
-                <div className="flex items-center space-x-2 mb-2">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                  </div>
-                  <span className="text-xs text-gray-500">Typing...</span>
-                </div>
+              <div className="bg-white border border-gray-100 rounded-lg rounded-bl-none p-3 shadow-sm">
                 <div className="space-y-2">
-                  <Skeleton className="h-3 w-48" />
-                  <Skeleton className="h-3 w-40" />
-                  <Skeleton className="h-3 w-32" />
+                  <div className="h-3 bg-blue-200 rounded-full animate-pulse"></div>
+                  <div className="h-3 bg-blue-200 rounded-full animate-pulse w-4/5"></div>
+                  <div className="h-3 bg-blue-200 rounded-full animate-pulse w-3/5"></div>
                 </div>
               </div>
             </div>
@@ -127,14 +110,11 @@ const SidebarChat = ({
 
         {isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && (
           <div className="space-y-2">
-            <p className="text-xs text-gray-500 font-medium">Quick actions:</p>
             {currentStep.userOptions.map((option, index) => (
               <Button
                 key={index}
                 onClick={() => onFlowChoice(option.text, option.nextStep)}
-                variant="outline"
-                size="sm"
-                className="w-full text-left justify-start text-sm border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 min-h-[2.5rem] h-auto py-3 px-4 whitespace-normal leading-relaxed transition-all duration-200"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
               >
                 {option.text}
               </Button>
@@ -146,18 +126,23 @@ const SidebarChat = ({
       {/* Input - Fixed at bottom */}
       {!hasOnlyButtonOptions && (
         <div className="p-4 border-t border-gray-200 bg-white flex-shrink-0">
-          <div className="flex space-x-3">
+          <div className="relative">
             <Input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Type a message..."
-              className="flex-1 border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              placeholder="Ask me about products, features, and pricing, or connect to a sales rep."
+              className="w-full bg-gray-50 border-gray-200 rounded-lg pl-12 pr-12 py-3 text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
             />
+            <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+              <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
+                <MessageCircle className="w-4 h-4 text-white" />
+              </div>
+            </div>
             <Button
               onClick={sendMessage}
               size="sm"
-              className="bg-blue-500 hover:bg-blue-600"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white border-0 h-8 w-8 p-0"
               disabled={!inputValue.trim()}
             >
               <Send className="w-4 h-4" />
