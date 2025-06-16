@@ -159,11 +159,12 @@ const ChatWidget = () => {
       addRegularMessageWithTyping([
         "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\nSerial number (found on a label, usually on the back or bottom of your cart)\nModel name (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!"
       ], 1500);
-      setShowInitialButtons(true);
-      setExpectingSerialNumber(false);
-      setExpectingModel(false);
-      setAllowSerialNumberEntry(false);
-      setTextInputAllowed(false);
+      
+      setTimeout(() => {
+        setShowInitialButtons(true);
+        setTextInputAllowed(false);
+      }, 2000);
+      
     } else if (action === 'I need to buy a part for an Amigo cart') {
       addRegularMessageWithTyping([
         "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n\nCall our parts department at 1-800-692-6446\nEmail parts@amigomobility.com\nVisit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
@@ -282,11 +283,12 @@ const ChatWidget = () => {
       addRegularMessageWithTyping([
         "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I can work with either:\n\nSerial number - for precise troubleshooting\nModel name - for general guidance\n\nWhich would you prefer to provide? Or if you need help finding either, just let me know!"
       ], 1500);
-      setShowInitialButtons(true);
-      setExpectingSerialNumber(false);
-      setExpectingModel(false);
-      setAllowSerialNumberEntry(false);
-      setTextInputAllowed(false);
+      
+      setTimeout(() => {
+        setShowInitialButtons(true);
+        setTextInputAllowed(false);
+      }, 2000);
+      
     } else if ((expectingSerialNumber || expectingModel) && !isSerialNumberFormat(inputValue) && !isModelFormat(inputValue)) {
       addRegularMessageWithTyping([
         "I didn't recognize that as a serial number or model name. \n\nFor serial numbers: Look for 6+ characters with letters and numbers (often starting with AMI)\nFor models: Try SmartShopper, ValueShopper, Vista, or Max CR\n\nNeed help finding either? Just ask \"help find serial number\" or \"help identify model\" and I'll guide you!"
