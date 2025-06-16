@@ -35,6 +35,7 @@ export const useConversationFlow = () => {
   const [activeFlow, setActiveFlow] = useState<FlowType>('general');
   const [isTyping, setIsTyping] = useState(false);
   const [allowTextInput, setAllowTextInput] = useState(true);
+  const [showUserOptions, setShowUserOptions] = useState(false);
 
   const getCurrentStep = (): ConversationStep | null => {
     const flow = flowMap[activeFlow];
@@ -50,6 +51,7 @@ export const useConversationFlow = () => {
       isFlowMessage: true
     };
     setIsTyping(true);
+    setShowUserOptions(false); // Hide options while typing
     setConversationHistory(prev => [...prev, typingMessage]);
     return typingMessage.id;
   };
@@ -74,6 +76,11 @@ export const useConversationFlow = () => {
       }));
 
       setConversationHistory(prev => [...prev, ...newMessages]);
+      
+      // Show user options after bot message is complete
+      setTimeout(() => {
+        setShowUserOptions(true);
+      }, 100);
     }, delay);
   };
 
@@ -82,6 +89,7 @@ export const useConversationFlow = () => {
     setIsInFlow(true);
     setCurrentStep('greeting');
     setAllowTextInput(false); // Disable text input when in flow
+    setShowUserOptions(false); // Hide options initially
     const flow = flowMap[flowType];
     const greetingStep = flow.greeting;
     
@@ -94,6 +102,8 @@ export const useConversationFlow = () => {
   };
 
   const handleUserChoice = (choice: string, nextStep: string) => {
+    setShowUserOptions(false); // Hide options immediately when user makes choice
+    
     // Add user message
     const userMessage: ConversationMessage = {
       id: `user-${Date.now()}`,
@@ -127,6 +137,7 @@ export const useConversationFlow = () => {
     setActiveFlow('general');
     setIsTyping(false);
     setAllowTextInput(true); // Re-enable text input when flow is reset
+    setShowUserOptions(false);
   };
 
   const addRegularMessage = (message: ConversationMessage) => {
@@ -142,7 +153,7 @@ export const useConversationFlow = () => {
   };
 
   return {
-    currentStep: getCurrentStep(),
+    currentStep: showUserOptions ? getCurrentStep() : null, // Only return current step when options should be shown
     conversationHistory,
     isInFlow,
     activeFlow,
