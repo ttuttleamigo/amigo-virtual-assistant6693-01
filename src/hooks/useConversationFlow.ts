@@ -3,6 +3,7 @@ import { conversationFlow, ConversationStep } from '@/data/conversationFlow';
 import { smartShopperFlow } from '@/data/smartShopperFlow';
 import { valueShopperFlow } from '@/data/valueShopperFlow';
 import { vistaFlow } from '@/data/vistaFlow';
+import { maxCRFlow } from '@/data/maxCRFlow';
 
 export interface ConversationMessage {
   id: string;
@@ -12,13 +13,14 @@ export interface ConversationMessage {
   isFlowMessage?: boolean;
 }
 
-export type FlowType = 'general' | 'smartShopper' | 'valueShopper' | 'vista';
+export type FlowType = 'general' | 'smartShopper' | 'valueShopper' | 'vista' | 'maxCR';
 
 const flowMap = {
   general: conversationFlow,
   smartShopper: smartShopperFlow,
   valueShopper: valueShopperFlow,
-  vista: vistaFlow
+  vista: vistaFlow,
+  maxCR: maxCRFlow
 };
 
 export const useConversationFlow = () => {
