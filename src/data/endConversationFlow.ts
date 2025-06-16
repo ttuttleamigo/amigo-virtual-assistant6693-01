@@ -22,7 +22,7 @@ export const endConversationFlow: ConversationFlow = {
 
   sorry_talk_to_agent: {
     id: 'sorry_talk_to_agent',
-    botMessage: "I'm sorry I wasn't able to fully resolve your issue. Let me connect you with one of our factory service agents who can provide more personalized assistance.",
+    botMessage: "I'm sorry I wasn't able to fully resolve your issue.",
     userOptions: [
       { text: "Continue", nextStep: "contact_agent" }
     ]
