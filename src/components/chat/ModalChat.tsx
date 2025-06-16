@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -98,17 +99,21 @@ const ModalChat = ({
                 className="h-12 object-contain"
               />
             </div>
-            <h2 className="text-2xl font-semibold text-white mb-2">
-              How can <span className="text-blue-100">Amigo</span> help?
-            </h2>
-            <p className="text-blue-100 text-sm font-medium">
-              Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-            </p>
           </div>
         </div>
 
         {/* Messages Container - Fixed height with scroll */}
         <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6 min-h-[500px] bg-gradient-to-b from-blue-50 via-blue-25 to-white">
+          {/* Title and timestamp - now in scrollable area */}
+          <div className="text-center pb-4 border-b border-blue-200">
+            <h2 className="text-2xl font-semibold text-blue-600 mb-2">
+              How can <span className="text-blue-500">Amigo</span> help?
+            </h2>
+            <p className="text-blue-500 text-sm font-medium">
+              Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+            </p>
+          </div>
+
           {conversationHistory.filter(msg => msg.text !== 'typing').slice(-10).map(message => (
             <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`flex items-start space-x-4 max-w-[75%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
