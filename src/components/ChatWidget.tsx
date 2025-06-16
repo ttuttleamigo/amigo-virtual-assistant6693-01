@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
@@ -301,7 +302,7 @@ const ChatWidget = () => {
     setInputValue('');
   };
 
-  const isInputDisabled = !allowTextInput || (isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0);
+  const isInputDisabled = !allowTextInput || (isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0) || showInitialButtons;
 
   // Create custom step with buttons when we should show initial buttons
   const customStep = showInitialButtons ? {
