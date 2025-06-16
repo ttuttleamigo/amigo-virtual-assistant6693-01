@@ -1,0 +1,60 @@
+
+/* Scoped styles for Amigo Widget to prevent conflicts with host site */
+#amigo-widget-container * {
+  box-sizing: border-box;
+}
+
+/* Reset styles within widget container */
+#amigo-widget-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+}
+
+/* Ensure widget elements have pointer events */
+#amigo-widget-container > * {
+  pointer-events: auto;
+}
+
+/* Override any potential conflicts */
+#amigo-widget-container button {
+  font-family: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+#amigo-widget-container input {
+  font-family: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+/* Animations for widget */
+@keyframes amigo-slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+#amigo-widget-container .animate-slide-in-right {
+  animation: amigo-slide-in-right 0.3s ease-out;
+}

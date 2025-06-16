@@ -1,0 +1,8 @@
+
+{
+  "scripts": {
+    "build:widget": "vite build --config vite.widget.config.ts",
+    "build:all": "npm run build && npm run build:widget",
+    "preview:widget": "vite preview --config vite.widget.config.ts"
+  }
+}
