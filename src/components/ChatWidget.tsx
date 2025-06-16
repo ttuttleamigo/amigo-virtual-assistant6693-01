@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
@@ -198,7 +197,7 @@ const ChatWidget = () => {
     return (
       <SidebarChat
         conversationHistory={conversationHistory}
-        inputValue={setInputValue}
+        inputValue={inputValue}
         setInputValue={setInputValue}
         sendMessage={sendMessage}
         onClose={handleClose}
