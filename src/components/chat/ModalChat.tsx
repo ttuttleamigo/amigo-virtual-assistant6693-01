@@ -68,7 +68,7 @@ const ModalChat = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-gradient-to-b from-blue-50 via-blue-25 to-white rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden border border-blue-100">
         {/* Header */}
-        <div className="px-8 py-6 border-b border-blue-100 bg-gradient-to-r from-blue-100 via-blue-50 to-white flex-shrink-0">
+        <div className="px-8 py-6 border-b border-blue-100 bg-gradient-to-b from-white to-blue-50/30 flex-shrink-0">
           <div className="flex items-center justify-between mb-4">
             <div></div>
             <div className="flex items-center space-x-2">
