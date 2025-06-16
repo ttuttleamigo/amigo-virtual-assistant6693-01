@@ -13,6 +13,7 @@ const ChatWidget = () => {
   const [chatState, setChatState] = useState<ChatState>('horizontal');
   const [inputValue, setInputValue] = useState('');
   const [productInfo, setProductInfo] = useState<ProductInfo | null>(null);
+  const [expectingSerialNumber, setExpectingSerialNumber] = useState(false);
   const { 
     currentStep, 
     conversationHistory, 
@@ -23,6 +24,14 @@ const ChatWidget = () => {
     resetFlow,
     addRegularMessage 
   } = useConversationFlow();
+
+  // Function to check if a string looks like a serial number
+  const isSerialNumberFormat = (text: string): boolean => {
+    // Remove spaces and convert to uppercase
+    const cleanText = text.replace(/\s+/g, '').toUpperCase();
+    // Check if it matches common serial number patterns (letters and numbers, typically 6+ characters)
+    return /^[A-Z0-9]{6,}$/.test(cleanText) || /^\d{6,}$/.test(cleanText);
+  };
 
   const handleSerialNumberSubmit = async (serialNumber: string) => {
     setChatState('modal');
@@ -88,6 +97,8 @@ const ChatWidget = () => {
       };
       addRegularMessage(errorMessage);
     }
+    
+    setExpectingSerialNumber(false);
   };
 
   const handleSuggestedAction = (action: string, flowType?: FlowType) => {
@@ -113,6 +124,7 @@ const ChatWidget = () => {
           timestamp: new Date()
         };
         addRegularMessage(botResponse);
+        setExpectingSerialNumber(true);
       }, 1000);
     } else if (action === 'I need to buy a part for an Amigo cart') {
       // Direct to parts ordering
@@ -153,10 +165,18 @@ const ChatWidget = () => {
     setChatState('hidden');
     resetFlow();
     setProductInfo(null);
+    setExpectingSerialNumber(false);
   };
 
   const sendMessage = () => {
     if (!inputValue.trim()) return;
+    
+    // Check if we're expecting a serial number and the input looks like one
+    if (expectingSerialNumber && isSerialNumberFormat(inputValue)) {
+      handleSerialNumberSubmit(inputValue);
+      setInputValue('');
+      return;
+    }
     
     const newMessage = {
       id: Date.now().toString(),
@@ -167,11 +187,22 @@ const ChatWidget = () => {
     addRegularMessage(newMessage);
     setInputValue('');
 
-    if (!isInFlow) {
+    if (!isInFlow && !expectingSerialNumber) {
       setTimeout(() => {
         const botResponse = {
           id: (Date.now() + 1).toString(),
           text: "I can help you troubleshoot your Amigo cart. For the most accurate assistance, could you provide your serial number? You can click 'Enter Serial #' or just tell me what issue you're experiencing.",
+          sender: 'agent' as const,
+          timestamp: new Date()
+        };
+        addRegularMessage(botResponse);
+      }, 1000);
+    } else if (expectingSerialNumber && !isSerialNumberFormat(inputValue)) {
+      // User entered text that doesn't look like a serial number
+      setTimeout(() => {
+        const botResponse = {
+          id: (Date.now() + 1).toString(),
+          text: "I didn't recognize that as a serial number. Serial numbers are typically 6 or more characters long and contain letters and numbers. Could you please double-check and enter your serial number again? You can also contact our support team at 1-800-692-6446 if you need help locating it.",
           sender: 'agent' as const,
           timestamp: new Date()
         };
