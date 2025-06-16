@@ -68,39 +68,43 @@ const ModalChat = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-gradient-to-b from-blue-50 via-blue-25 to-white rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden border border-blue-100">
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-blue-100 bg-gradient-to-r from-blue-100 via-blue-50 to-white flex-shrink-0">
-          <div className="flex items-center space-x-4">
-            <img 
-              src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
-              alt="Amigo Virtual Assistant" 
-              className="h-10 object-contain"
-            />
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-800">
-                How can <span className="text-blue-600">Amigo</span> help?
-              </h2>
-              <p className="text-blue-600 text-sm font-medium">
-                Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-              </p>
+        <div className="px-8 py-6 border-b border-blue-100 bg-gradient-to-r from-blue-100 via-blue-50 to-white flex-shrink-0">
+          <div className="flex items-center justify-between mb-4">
+            <div></div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onModalToSidebar}
+                className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 h-10 w-10 p-0 rounded-full"
+              >
+                <Minimize2 className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClose}
+                className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 h-10 w-10 p-0 rounded-full"
+              >
+                <X className="w-5 h-5" />
+              </Button>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onModalToSidebar}
-              className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 h-10 w-10 p-0 rounded-full"
-            >
-              <Minimize2 className="w-5 h-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 h-10 w-10 p-0 rounded-full"
-            >
-              <X className="w-5 h-5" />
-            </Button>
+          
+          <div className="text-center">
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
+                alt="Amigo Virtual Assistant" 
+                className="h-12 object-contain"
+              />
+            </div>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+              How can <span className="text-blue-600">Amigo</span> help?
+            </h2>
+            <p className="text-blue-600 text-sm font-medium">
+              Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+            </p>
           </div>
         </div>
 
