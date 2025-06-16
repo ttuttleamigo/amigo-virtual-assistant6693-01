@@ -38,20 +38,26 @@ const HorizontalChat = ({
 
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
-      <div className="bg-gradient-to-r from-blue-600 to-green-500 rounded-lg shadow-xl border border-gray-200 min-w-[700px] max-w-4xl">
-        <div className="px-4 py-3">
-          <div className="flex items-center justify-between mb-3">
+      <div className="bg-white rounded-lg shadow-xl border border-gray-200 min-w-[700px] max-w-4xl">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                 <MessageCircle className="w-4 h-4 text-white" />
               </div>
-              <span className="text-sm font-medium text-white">Get help with your Amigo cart troubleshooting and support</span>
+              <div>
+                <span className="text-sm font-semibold text-gray-900">Get help with your Amigo cart troubleshooting and support</span>
+                <div className="flex items-center space-x-1 mt-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-xs text-gray-500">Support team is online</span>
+                </div>
+              </div>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="text-white hover:bg-white/20"
+              className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
             >
               <X className="w-4 h-4" />
             </Button>
@@ -64,22 +70,23 @@ const HorizontalChat = ({
                   value={serialNumber}
                   onChange={(e) => setSerialNumber(e.target.value)}
                   placeholder="Enter your serial number (e.g., AMI12345678)"
-                  className="w-full pr-10 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-10"
+                  className="w-full pr-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-11"
                   onKeyPress={(e) => e.key === 'Enter' && handleSerialSubmit()}
                 />
               ) : (
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Ask me anything..."
-                  className="w-full pr-10 bg-gray-50 border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-10"
+                  placeholder="Ask me about products, features, and pricing, or connect to a sales rep"
+                  className="w-full pr-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500 h-11"
                   onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                 />
               )}
               <Button
                 onClick={isSerialNumberMode ? handleSerialSubmit : sendMessage}
                 size="sm"
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 h-8 w-8 p-0"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 h-7 w-7 p-0"
+                disabled={isSerialNumberMode ? !serialNumber.trim() : !inputValue.trim()}
               >
                 <Send className="w-3 h-3" />
               </Button>
@@ -90,7 +97,7 @@ const HorizontalChat = ({
                 onClick={handleSerialNumberModeToggle}
                 variant="outline"
                 size="sm"
-                className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
+                className="text-sm px-4 py-2 h-11 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 whitespace-nowrap font-medium transition-all duration-200"
               >
                 Enter Serial #
               </Button>
@@ -98,7 +105,7 @@ const HorizontalChat = ({
                 onClick={() => onSuggestedAction('Connect me with support')}
                 variant="outline"
                 size="sm"
-                className="text-xs px-3 py-1.5 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 whitespace-nowrap"
+                className="text-sm px-4 py-2 h-11 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 whitespace-nowrap font-medium transition-all duration-200"
               >
                 Support
               </Button>
