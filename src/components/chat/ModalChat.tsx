@@ -24,17 +24,17 @@ interface ModalChatProps {
 const SkeletonLoader = () => (
   <div className="flex justify-start">
     <div className="flex items-start space-x-3 max-w-[85%]">
-      <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center flex-shrink-0 shadow-sm">
+      <div className="w-10 h-10 rounded-full bg-white border-2 border-blue-100 flex items-center justify-center flex-shrink-0 shadow-sm">
         <img 
           src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" 
           alt="Amigo" 
           className="w-6 h-6 object-contain"
         />
       </div>
-      <div className="space-y-2 flex-1">
-        <Skeleton className="h-4 w-3/4 bg-blue-200" />
-        <Skeleton className="h-4 w-1/2 bg-blue-200" />
-        <Skeleton className="h-4 w-2/3 bg-blue-200" />
+      <div className="space-y-3 flex-1">
+        <Skeleton className="h-4 w-4/5 bg-blue-300 animate-pulse" />
+        <Skeleton className="h-4 w-3/5 bg-blue-300 animate-pulse" />
+        <Skeleton className="h-4 w-2/3 bg-blue-300 animate-pulse" />
       </div>
     </div>
   </div>
@@ -66,9 +66,9 @@ const ModalChat = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-gradient-to-b from-blue-50 via-blue-25 to-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[85vh] flex flex-col overflow-hidden border border-blue-100">
+      <div className="bg-gradient-to-b from-blue-50 via-blue-25 to-white rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden border border-blue-100">
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-blue-100 bg-gradient-to-r from-blue-100 via-blue-50 to-white">
+        <div className="flex items-center justify-between px-8 py-6 border-b border-blue-100 bg-gradient-to-r from-blue-100 via-blue-50 to-white flex-shrink-0">
           <div className="flex items-center space-x-4">
             <img 
               src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
@@ -104,8 +104,8 @@ const ModalChat = ({
           </div>
         </div>
 
-        {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6 min-h-0">
+        {/* Messages Container - Fixed height with scroll */}
+        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6 min-h-[500px]">
           {conversationHistory.filter(msg => msg.text !== 'typing').slice(-10).map(message => (
             <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`flex items-start space-x-4 max-w-[75%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
@@ -154,7 +154,7 @@ const ModalChat = ({
 
         {/* Input Section */}
         {!hasOnlyButtonOptions && (
-          <div className="px-8 py-6 border-t border-blue-100 bg-gradient-to-r from-blue-50 via-blue-25 to-white">
+          <div className="px-8 py-6 border-t border-blue-100 bg-gradient-to-r from-blue-50 via-blue-25 to-white flex-shrink-0">
             <div className="flex items-center space-x-3">
               <div className="flex-1 relative">
                 <Input
