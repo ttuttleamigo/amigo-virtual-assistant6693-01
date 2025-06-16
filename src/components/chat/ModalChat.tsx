@@ -160,24 +160,24 @@ const ModalChat = ({
         {!hasOnlyButtonOptions && (
           <div className="px-8 py-6 border-t border-blue-100 bg-gradient-to-r from-blue-50 via-blue-25 to-white flex-shrink-0">
             <div className="flex items-center space-x-3">
-              <div className="flex-1 relative">
+              <div className="flex-1">
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder={isInputDisabled ? "Please select an option above" : "Type your message here..."}
-                  className="w-full pr-14 py-4 text-base bg-white border-2 border-blue-100 focus:border-blue-300 focus:ring-2 focus:ring-blue-100 text-gray-700 placeholder-gray-500 rounded-xl"
+                  className="w-full py-4 text-base bg-white border-2 border-blue-100 focus:border-blue-300 focus:ring-2 focus:ring-blue-100 text-gray-700 placeholder-gray-500 rounded-xl"
                   onKeyPress={(e) => e.key === 'Enter' && !isInputDisabled && sendMessage()}
                   disabled={isInputDisabled}
                 />
-                <Button
-                  onClick={sendMessage}
-                  size="sm"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white h-10 w-10 p-0 border-0 rounded-lg"
-                  disabled={!inputValue.trim() || isInputDisabled}
-                >
-                  <Send className="w-4 h-4" />
-                </Button>
               </div>
+              <Button
+                onClick={sendMessage}
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700 text-white h-12 w-12 p-0 border-0 rounded-lg flex-shrink-0"
+                disabled={!inputValue.trim() || isInputDisabled}
+              >
+                <Send className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         )}
