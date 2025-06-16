@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -54,7 +55,7 @@ const SidebarChat = ({
           Amigo Support joined • {new Date().toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit'
-        })} PM
+        })}
         </p>
       </div>
 

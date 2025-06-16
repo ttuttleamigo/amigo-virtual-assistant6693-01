@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -70,7 +71,7 @@ const ModalChat = ({
             How can <span className="text-blue-600">Amigo</span> help?
           </h2>
           <p className="text-gray-600 text-sm">
-            Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} PM
+            Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
           </p>
         </div>
 
