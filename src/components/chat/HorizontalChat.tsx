@@ -32,10 +32,6 @@ const HorizontalChat = ({
     }
   };
 
-  const handleSerialNumberModeToggle = () => {
-    setIsSerialNumberMode(true);
-  };
-
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
       <div className="bg-white rounded-lg shadow-xl border border-gray-200 min-w-[700px] max-w-4xl">
@@ -44,13 +40,6 @@ const HorizontalChat = ({
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                 <MessageCircle className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <span className="text-sm font-semibold text-gray-900">Get help with your Amigo cart troubleshooting and support</span>
-                <div className="flex items-center space-x-1 mt-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-xs text-gray-500">Support team is online</span>
-                </div>
               </div>
             </div>
             <Button
@@ -63,8 +52,9 @@ const HorizontalChat = ({
             </Button>
           </div>
           
-          <div className="flex items-center space-x-3">
-            <div className="flex-1 relative">
+          <div className="space-y-4">
+            {/* Input box */}
+            <div className="relative">
               {isSerialNumberMode ? (
                 <Input
                   value={serialNumber}
@@ -92,22 +82,28 @@ const HorizontalChat = ({
               </Button>
             </div>
             
-            <div className="flex space-x-2">
+            {/* Suggested action buttons */}
+            <div className="flex space-x-3">
               <Button
-                onClick={handleSerialNumberModeToggle}
+                onClick={() => onSuggestedAction('I need help with an Amigo cart repair')}
                 variant="outline"
-                size="sm"
-                className="text-sm px-4 py-2 h-11 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 whitespace-nowrap font-medium transition-all duration-200"
+                className="flex-1 text-sm px-4 py-3 h-auto border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 font-medium transition-all duration-200"
               >
-                Enter Serial #
+                I need help with an Amigo cart repair
               </Button>
               <Button
-                onClick={() => onSuggestedAction('Connect me with support')}
+                onClick={() => onSuggestedAction('I need to buy a part for an Amigo cart')}
                 variant="outline"
-                size="sm"
-                className="text-sm px-4 py-2 h-11 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 whitespace-nowrap font-medium transition-all duration-200"
+                className="flex-1 text-sm px-4 py-3 h-auto border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 font-medium transition-all duration-200"
               >
-                Support
+                I need to buy a part for an Amigo cart
+              </Button>
+              <Button
+                onClick={() => onSuggestedAction('I have a different customer service need')}
+                variant="outline"
+                className="flex-1 text-sm px-4 py-3 h-auto border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 font-medium transition-all duration-200"
+              >
+                I have a different customer service need
               </Button>
             </div>
           </div>
