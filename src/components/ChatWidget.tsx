@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
@@ -103,7 +102,7 @@ const ChatWidget = () => {
         // Serial number not found - offer helpful alternatives
         setTimeout(() => {
           addRegularMessageWithTyping([
-            "I couldn't find that serial number in our system. Let me help you with some alternatives:\n\n• **Try again** - Double-check the serial number (it's usually on a label on the back or bottom of your cart)\n• **Enter your model** - If you know your cart model (like SmartShopper, ValueShopper, Vista, or Max CR), I can help based on that\n• **Get help locating** - I can guide you on where to find your serial number\n• **Contact support** - Call 1-800-692-6446 for direct assistance\n\nWhat would you prefer to do?"
+            "I couldn't find that serial number in our system. Let me help you with some alternatives:\n\n• Try again - Double-check the serial number (it's usually on a label on the back or bottom of your cart)\n• Enter your model - If you know your cart model (like SmartShopper, ValueShopper, Vista, or Max CR), I can help based on that\n• Get help locating - I can guide you on where to find your serial number\n• Contact support - Call 1-800-692-6446 for direct assistance\n\nWhat would you prefer to do?"
           ], 1000);
           
           // Keep expecting serial number for retry
@@ -116,7 +115,7 @@ const ChatWidget = () => {
       // Error occurred during lookup - offer helpful alternatives
       setTimeout(() => {
         addRegularMessageWithTyping([
-          "I'm having trouble looking up that serial number right now. Let me offer some alternatives:\n\n• **Try again** - This might be a temporary connection issue\n• **Enter your model** - If you know your cart model, I can help based on that\n• **Find your serial number** - I can help you locate it on your cart\n• **Contact support** - Call 1-800-692-6446 for immediate assistance\n\nWhat would you like to do?"
+          "I'm having trouble looking up that serial number right now. Let me offer some alternatives:\n\n• Try again - This might be a temporary connection issue\n• Enter your model - If you know your cart model, I can help based on that\n• Find your serial number - I can help you locate it on your cart\n• Contact support - Call 1-800-692-6446 for immediate assistance\n\nWhat would you like to do?"
         ], 1000);
         
         // Keep expecting serial number for retry
@@ -178,7 +177,7 @@ const ChatWidget = () => {
     if (action === 'I need help with an Amigo cart repair') {
       // Ask for serial number first with helpful guidance
       addRegularMessageWithTyping([
-        "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\n• **Serial number** (found on a label, usually on the back or bottom of your cart)\n• **Model name** (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!"
+        "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\n• Serial number (found on a label, usually on the back or bottom of your cart)\n• Model name (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!"
       ], 1500);
       setExpectingSerialNumber(true);
       setExpectingModel(true);
@@ -262,7 +261,7 @@ const ChatWidget = () => {
     // Handle specific requests for help
     if (userInput.includes('help') && (userInput.includes('find') || userInput.includes('locate')) && userInput.includes('serial')) {
       addRegularMessageWithTyping([
-        "I can help you find your serial number! Here's where to look:\n\n**Most Common Locations:**\n• **Back of the cart** - Look for a white or silver label\n• **Bottom/underside** - May be on the base or frame\n• **Near the battery compartment** - Sometimes inside or nearby\n• **On the controller** - Some models have it there\n\n**What to look for:**\n• A label with \"S/N\" or \"Serial Number\"\n• Usually starts with letters like \"AMI\" followed by numbers\n• Typically 8-12 characters long\n\nOnce you find it, just type it here and I'll look up your cart information!"
+        "I can help you find your serial number! Here's where to look:\n\nMost Common Locations:\n• Back of the cart - Look for a white or silver label\n• Bottom/underside - May be on the base or frame\n• Near the battery compartment - Sometimes inside or nearby\n• On the controller - Some models have it there\n\nWhat to look for:\n• A label with \"S/N\" or \"Serial Number\"\n• Usually starts with letters like \"AMI\" followed by numbers\n• Typically 8-12 characters long\n\nOnce you find it, just type it here and I'll look up your cart information!"
       ], 1500);
       setExpectingSerialNumber(true);
       setTextInputAllowed(true);
@@ -271,7 +270,7 @@ const ChatWidget = () => {
 
     if (userInput.includes('model') && (userInput.includes('help') || userInput.includes('what') || userInput.includes('which'))) {
       addRegularMessageWithTyping([
-        "I can help you identify your Amigo model! Here are our main models:\n\n**SmartShopper** - Compact shopping cart, great for stores\n**ValueShopper** - Affordable option with essential features\n**Vista** - Mid-range model with enhanced comfort\n**Max CR** - Heavy-duty model for outdoor use\n\n**Where to find your model:**\n• Look for a label on your cart (same place as serial number)\n• Check your paperwork or receipt\n• The model name is usually clearly marked\n\nJust tell me which model you have, or describe your cart and I can help identify it!"
+        "I can help you identify your Amigo model! Here are our main models:\n\nSmartShopper - Compact shopping cart, great for stores\nValueShopper - Affordable option with essential features\nVista - Mid-range model with enhanced comfort\nMax CR - Heavy-duty model for outdoor use\n\nWhere to find your model:\n• Look for a label on your cart (same place as serial number)\n• Check your paperwork or receipt\n• The model name is usually clearly marked\n\nJust tell me which model you have, or describe your cart and I can help identify it!"
       ], 1500);
       setExpectingModel(true);
       setTextInputAllowed(true);
@@ -280,7 +279,7 @@ const ChatWidget = () => {
 
     if (!isInFlow && !expectingSerialNumber && !expectingModel) {
       addRegularMessageWithTyping([
-        "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I can work with either:\n\n• **Your serial number** - for precise troubleshooting\n• **Your model name** - for general guidance\n\nWhich would you prefer to provide? Or if you need help finding either, just let me know!"
+        "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I can work with either:\n\n• Your serial number - for precise troubleshooting\n• Your model name - for general guidance\n\nWhich would you prefer to provide? Or if you need help finding either, just let me know!"
       ], 1500);
       setExpectingSerialNumber(true);
       setExpectingModel(true);
@@ -288,7 +287,7 @@ const ChatWidget = () => {
     } else if ((expectingSerialNumber || expectingModel) && !isSerialNumberFormat(inputValue) && !isModelFormat(inputValue)) {
       // User entered text that doesn't look like a serial number or model
       addRegularMessageWithTyping([
-        "I didn't recognize that as a serial number or model name. \n\n**For serial numbers:** Look for 6+ characters with letters and numbers (often starting with AMI)\n**For models:** Try SmartShopper, ValueShopper, Vista, or Max CR\n\nNeed help finding either? Just ask \"help find serial number\" or \"help identify model\" and I'll guide you!"
+        "I didn't recognize that as a serial number or model name. \n\nFor serial numbers: Look for 6+ characters with letters and numbers (often starting with AMI)\nFor models: Try SmartShopper, ValueShopper, Vista, or Max CR\n\nNeed help finding either? Just ask \"help find serial number\" or \"help identify model\" and I'll guide you!"
       ], 1500);
     }
   };
