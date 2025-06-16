@@ -1,11 +1,9 @@
-
 import { ConversationFlow } from './conversationFlow';
 
 export const contactAgentFlow: ConversationFlow = {
   contact_agent: {
     id: 'contact_agent',
     botMessage: [
-      "I'd be happy to connect you with one of our factory service agents who can provide personalized assistance.",
       "Would you prefer to receive a phone call or an email?"
     ],
     userOptions: [
