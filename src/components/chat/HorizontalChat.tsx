@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -70,7 +71,7 @@ const HorizontalChat = ({
             </div>
             
             {/* Action Buttons */}
-            <div className="flex flex-wrap gap-2 items-center">
+            <div className="flex gap-2 items-center">
               <Button
                 onClick={() => onSuggestedAction('I need help with an Amigo cart repair', 'general')}
                 className="bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
