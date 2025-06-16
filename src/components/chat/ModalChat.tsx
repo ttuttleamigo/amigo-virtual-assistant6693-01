@@ -39,7 +39,11 @@ const ModalChat = ({
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-100">
           <div className="flex items-center space-x-3">
-            <span className="font-medium text-gray-700 text-sm">Amigo Support</span>
+            <img 
+              src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
+              alt="Amigo Virtual Assistant" 
+              className="h-8 object-contain"
+            />
           </div>
           <div className="flex space-x-1">
             <Button
@@ -64,7 +68,7 @@ const ModalChat = ({
         {/* Title */}
         <div className="px-6 py-4 text-center">
           <h2 className="text-2xl font-light text-gray-900 mb-2">
-            How can <span className="text-blue-600 font-medium">Amigo Support</span> help?
+            How can <span className="text-blue-600 font-medium">Amigo</span> help?
           </h2>
           <p className="text-gray-500 text-sm">
             Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} PM
