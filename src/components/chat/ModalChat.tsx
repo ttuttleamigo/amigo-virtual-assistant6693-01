@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -73,8 +74,8 @@ const ModalChat = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden border border-blue-100">
         {/* Header */}
-        <div className="px-8 py-6 border-b border-blue-100 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600 flex-shrink-0">
-          <div className="flex items-center justify-between mb-4">
+        <div className="px-8 py-4 border-b border-blue-100 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600 flex-shrink-0">
+          <div className="flex items-center justify-between mb-3">
             <div></div>
             <div className="flex items-center space-x-2">
               <Button
@@ -100,7 +101,7 @@ const ModalChat = ({
             <img 
               src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
               alt="Amigo Virtual Assistant" 
-              className="h-8 object-contain"
+              className="h-10 object-contain"
             />
           </div>
         </div>
