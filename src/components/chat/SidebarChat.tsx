@@ -38,7 +38,7 @@ const SidebarChat = ({
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white flex-shrink-0">
         <div className="flex items-center space-x-3">
-          <span className="font-medium text-gray-700 text-sm">Agentforce</span>
+          <span className="font-medium text-gray-700 text-sm">Amigo Support</span>
         </div>
         <div className="flex space-x-1">
           <Button
@@ -63,10 +63,10 @@ const SidebarChat = ({
       {/* Title */}
       <div className="px-6 py-4 text-center border-b border-gray-100 flex-shrink-0">
         <h2 className="text-xl font-light text-gray-900 mb-2">
-          How can <span className="text-blue-600 font-medium">Agentforce</span> help?
+          How can <span className="text-blue-600 font-medium">Amigo Support</span> help?
         </h2>
         <p className="text-gray-500 text-sm">
-          Agentforce joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} PM
+          Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} PM
         </p>
       </div>
 
@@ -130,7 +130,7 @@ const SidebarChat = ({
             <Input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask me about products, features, and pricing, or connect to a sales rep."
+              placeholder="Ask me about your Amigo cart troubleshooting or connect to support."
               className="w-full bg-gray-50 border-gray-200 rounded-lg pl-12 pr-12 py-3 text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
             />

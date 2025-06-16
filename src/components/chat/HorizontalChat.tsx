@@ -49,7 +49,7 @@ const HorizontalChat = ({
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask me about products, features, and pricing, or connect to a sales rep."
+                placeholder="Ask me about your Amigo cart troubleshooting or connect to support."
                 className="w-full bg-white border-0 rounded-lg pl-12 pr-4 py-3 text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-transparent"
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               />
@@ -71,22 +71,22 @@ const HorizontalChat = ({
             {/* Action Buttons */}
             <div className="flex space-x-3">
               <Button
-                onClick={() => onSuggestedAction('Show me an Agentforce demo')}
+                onClick={() => onSuggestedAction('Start troubleshooting')}
                 className="bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
               >
-                Show me an Agentforce demo
+                Start troubleshooting
               </Button>
               <Button
-                onClick={() => onSuggestedAction('How can Salesforce help my business')}
+                onClick={() => onSuggestedAction('Connect me with support')}
                 className="bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
               >
-                How can Salesforce help my business
+                Connect me with support
               </Button>
               <Button
-                onClick={() => onSuggestedAction('Connect me with a sales rep')}
+                onClick={() => onSerialNumberSubmit(prompt('Enter your Amigo serial number:') || '')}
                 className="bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
               >
-                Connect me with a sales rep
+                Enter Serial #
               </Button>
             </div>
           </div>

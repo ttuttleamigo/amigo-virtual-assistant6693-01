@@ -29,7 +29,7 @@ const MinimizedChat = ({
           <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
             <MessageCircle className="w-3 h-3 text-white" />
           </div>
-          <span className="font-medium text-gray-700 text-sm">Agentforce</span>
+          <span className="font-medium text-gray-700 text-sm">Amigo Support</span>
         </div>
         <div className="flex space-x-1">
           <Button
@@ -70,7 +70,7 @@ const MinimizedChat = ({
           <Input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Message Agentforce"
+            placeholder="Message Amigo Support"
             className="w-full bg-gray-50 border-gray-200 rounded-lg pl-10 pr-10 py-2 text-sm text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
           />
