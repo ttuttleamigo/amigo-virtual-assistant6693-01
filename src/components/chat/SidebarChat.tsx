@@ -35,7 +35,6 @@ const SidebarChat = ({
   isInputDisabled = false
 }: SidebarChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const hasOnlyButtonOptions = isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
   const [streamingPlaceholder, setStreamingPlaceholder] = useState('');
 
   // Update streaming placeholder when typing
@@ -134,29 +133,27 @@ const SidebarChat = ({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input - Fixed at bottom */}
-      {!hasOnlyButtonOptions && (
-        <div className="p-4 border-t border-blue-100 flex-shrink-0 bg-gradient-to-r from-blue-100 via-blue-50 to-white">
-          <div className="relative">
-            <Input 
-              value={inputValue} 
-              onChange={e => setInputValue(e.target.value)} 
-              placeholder={getPlaceholderText()}
-              className="w-full bg-white border-2 border-blue-100 focus:border-blue-300 focus:ring-2 focus:ring-blue-100 rounded-lg pl-12 pr-12 py-3 text-gray-700 placeholder-gray-500"
-              onKeyPress={e => e.key === 'Enter' && !isInputDisabled && !isTyping && sendMessage()}
-              disabled={isInputDisabled || isTyping}
-            />
-            <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-              <div className="w-6 h-6 bg-white border-2 border-blue-100 rounded-full flex items-center justify-center shadow-sm">
-                <img src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" alt="Amigo" className="w-4 h-4 object-contain" />
-              </div>
+      {/* Input - Fixed at bottom - Always show */}
+      <div className="p-4 border-t border-blue-100 flex-shrink-0 bg-gradient-to-r from-blue-100 via-blue-50 to-white">
+        <div className="relative">
+          <Input 
+            value={inputValue} 
+            onChange={e => setInputValue(e.target.value)} 
+            placeholder={getPlaceholderText()}
+            className="w-full bg-white border-2 border-blue-100 focus:border-blue-300 focus:ring-2 focus:ring-blue-100 rounded-lg pl-12 pr-12 py-3 text-gray-700 placeholder-gray-500"
+            onKeyPress={e => e.key === 'Enter' && !isInputDisabled && !isTyping && sendMessage()}
+            disabled={isInputDisabled || isTyping}
+          />
+          <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+            <div className="w-6 h-6 bg-white border-2 border-blue-100 rounded-full flex items-center justify-center shadow-sm">
+              <img src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" alt="Amigo" className="w-4 h-4 object-contain" />
             </div>
-            <Button onClick={sendMessage} size="sm" className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white border-0 h-8 w-8 p-0 rounded-lg" disabled={!inputValue.trim() || isInputDisabled || isTyping}>
-              <Send className="w-4 h-4" />
-            </Button>
           </div>
+          <Button onClick={sendMessage} size="sm" className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white border-0 h-8 w-8 p-0 rounded-lg" disabled={!inputValue.trim() || isInputDisabled || isTyping}>
+            <Send className="w-4 h-4" />
+          </Button>
         </div>
-      )}
+      </div>
     </div>
   );
 };
