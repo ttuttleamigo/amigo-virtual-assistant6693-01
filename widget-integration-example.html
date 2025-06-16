@@ -92,24 +92,14 @@
         <p>The widget should appear in the bottom right corner and not interfere with this content.</p>
     </div>
 
-    <!-- Widget Integration - Choose one method -->
-    
-    <!-- Method 1: Auto-init (uncomment to test) -->
-    <!-- 
-    <link rel="stylesheet" href="./dist-widget/amigo-widget.css">
-    <script src="./dist-widget/amigo-widget.umd.js" data-amigo-widget="auto"></script>
-    -->
-    
-    <!-- Method 2: Manual init (uncomment to test) -->
-    <!-- 
+    <!-- Widget Integration - Active for testing -->
     <link rel="stylesheet" href="./dist-widget/amigo-widget.css">
     <script src="./dist-widget/amigo-widget.umd.js"></script>
     <script>
         // Initialize when page is ready
         document.addEventListener('DOMContentLoaded', function() {
-            AmigoWidget.init();
+            console.log('Page loaded, AmigoWidget available:', typeof AmigoWidget);
         });
     </script>
-    -->
 </body>
 </html>
