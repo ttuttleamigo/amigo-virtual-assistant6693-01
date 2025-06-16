@@ -44,7 +44,7 @@ const HorizontalChat = ({
         </div>
         
         {/* Content */}
-        <div className="px-6 pb-6">
+        <div className="px-6 pb-6 bg-gradient-to-br from-blue-50 via-white to-blue-50">
           {/* Input Section */}
           <div className="space-y-3">
             <div className="relative">
