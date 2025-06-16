@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -97,14 +96,12 @@ const ModalChat = ({
             </div>
           </div>
           
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <img 
-                src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
-                alt="Amigo Virtual Assistant" 
-                className="h-12 object-contain"
-              />
-            </div>
+          <div className="flex justify-start">
+            <img 
+              src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
+              alt="Amigo Virtual Assistant" 
+              className="h-8 object-contain"
+            />
           </div>
         </div>
 
