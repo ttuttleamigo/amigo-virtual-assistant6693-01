@@ -34,10 +34,10 @@ const ModalChat = ({
   const isLoading = conversationHistory.some(msg => msg.text.includes("Looking up") || msg.text.includes("loading"));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 animate-scale-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <img 
               src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
@@ -45,12 +45,12 @@ const ModalChat = ({
               className="h-8 object-contain"
             />
           </div>
-          <div className="flex space-x-1">
+          <div className="flex items-center space-x-2">
             <Button
               variant="ghost"
               size="sm"
               onClick={onModalToSidebar}
-              className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 h-8 w-8 p-0"
+              className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 h-8 w-8 p-0"
             >
               <Minimize2 className="w-4 h-4" />
             </Button>
@@ -58,102 +58,98 @@ const ModalChat = ({
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 h-8 w-8 p-0"
+              className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 h-8 w-8 p-0"
             >
               <X className="w-4 h-4" />
             </Button>
           </div>
         </div>
         
-        {/* Title */}
-        <div className="px-6 py-4 text-center">
-          <h2 className="text-2xl font-light text-gray-900 mb-2">
-            How can <span className="text-blue-600 font-medium">Amigo</span> help?
+        {/* Title Section */}
+        <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900 mb-1">
+            How can <span className="text-blue-600">Amigo</span> help?
           </h2>
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-600 text-sm">
             Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} PM
           </p>
         </div>
 
-        {/* Messages */}
-        <div className="px-6 py-4 space-y-4 max-h-80 overflow-y-auto bg-gray-50">
-          {conversationHistory.slice(-5).map(message => (
-            <div key={message.id} className={`flex items-start space-x-3 ${message.sender === 'user' ? 'justify-end flex-row-reverse space-x-reverse' : 'justify-start'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                message.sender === 'agent' ? 'bg-blue-600' : 'bg-gray-600'
-              }`}>
-                <MessageCircle className="w-4 h-4 text-white" />
-              </div>
-              <div className={`max-w-[75%] p-3 rounded-lg text-sm ${
-                message.sender === 'user' 
-                  ? 'bg-blue-600 text-white rounded-br-none' 
-                  : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none shadow-sm'
-              }`}>
-                {message.text}
+        {/* Messages Container */}
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 min-h-0">
+          {conversationHistory.slice(-10).map(message => (
+            <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`flex items-start space-x-3 max-w-[80%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  message.sender === 'agent' ? 'bg-blue-600' : 'bg-gray-500'
+                }`}>
+                  <MessageCircle className="w-4 h-4 text-white" />
+                </div>
+                <div className={`px-4 py-2 rounded-lg text-sm whitespace-pre-wrap ${
+                  message.sender === 'user' 
+                    ? 'bg-blue-600 text-white rounded-tr-sm' 
+                    : 'bg-gray-100 text-gray-900 rounded-tl-sm border'
+                }`}>
+                  {message.text}
+                </div>
               </div>
             </div>
           ))}
 
           {isLoading && (
-            <div className="flex items-start space-x-3 justify-start">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                <MessageCircle className="w-4 h-4 text-white" />
-              </div>
-              <div className="bg-white border border-gray-100 rounded-lg rounded-bl-none p-3 shadow-sm max-w-[75%]">
-                <div className="space-y-2">
-                  <div className="h-3 bg-blue-200 rounded-full animate-pulse"></div>
-                  <div className="h-3 bg-blue-200 rounded-full animate-pulse w-4/5"></div>
-                  <div className="h-3 bg-blue-200 rounded-full animate-pulse w-3/5"></div>
+            <div className="flex justify-start">
+              <div className="flex items-start space-x-3 max-w-[80%]">
+                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                  <MessageCircle className="w-4 h-4 text-white" />
+                </div>
+                <div className="bg-gray-100 border rounded-lg rounded-tl-sm px-4 py-2">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
           {isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && onFlowChoice && (
-            <div className="space-y-2 pt-2">
+            <div className="space-y-2 mt-4">
               {currentStep.userOptions.map((option, index) => (
                 <Button
                   key={index}
                   onClick={() => onFlowChoice(option.text, option.nextStep)}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
+                  variant="outline"
+                  className="w-full justify-start text-left h-auto p-3 border-blue-200 hover:bg-blue-50 hover:border-blue-300"
                 >
                   {option.text}
                 </Button>
               ))}
             </div>
           )}
-          
-          <Button
-            onClick={onModalToSidebar}
-            className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 border-0"
-          >
-            Continue conversation
-          </Button>
         </div>
 
+        {/* Input Section */}
         {!hasOnlyButtonOptions && (
-          <div className="p-6 border-t border-gray-100">
-            <div className="relative">
-              <Input
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask me about your Amigo cart troubleshooting or connect to support."
-                className="w-full bg-gray-50 border-gray-200 rounded-lg pl-12 pr-12 py-3 text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-              />
-              <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                  <MessageCircle className="w-4 h-4 text-white" />
-                </div>
+          <div className="px-6 py-4 border-t border-gray-200 bg-white">
+            <div className="flex items-center space-x-2">
+              <div className="flex-1 relative">
+                <Input
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="Type your message here..."
+                  className="w-full pr-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                />
+                <Button
+                  onClick={sendMessage}
+                  size="sm"
+                  className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white h-8 w-8 p-0"
+                  disabled={!inputValue.trim()}
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
               </div>
-              <Button
-                onClick={sendMessage}
-                size="sm"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white border-0 h-8 w-8 p-0"
-                disabled={!inputValue.trim()}
-              >
-                <Send className="w-4 h-4" />
-              </Button>
             </div>
           </div>
         )}
