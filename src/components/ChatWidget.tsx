@@ -95,13 +95,7 @@ const ChatWidget = () => {
     if (action === 'Start troubleshooting' && flowType) {
       startFlow(flowType);
     } else if (action === 'Connect me with support') {
-      const supportMessage = {
-        id: Date.now().toString(),
-        text: "I'll connect you with our support team. You can reach them at 1-800-692-6446 or email support@amigomobility.com",
-        sender: 'agent' as const,
-        timestamp: new Date()
-      };
-      addRegularMessage(supportMessage);
+      startFlow('contactAgent');
     } else {
       const newMessage = {
         id: Date.now().toString(),
