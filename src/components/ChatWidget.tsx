@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
@@ -19,10 +20,14 @@ const ChatWidget = () => {
     conversationHistory, 
     isInFlow, 
     activeFlow,
+    isTyping,
+    allowTextInput,
     startFlow, 
     handleUserChoice, 
     resetFlow,
-    addRegularMessage 
+    addRegularMessage,
+    addRegularMessageWithTyping,
+    setTextInputAllowed
   } = useConversationFlow();
 
   // Function to check if a string looks like a serial number
@@ -45,14 +50,8 @@ const ChatWidget = () => {
     };
     addRegularMessage(userMessage);
 
-    // Show loading message
-    const loadingMessage = {
-      id: (Date.now() + 1).toString(),
-      text: "Looking up your product information...",
-      sender: 'agent' as const,
-      timestamp: new Date()
-    };
-    addRegularMessage(loadingMessage);
+    // Show loading message with typing
+    addRegularMessageWithTyping(["Looking up your product information..."], 500);
 
     try {
       const productData = await lookupSerialNumber(serialNumber);
@@ -70,41 +69,35 @@ const ChatWidget = () => {
         }
         successText += ` Let me start the appropriate troubleshooting guide for you.`;
         
-        const successMessage = {
-          id: (Date.now() + 2).toString(),
-          text: successText,
-          sender: 'agent' as const,
-          timestamp: new Date()
-        };
-        addRegularMessage(successMessage);
-        
-        // Start the appropriate flow
+        // Add success message with typing delay
         setTimeout(() => {
-          startFlow(flowType);
-        }, 1000);
+          addRegularMessageWithTyping([successText], 1000);
+          
+          // Start the appropriate flow after another delay
+          setTimeout(() => {
+            startFlow(flowType);
+          }, 2500);
+        }, 1500);
         
       } else {
         // Serial number not found or no model data
-        const errorMessage = {
-          id: (Date.now() + 2).toString(),
-          text: "I couldn't find that serial number in our system. Please double-check the serial number or contact our support team at 1-800-692-6446 for assistance.",
-          sender: 'agent' as const,
-          timestamp: new Date()
-        };
-        addRegularMessage(errorMessage);
+        setTimeout(() => {
+          addRegularMessageWithTyping([
+            "I couldn't find that serial number in our system. Please double-check the serial number or contact our support team at 1-800-692-6446 for assistance."
+          ], 1000);
+        }, 1500);
       }
     } catch (error) {
       // Error occurred during lookup
-      const errorMessage = {
-        id: (Date.now() + 2).toString(),
-        text: "I'm having trouble looking up that serial number right now. Please try again later or contact our support team at 1-800-692-6446.",
-        sender: 'agent' as const,
-        timestamp: new Date()
-      };
-      addRegularMessage(errorMessage);
+      setTimeout(() => {
+        addRegularMessageWithTyping([
+          "I'm having trouble looking up that serial number right now. Please try again later or contact our support team at 1-800-692-6446."
+        ], 1000);
+      }, 1500);
     }
     
     setExpectingSerialNumber(false);
+    setTextInputAllowed(false); // Disable text input after serial number submission
   };
 
   const handleSuggestedAction = (action: string, flowType?: FlowType) => {
@@ -122,32 +115,22 @@ const ChatWidget = () => {
     // Handle different actions
     if (action === 'I need help with an Amigo cart repair') {
       // Ask for serial number first
-      setTimeout(() => {
-        const botResponse = {
-          id: (Date.now() + 1).toString(),
-          text: "I'd be happy to help you with your Amigo cart repair! To provide the most accurate troubleshooting steps, could you please provide your cart's serial number? You can find it on a label typically located on the back or bottom of your cart.",
-          sender: 'agent' as const,
-          timestamp: new Date()
-        };
-        addRegularMessage(botResponse);
-        setExpectingSerialNumber(true);
-      }, 1000);
+      addRegularMessageWithTyping([
+        "I'd be happy to help you with your Amigo cart repair! To provide the most accurate troubleshooting steps, could you please provide your cart's serial number? You can find it on a label typically located on the back or bottom of your cart."
+      ], 1500);
+      setExpectingSerialNumber(true);
+      setTextInputAllowed(true); // Allow text input for serial number
     } else if (action === 'I need to buy a part for an Amigo cart') {
       // Direct to parts ordering
-      setTimeout(() => {
-        const botResponse = {
-          id: (Date.now() + 1).toString(),
-          text: "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n\n• Call our parts department at 1-800-692-6446\n• Email parts@amigomobility.com\n• Visit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?",
-          sender: 'agent' as const,
-          timestamp: new Date()
-        };
-        addRegularMessage(botResponse);
-      }, 1000);
+      addRegularMessageWithTyping([
+        "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n\n• Call our parts department at 1-800-692-6446\n• Email parts@amigomobility.com\n• Visit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
+      ], 1500);
+      setTextInputAllowed(false); // No text input needed for this flow
     } else if (action === 'I have a different customer service need') {
       // Start contact agent flow
       setTimeout(() => {
         startFlow('contactAgent');
-      }, 1000);
+      }, 1500);
     }
   };
 
@@ -194,28 +177,19 @@ const ChatWidget = () => {
     setInputValue('');
 
     if (!isInFlow && !expectingSerialNumber) {
-      setTimeout(() => {
-        const botResponse = {
-          id: (Date.now() + 1).toString(),
-          text: "I can help you troubleshoot your Amigo cart. For the most accurate assistance, could you provide your serial number? You can click 'Enter Serial #' or just tell me what issue you're experiencing.",
-          sender: 'agent' as const,
-          timestamp: new Date()
-        };
-        addRegularMessage(botResponse);
-      }, 1000);
+      addRegularMessageWithTyping([
+        "I can help you troubleshoot your Amigo cart. For the most accurate assistance, could you provide your serial number? You can click 'Enter Serial #' or just tell me what issue you're experiencing."
+      ], 1500);
     } else if (expectingSerialNumber && !isSerialNumberFormat(inputValue)) {
       // User entered text that doesn't look like a serial number
-      setTimeout(() => {
-        const botResponse = {
-          id: (Date.now() + 1).toString(),
-          text: "I didn't recognize that as a serial number. Serial numbers are typically 6 or more characters long and contain letters and numbers. Could you please double-check and enter your serial number again? You can also contact our support team at 1-800-692-6446 if you need help locating it.",
-          sender: 'agent' as const,
-          timestamp: new Date()
-        };
-        addRegularMessage(botResponse);
-      }, 1000);
+      addRegularMessageWithTyping([
+        "I didn't recognize that as a serial number. Serial numbers are typically 6 or more characters long and contain letters and numbers. Could you please double-check and enter your serial number again? You can also contact our support team at 1-800-692-6446 if you need help locating it."
+      ], 1500);
     }
   };
+
+  // Calculate if input should be disabled
+  const isInputDisabled = !allowTextInput || (isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0);
 
   if (chatState === 'hidden') {
     return <ChatButton onClick={() => setChatState('horizontal')} />;
@@ -246,6 +220,8 @@ const ChatWidget = () => {
         isInFlow={isInFlow}
         currentStep={currentStep}
         onFlowChoice={handleFlowChoice}
+        isTyping={isTyping}
+        isInputDisabled={isInputDisabled}
       />
     );
   }
@@ -262,6 +238,8 @@ const ChatWidget = () => {
         isInFlow={isInFlow}
         currentStep={currentStep}
         onFlowChoice={handleFlowChoice}
+        isTyping={isTyping}
+        isInputDisabled={isInputDisabled}
       />
     );
   }
@@ -275,6 +253,7 @@ const ChatWidget = () => {
         sendMessage={sendMessage}
         onClose={handleClose}
         onRestore={handleRestore}
+        isInputDisabled={isInputDisabled}
       />
     );
   }
