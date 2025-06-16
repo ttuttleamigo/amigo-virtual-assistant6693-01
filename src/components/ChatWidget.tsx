@@ -10,6 +10,7 @@ type ChatState = 'hidden' | 'horizontal' | 'modal' | 'sidebar';
 
 const ChatWidget = () => {
   const [chatState, setChatState] = useState<ChatState>('horizontal');
+  const [previousState, setPreviousState] = useState<ChatState>('horizontal'); // Track previous state
   const [inputValue, setInputValue] = useState('');
   const [productInfo, setProductInfo] = useState<ProductInfo | null>(null);
   const [expectingSerialNumber, setExpectingSerialNumber] = useState(false);
@@ -40,6 +41,7 @@ const ChatWidget = () => {
     // Don't change state if we're already in sidebar - stay in sidebar
     if (chatState !== 'sidebar') {
       setChatState('modal');
+      setPreviousState('modal'); // Update previous state
     }
     
     // Add user message with serial number
@@ -102,6 +104,7 @@ const ChatWidget = () => {
 
   const handleSuggestedAction = (action: string, flowType?: FlowType) => {
     setChatState('modal');
+    setPreviousState('modal'); // Update previous state
     
     // Add user message
     const newMessage = {
@@ -140,17 +143,32 @@ const ChatWidget = () => {
 
   const handleModalToSidebar = () => {
     setChatState('sidebar');
+    setPreviousState('sidebar'); // Update previous state
   };
 
   const handleMinimize = () => {
     setChatState('modal'); // Changed from 'minimized' to 'modal'
+    setPreviousState('modal'); // Update previous state
   };
 
   const handleClose = () => {
+    // Store current state as previous before closing
+    if (chatState !== 'hidden' && chatState !== 'horizontal') {
+      setPreviousState(chatState);
+    }
     setChatState('hidden');
     resetFlow();
     setProductInfo(null);
     setExpectingSerialNumber(false);
+  };
+
+  const handleChatButtonClick = () => {
+    // If there's conversation history, restore to previous state, otherwise start with horizontal
+    if (conversationHistory.length > 0) {
+      setChatState(previousState);
+    } else {
+      setChatState('horizontal');
+    }
   };
 
   const sendMessage = () => {
@@ -197,7 +215,7 @@ const ChatWidget = () => {
   const isInputDisabled = !allowTextInput || (isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0);
 
   if (chatState === 'hidden') {
-    return <ChatButton onClick={() => setChatState('horizontal')} />;
+    return <ChatButton onClick={handleChatButtonClick} />;
   }
 
   if (chatState === 'horizontal') {
