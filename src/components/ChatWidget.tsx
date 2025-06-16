@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
@@ -15,6 +16,7 @@ const ChatWidget = () => {
   const [productInfo, setProductInfo] = useState<ProductInfo | null>(null);
   const [expectingSerialNumber, setExpectingSerialNumber] = useState(false);
   const [expectingModel, setExpectingModel] = useState(false);
+  const [allowSerialNumberEntry, setAllowSerialNumberEntry] = useState(false);
   const { 
     currentStep, 
     conversationHistory, 
@@ -175,13 +177,14 @@ const ChatWidget = () => {
 
     // Handle different actions
     if (action === 'I need help with an Amigo cart repair') {
-      // Ask for serial number first with helpful guidance
+      // Ask for serial number first with helpful guidance and buttons
       addRegularMessageWithTyping([
         "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\n• Serial number (found on a label, usually on the back or bottom of your cart)\n• Model name (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!"
       ], 1500);
-      setExpectingSerialNumber(true);
-      setExpectingModel(true);
-      setTextInputAllowed(true);
+      setExpectingSerialNumber(false);
+      setExpectingModel(false);
+      setAllowSerialNumberEntry(false);
+      setTextInputAllowed(false);
     } else if (action === 'I need to buy a part for an Amigo cart') {
       // Direct to parts ordering
       addRegularMessageWithTyping([
@@ -193,6 +196,27 @@ const ChatWidget = () => {
       setTimeout(() => {
         startFlow('contactAgent');
       }, 1500);
+    } else if (action === 'Enter serial number') {
+      // Enable serial number entry
+      addRegularMessageWithTyping([
+        "Great! Please enter your serial number. You can find it on a label, usually on the back or bottom of your cart."
+      ], 1000);
+      setExpectingSerialNumber(true);
+      setAllowSerialNumberEntry(true);
+      setTextInputAllowed(true);
+    } else if (action === 'Enter model name') {
+      // Enable model entry
+      addRegularMessageWithTyping([
+        "Perfect! Please enter your model name. Common models include SmartShopper, ValueShopper, Vista, or Max CR."
+      ], 1000);
+      setExpectingModel(true);
+      setTextInputAllowed(true);
+    } else if (action === "I'm not sure") {
+      // Provide guidance
+      addRegularMessageWithTyping([
+        "No problem! I can help you find the information we need. Here are some options:\n\n• I can guide you on where to find your serial number\n• I can help you identify your model\n• You can contact our support team at 1-800-692-6446\n\nWhat would you prefer?"
+      ], 1500);
+      setTextInputAllowed(false);
     }
   };
 
@@ -219,6 +243,8 @@ const ChatWidget = () => {
     resetFlow();
     setProductInfo(null);
     setExpectingSerialNumber(false);
+    setExpectingModel(false);
+    setAllowSerialNumberEntry(false);
   };
 
   const handleChatButtonClick = () => {
@@ -234,9 +260,10 @@ const ChatWidget = () => {
     if (!inputValue.trim()) return;
     
     // Check if we're expecting a serial number and the input looks like one
-    if (expectingSerialNumber && isSerialNumberFormat(inputValue)) {
+    if (expectingSerialNumber && allowSerialNumberEntry && isSerialNumberFormat(inputValue)) {
       handleSerialNumberSubmit(inputValue);
       setInputValue('');
+      setAllowSerialNumberEntry(false);
       return;
     }
     
@@ -264,6 +291,7 @@ const ChatWidget = () => {
         "I can help you find your serial number! Here's where to look:\n\nMost Common Locations:\n• Back of the cart - Look for a white or silver label\n• Bottom/underside - May be on the base or frame\n• Near the battery compartment - Sometimes inside or nearby\n• On the controller - Some models have it there\n\nWhat to look for:\n• A label with \"S/N\" or \"Serial Number\"\n• Usually starts with letters like \"AMI\" followed by numbers\n• Typically 8-12 characters long\n\nOnce you find it, just type it here and I'll look up your cart information!"
       ], 1500);
       setExpectingSerialNumber(true);
+      setAllowSerialNumberEntry(true);
       setTextInputAllowed(true);
       return;
     }
@@ -279,11 +307,12 @@ const ChatWidget = () => {
 
     if (!isInFlow && !expectingSerialNumber && !expectingModel) {
       addRegularMessageWithTyping([
-        "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I can work with either:\n\n• Your serial number - for precise troubleshooting\n• Your model name - for general guidance\n\nWhich would you prefer to provide? Or if you need help finding either, just let me know!"
+        "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I can work with either:\n\nSerial number - for precise troubleshooting\nModel name - for general guidance\n\nWhich would you prefer to provide? Or if you need help finding either, just let me know!"
       ], 1500);
-      setExpectingSerialNumber(true);
-      setExpectingModel(true);
-      setTextInputAllowed(true);
+      setExpectingSerialNumber(false);
+      setExpectingModel(false);
+      setAllowSerialNumberEntry(false);
+      setTextInputAllowed(false);
     } else if ((expectingSerialNumber || expectingModel) && !isSerialNumberFormat(inputValue) && !isModelFormat(inputValue)) {
       // User entered text that doesn't look like a serial number or model
       addRegularMessageWithTyping([
@@ -303,6 +332,19 @@ const ChatWidget = () => {
 
   // Calculate if input should be disabled
   const isInputDisabled = !allowTextInput || (isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0);
+
+  // Create custom step with buttons when not in flow and expecting input
+  const customStep = (!isInFlow && !expectingSerialNumber && !expectingModel && conversationHistory.length > 0) ? {
+    botMessage: "",
+    userOptions: [
+      { text: "Enter serial number", nextStep: "" },
+      { text: "Enter model name", nextStep: "" },
+      { text: "I'm not sure", nextStep: "" }
+    ]
+  } : null;
+
+  // Use custom step or current flow step
+  const displayStep = customStep || currentStep;
 
   if (chatState === 'hidden') {
     return <ChatButton onClick={handleChatButtonClick} />;
@@ -331,8 +373,8 @@ const ChatWidget = () => {
         onClose={handleClose}
         onModalToSidebar={handleModalToSidebar}
         isInFlow={isInFlow}
-        currentStep={currentStep}
-        onFlowChoice={handleFlowChoice}
+        currentStep={displayStep}
+        onFlowChoice={customStep ? handleSuggestedAction : handleFlowChoice}
         isTyping={isTyping}
         isInputDisabled={isInputDisabled}
         onDownloadTranscript={downloadTranscript}
@@ -351,8 +393,8 @@ const ChatWidget = () => {
         onClose={handleClose}
         onMinimize={handleMinimize}
         isInFlow={isInFlow}
-        currentStep={currentStep}
-        onFlowChoice={handleFlowChoice}
+        currentStep={displayStep}
+        onFlowChoice={customStep ? handleSuggestedAction : handleFlowChoice}
         isTyping={isTyping}
         isInputDisabled={isInputDisabled}
         onDownloadTranscript={downloadTranscript}
