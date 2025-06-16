@@ -33,7 +33,11 @@ const SidebarChat = ({
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white flex-shrink-0">
         <div className="flex items-center space-x-3">
-          <span className="font-medium text-gray-700 text-sm">Amigo Support</span>
+          <img 
+            src="/lovable-uploads/4b9131f2-ab48-4c5a-951f-e24f1806cf8e.png" 
+            alt="Amigo Virtual Assistant" 
+            className="h-8 object-contain"
+          />
         </div>
         <div className="flex space-x-1">
           <Button variant="ghost" size="sm" onClick={onMinimize} className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 h-8 w-8 p-0">
