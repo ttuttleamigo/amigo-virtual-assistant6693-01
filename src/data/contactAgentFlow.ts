@@ -3,6 +3,7 @@ import { ConversationFlow } from './conversationFlow';
 
 export const contactAgentFlow: ConversationFlow = {
   contact_agent: {
+    id: 'contact_agent',
     botMessage: [
       "I'd be happy to connect you with one of our factory service agents who can provide personalized assistance.",
       "Would you prefer to receive a phone call or an email?"
@@ -14,6 +15,7 @@ export const contactAgentFlow: ConversationFlow = {
   },
 
   phone_call: {
+    id: 'phone_call',
     botMessage: [
       "Perfect! Our friendly Amigo service agents are available by phone Monday through Friday from 7:30 a.m. to 5:30 p.m. EST and can contact you within the next business day.",
       "Is this convenient for you, or would you prefer to call customer support directly?"
@@ -25,6 +27,7 @@ export const contactAgentFlow: ConversationFlow = {
   },
 
   enter_contact_info: {
+    id: 'enter_contact_info',
     botMessage: "Great! Please provide your name and phone number, and one of our service agents will contact you within the next business day.",
     userOptions: [
       { text: "Submit contact information", nextStep: "contact_info_received" }
@@ -32,6 +35,7 @@ export const contactAgentFlow: ConversationFlow = {
   },
 
   contact_info_received: {
+    id: 'contact_info_received',
     botMessage: [
       "Thank you! We've received your information and one of our service agents will be in touch within the next business day to help with your Amigo cart.",
       "Thank you for choosing Amigo for your mobility needs!"
@@ -40,11 +44,13 @@ export const contactAgentFlow: ConversationFlow = {
   },
 
   call_phone_number: {
+    id: 'call_phone_number',
     botMessage: "Excellent! Please call 1-800-248-9131 Monday through Friday between 7:30 a.m. and 5:30 p.m. EST, and one of our knowledgeable agents will be happy to assist you with your Amigo cart.",
     userOptions: []
   },
 
   send_email: {
+    id: 'send_email',
     botMessage: [
       "That works perfectly! Please email service@myamigo.com with your name, company, phone number, and a brief description of what you need help with. One of our service agents will respond within the next business day.",
       "Thank you for choosing Amigo for your mobility needs!"
