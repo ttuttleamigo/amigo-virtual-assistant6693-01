@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 interface HorizontalChatProps {
   inputValue: string;
@@ -48,12 +48,12 @@ const HorizontalChat = ({
           {/* Input Section */}
           <div className="space-y-3">
             <div className="relative">
-              <Input
+              <Textarea
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Hello, I'm Amigo Mobility's virtual assistant, an AI powered tool designed to help with your customer support needs. How can I help you today?"
-                className="w-full bg-white border-0 rounded-lg pl-12 pr-16 py-4 text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-white focus:border-transparent text-sm leading-relaxed min-h-[60px] resize-none"
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                className="w-full bg-white border-0 rounded-lg pl-12 pr-16 py-4 text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-white focus:border-transparent text-sm leading-relaxed min-h-[80px] resize-none"
+                onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
               />
               <div className="absolute left-4 top-5">
                 <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
