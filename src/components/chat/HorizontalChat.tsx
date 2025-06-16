@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,7 +24,7 @@ const HorizontalChat = ({
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
       <div className="bg-blue-600 rounded-lg shadow-xl min-w-[800px] max-w-6xl">
         {/* Header with close button */}
-        <div className="flex items-center justify-between p-3">
+        <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600 rounded-t-lg">
           <div className="flex items-center space-x-2">
             <img 
               src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
