@@ -29,8 +29,8 @@ const HorizontalChat = ({
           <div className="flex items-center space-x-2">
             <img 
               src="/lovable-uploads/bd742051-efbe-415d-9b3e-cab63b992d5e.png" 
-              alt="Amigo Logo" 
-              className="w-8 h-8 object-contain"
+              alt="Amigo Virtual Assistant" 
+              className="h-12 object-contain"
             />
           </div>
           <Button
