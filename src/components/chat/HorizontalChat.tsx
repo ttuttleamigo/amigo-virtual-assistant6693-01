@@ -23,7 +23,7 @@ const HorizontalChat = ({
 }: HorizontalChatProps) => {
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
-      <div className="bg-blue-600 rounded-lg shadow-xl min-w-[600px] max-w-4xl">
+      <div className="bg-blue-600 rounded-lg shadow-xl min-w-[700px] max-w-5xl">
         {/* Header with close button */}
         <div className="flex items-center justify-between p-3">
           <div className="flex items-center space-x-2">
@@ -52,7 +52,7 @@ const HorizontalChat = ({
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Hello, I'm Amigo Mobility's virtual assistant, an AI powered tool designed to help with your customer support needs. How can I help you today?"
-                className="w-full bg-white border-0 rounded-lg pl-12 pr-4 py-3 text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-transparent"
+                className="w-full bg-white border-0 rounded-lg pl-12 pr-16 py-4 text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-transparent text-sm leading-relaxed"
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               />
               <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
@@ -71,7 +71,7 @@ const HorizontalChat = ({
             </div>
             
             {/* Action Buttons */}
-            <div className="flex space-x-3">
+            <div className="flex flex-wrap gap-2">
               <Button
                 onClick={() => onSuggestedAction('I need help with an Amigo cart repair', 'general')}
                 className="bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
