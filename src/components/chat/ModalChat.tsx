@@ -47,9 +47,9 @@ const ModalChat = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600">
           <div className="flex items-center space-x-3">
             <img 
               src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
@@ -62,7 +62,7 @@ const ModalChat = ({
               variant="ghost"
               size="sm"
               onClick={onModalToSidebar}
-              className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 h-8 w-8 p-0"
+              className="text-white hover:text-white hover:bg-white/20 h-8 w-8 p-0"
             >
               <Minimize2 className="w-4 h-4" />
             </Button>
@@ -70,7 +70,7 @@ const ModalChat = ({
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 h-8 w-8 p-0"
+              className="text-white hover:text-white hover:bg-white/20 h-8 w-8 p-0"
             >
               <X className="w-4 h-4" />
             </Button>
@@ -78,22 +78,22 @@ const ModalChat = ({
         </div>
         
         {/* Title Section */}
-        <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900 mb-1">
-            How can <span className="text-blue-600">Amigo</span> help?
+        <div className="px-6 py-4 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600 border-b border-blue-400">
+          <h2 className="text-xl font-semibold text-white mb-1">
+            How can <span className="text-blue-100">Amigo</span> help?
           </h2>
-          <p className="text-gray-600 text-sm">
+          <p className="text-blue-100 text-sm">
             Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
           </p>
         </div>
 
         {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 min-h-0">
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 min-h-0 bg-gradient-to-b from-blue-50 to-white">
           {conversationHistory.filter(msg => msg.text !== 'typing').slice(-10).map(message => (
             <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`flex items-start space-x-3 max-w-[80%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  message.sender === 'agent' ? 'bg-white border border-gray-200' : 'bg-gray-500'
+                  message.sender === 'agent' ? 'bg-white border border-gray-200 shadow-sm' : 'bg-blue-600'
                 }`}>
                   {message.sender === 'agent' ? (
                     <img 
@@ -105,10 +105,10 @@ const ModalChat = ({
                     <MessageCircle className="w-4 h-4 text-white" />
                   )}
                 </div>
-                <div className={`px-4 py-2 rounded-lg text-sm whitespace-pre-wrap ${
+                <div className={`px-4 py-2 rounded-lg text-sm whitespace-pre-wrap shadow-sm ${
                   message.sender === 'user' 
                     ? 'bg-blue-600 text-white rounded-tr-sm' 
-                    : 'bg-gray-100 text-gray-900 rounded-tl-sm border'
+                    : 'bg-white text-gray-900 rounded-tl-sm border border-gray-200'
                 }`}>
                   {message.text}
                 </div>
@@ -124,8 +124,7 @@ const ModalChat = ({
                 <Button
                   key={index}
                   onClick={() => onFlowChoice(option.text, option.nextStep)}
-                  variant="outline"
-                  className="w-full justify-start text-left h-auto p-3 border-blue-200 hover:bg-blue-50 hover:border-blue-300 whitespace-normal break-words"
+                  className="w-full justify-start text-left h-auto p-3 bg-blue-600 hover:bg-blue-700 text-white border-0 whitespace-normal break-words shadow-md"
                 >
                   {option.text}
                 </Button>
@@ -138,21 +137,21 @@ const ModalChat = ({
 
         {/* Input Section */}
         {!hasOnlyButtonOptions && (
-          <div className="px-6 py-4 border-t border-gray-200 bg-white">
+          <div className="px-6 py-4 border-t border-gray-200 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600">
             <div className="flex items-center space-x-2">
               <div className="flex-1 relative">
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder={isInputDisabled ? "Please select an option above" : "Type your message here..."}
-                  className="w-full pr-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  className="w-full pr-12 bg-white border-0 focus:ring-2 focus:ring-white text-gray-700 placeholder-gray-500"
                   onKeyPress={(e) => e.key === 'Enter' && !isInputDisabled && sendMessage()}
                   disabled={isInputDisabled}
                 />
                 <Button
                   onClick={sendMessage}
                   size="sm"
-                  className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white h-8 w-8 p-0"
+                  className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-blue-700 hover:bg-blue-800 text-white h-8 w-8 p-0 border-0"
                   disabled={!inputValue.trim() || isInputDisabled}
                 >
                   <Send className="w-4 h-4" />
