@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +36,25 @@ const SidebarChat = ({
 }: SidebarChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasOnlyButtonOptions = isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
+  const [streamingPlaceholder, setStreamingPlaceholder] = useState('');
+
+  // Update streaming placeholder when typing
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isTyping) {
+      let dots = '';
+      interval = setInterval(() => {
+        dots = dots === '...' ? '' : dots + '.';
+        setStreamingPlaceholder(`Hang on while I check${dots}`);
+      }, 500);
+    } else {
+      setStreamingPlaceholder('');
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTyping]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -44,6 +63,12 @@ const SidebarChat = ({
   useEffect(() => {
     scrollToBottom();
   }, [conversationHistory, isTyping, currentStep]);
+
+  const getPlaceholderText = () => {
+    if (isTyping) return streamingPlaceholder;
+    if (isInputDisabled) return "Please select an option above";
+    return "Type your message here...";
+  };
 
   return (
     <div className="fixed right-0 top-0 bottom-0 w-96 shadow-2xl z-50 animate-slide-in-right border-l border-gray-200 flex flex-col">
@@ -116,17 +141,17 @@ const SidebarChat = ({
             <Input 
               value={inputValue} 
               onChange={e => setInputValue(e.target.value)} 
-              placeholder={isInputDisabled ? "Please select an option above" : "Type your message here..."} 
+              placeholder={getPlaceholderText()}
               className="w-full bg-white border-2 border-blue-100 focus:border-blue-300 focus:ring-2 focus:ring-blue-100 rounded-lg pl-12 pr-12 py-3 text-gray-700 placeholder-gray-500"
-              onKeyPress={e => e.key === 'Enter' && !isInputDisabled && sendMessage()}
-              disabled={isInputDisabled}
+              onKeyPress={e => e.key === 'Enter' && !isInputDisabled && !isTyping && sendMessage()}
+              disabled={isInputDisabled || isTyping}
             />
             <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
               <div className="w-6 h-6 bg-white border-2 border-blue-100 rounded-full flex items-center justify-center shadow-sm">
                 <img src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" alt="Amigo" className="w-4 h-4 object-contain" />
               </div>
             </div>
-            <Button onClick={sendMessage} size="sm" className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white border-0 h-8 w-8 p-0 rounded-lg" disabled={!inputValue.trim() || isInputDisabled}>
+            <Button onClick={sendMessage} size="sm" className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white border-0 h-8 w-8 p-0 rounded-lg" disabled={!inputValue.trim() || isInputDisabled || isTyping}>
               <Send className="w-4 h-4" />
             </Button>
           </div>

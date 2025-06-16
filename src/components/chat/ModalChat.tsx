@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,13 +32,30 @@ const SkeletonLoader = () => (
         />
       </div>
       <div className="space-y-3 flex-1">
-        <Skeleton className="h-4 w-4/5 bg-blue-300 animate-pulse" />
-        <Skeleton className="h-4 w-3/5 bg-blue-300 animate-pulse" />
-        <Skeleton className="h-4 w-2/3 bg-blue-300 animate-pulse" />
+        <Skeleton className="h-4 w-4/5 bg-gradient-to-r from-gray-200 to-gray-300 animate-pulse" />
+        <Skeleton className="h-4 w-3/5 bg-gradient-to-r from-gray-300 to-gray-400 animate-pulse" />
+        <Skeleton className="h-4 w-2/3 bg-gradient-to-r from-gray-200 to-gray-350 animate-pulse" />
       </div>
     </div>
   </div>
 );
+
+const StreamingPlaceholder = () => {
+  const [dots, setDots] = useState('');
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots(prev => {
+        if (prev === '...') return '';
+        return prev + '.';
+      });
+    }, 500);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  return `Hang on while I check${dots}`;
+};
 
 const ModalChat = ({
   conversationHistory,
@@ -55,6 +72,25 @@ const ModalChat = ({
 }: ModalChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasOnlyButtonOptions = isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
+  const [streamingPlaceholder, setStreamingPlaceholder] = useState('');
+
+  // Update streaming placeholder when typing
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isTyping) {
+      let dots = '';
+      interval = setInterval(() => {
+        dots = dots === '...' ? '' : dots + '.';
+        setStreamingPlaceholder(`Hang on while I check${dots}`);
+      }, 500);
+    } else {
+      setStreamingPlaceholder('');
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTyping]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -63,6 +99,12 @@ const ModalChat = ({
   useEffect(() => {
     scrollToBottom();
   }, [conversationHistory, isTyping, currentStep]);
+
+  const getPlaceholderText = () => {
+    if (isTyping) return streamingPlaceholder;
+    if (isInputDisabled) return "Please select an option above";
+    return "Type your message here...";
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -168,17 +210,17 @@ const ModalChat = ({
                 <Input
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder={isInputDisabled ? "Please select an option above" : "Type your message here..."}
+                  placeholder={getPlaceholderText()}
                   className="w-full py-4 text-base bg-white border-2 border-blue-100 focus:border-blue-300 focus:ring-2 focus:ring-blue-100 text-gray-700 placeholder-gray-500 rounded-xl"
                   onKeyPress={(e) => e.key === 'Enter' && !isInputDisabled && sendMessage()}
-                  disabled={isInputDisabled}
+                  disabled={isInputDisabled || isTyping}
                 />
               </div>
               <Button
                 onClick={sendMessage}
                 size="sm"
                 className="bg-blue-600 hover:bg-blue-700 text-white h-12 w-12 p-0 border-0 rounded-lg flex-shrink-0"
-                disabled={!inputValue.trim() || isInputDisabled}
+                disabled={!inputValue.trim() || isInputDisabled || isTyping}
               >
                 <Send className="w-4 h-4" />
               </Button>
