@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { conversationFlow, ConversationStep } from '@/data/conversationFlow';
 import { smartShopperFlow } from '@/data/smartShopperFlow';
 import { valueShopperFlow } from '@/data/valueShopperFlow';
@@ -27,6 +27,34 @@ const flowMap = {
   endConversation: endConversationFlow
 };
 
+const CHAT_HISTORY_KEY = 'amigo-chat-history';
+
+// Helper functions for localStorage
+const loadChatHistory = (): ConversationMessage[] => {
+  try {
+    const stored = localStorage.getItem(CHAT_HISTORY_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // Convert timestamp strings back to Date objects
+      return parsed.map((msg: any) => ({
+        ...msg,
+        timestamp: new Date(msg.timestamp)
+      }));
+    }
+  } catch (error) {
+    console.error('Error loading chat history:', error);
+  }
+  return [];
+};
+
+const saveChatHistory = (history: ConversationMessage[]) => {
+  try {
+    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+  } catch (error) {
+    console.error('Error saving chat history:', error);
+  }
+};
+
 export const useConversationFlow = () => {
   const [currentStep, setCurrentStep] = useState<string>('greeting');
   const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
@@ -35,6 +63,21 @@ export const useConversationFlow = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [allowTextInput, setAllowTextInput] = useState(true);
   const [showUserOptions, setShowUserOptions] = useState(false);
+
+  // Load chat history from localStorage on component mount
+  useEffect(() => {
+    const savedHistory = loadChatHistory();
+    if (savedHistory.length > 0) {
+      setConversationHistory(savedHistory);
+    }
+  }, []);
+
+  // Save chat history to localStorage whenever it changes
+  useEffect(() => {
+    if (conversationHistory.length > 0) {
+      saveChatHistory(conversationHistory);
+    }
+  }, [conversationHistory]);
 
   const getCurrentStep = (): ConversationStep | null => {
     const flow = flowMap[activeFlow];
@@ -132,11 +175,16 @@ export const useConversationFlow = () => {
   const resetFlow = () => {
     setIsInFlow(false);
     setCurrentStep('greeting');
-    setConversationHistory([]);
+    // Don't clear conversation history on flow reset
     setActiveFlow('general');
     setIsTyping(false);
     setAllowTextInput(true); // Re-enable text input when flow is reset
     setShowUserOptions(false);
+  };
+
+  const clearChatHistory = () => {
+    setConversationHistory([]);
+    localStorage.removeItem(CHAT_HISTORY_KEY);
   };
 
   const addRegularMessage = (message: ConversationMessage) => {
@@ -189,6 +237,7 @@ export const useConversationFlow = () => {
     addRegularMessage,
     addRegularMessageWithTyping,
     setTextInputAllowed,
-    downloadTranscript
+    downloadTranscript,
+    clearChatHistory
   };
 };

@@ -27,7 +27,8 @@ const ChatWidget = () => {
     addRegularMessage,
     addRegularMessageWithTyping,
     setTextInputAllowed,
-    downloadTranscript
+    downloadTranscript,
+    clearChatHistory
   } = useConversationFlow();
 
   // Function to check if a string looks like a serial number
@@ -255,6 +256,7 @@ const ChatWidget = () => {
         isTyping={isTyping}
         isInputDisabled={isInputDisabled}
         onDownloadTranscript={downloadTranscript}
+        onClearHistory={clearChatHistory}
       />
     );
   }
@@ -274,6 +276,7 @@ const ChatWidget = () => {
         isTyping={isTyping}
         isInputDisabled={isInputDisabled}
         onDownloadTranscript={downloadTranscript}
+        onClearHistory={clearChatHistory}
       />
     );
   }

@@ -1,6 +1,5 @@
-
 import React, { useEffect, useRef, useState } from 'react';
-import { MessageCircle, X, Expand, Send, Download } from 'lucide-react';
+import { MessageCircle, X, Expand, Send, Download, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ConversationMessage } from '@/hooks/useConversationFlow';
@@ -20,6 +19,7 @@ interface SidebarChatProps {
   isTyping?: boolean;
   isInputDisabled?: boolean;
   onDownloadTranscript?: () => void;
+  onClearHistory?: () => void;
 }
 
 const SidebarChat = ({
@@ -34,7 +34,8 @@ const SidebarChat = ({
   onFlowChoice,
   isTyping = false,
   isInputDisabled = false,
-  onDownloadTranscript
+  onDownloadTranscript,
+  onClearHistory
 }: SidebarChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [streamingPlaceholder, setStreamingPlaceholder] = useState('');
@@ -71,6 +72,14 @@ const SidebarChat = ({
     return "Type your message here...";
   };
 
+  const handleClearHistory = () => {
+    if (onClearHistory && conversationHistory.length > 0) {
+      if (window.confirm('Are you sure you want to clear the chat history? This action cannot be undone.')) {
+        onClearHistory();
+      }
+    }
+  };
+
   return (
     <div className="fixed right-0 top-0 bottom-0 w-96 shadow-2xl z-50 animate-slide-in-right border-l border-gray-200 flex flex-col">
       {/* Header */}
@@ -79,6 +88,17 @@ const SidebarChat = ({
           <img src="/lovable-uploads/4b9131f2-ab48-4c5a-951f-e24f1806cf8e.png" alt="Amigo Virtual Assistant" className="h-8 object-contain" />
         </div>
         <div className="flex space-x-1">
+          {onClearHistory && conversationHistory.length > 0 && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleClearHistory} 
+              className="text-white hover:text-white hover:bg-white/20 h-8 w-8 p-0"
+              title="Clear Chat History"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          )}
           {onDownloadTranscript && conversationHistory.length > 0 && (
             <Button 
               variant="ghost" 

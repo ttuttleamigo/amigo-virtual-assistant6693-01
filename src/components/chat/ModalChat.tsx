@@ -1,6 +1,5 @@
-
 import React, { useEffect, useRef, useState } from 'react';
-import { MessageCircle, X, Minimize2, Send, Download } from 'lucide-react';
+import { MessageCircle, X, Minimize2, Send, Download, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ConversationMessage } from '@/hooks/useConversationFlow';
@@ -20,6 +19,7 @@ interface ModalChatProps {
   isTyping?: boolean;
   isInputDisabled?: boolean;
   onDownloadTranscript?: () => void;
+  onClearHistory?: () => void;
 }
 
 const ModalChat = ({
@@ -34,7 +34,8 @@ const ModalChat = ({
   onFlowChoice,
   isTyping = false,
   isInputDisabled = false,
-  onDownloadTranscript
+  onDownloadTranscript,
+  onClearHistory
 }: ModalChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasOnlyButtonOptions = isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
@@ -72,6 +73,14 @@ const ModalChat = ({
     return "Type your message here...";
   };
 
+  const handleClearHistory = () => {
+    if (onClearHistory && conversationHistory.length > 0) {
+      if (window.confirm('Are you sure you want to clear the chat history? This action cannot be undone.')) {
+        onClearHistory();
+      }
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-transparent rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden">
@@ -84,6 +93,17 @@ const ModalChat = ({
               className="h-10 object-contain"
             />
             <div className="flex items-center space-x-2">
+              {onClearHistory && conversationHistory.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClearHistory}
+                  className="text-white hover:text-white hover:bg-white/20 h-10 w-10 p-0 rounded-full"
+                  title="Clear Chat History"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </Button>
+              )}
               {onDownloadTranscript && conversationHistory.length > 0 && (
                 <Button
                   variant="ghost"
