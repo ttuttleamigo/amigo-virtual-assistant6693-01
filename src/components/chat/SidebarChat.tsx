@@ -149,7 +149,7 @@ const SidebarChat = ({
         
         {isTyping && <TypingIndicator />}
 
-        {isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && (
+        {currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && (
           <div className="space-y-2">
             {currentStep.userOptions.map((option, index) => (
               <Button 

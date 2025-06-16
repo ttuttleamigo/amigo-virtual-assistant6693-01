@@ -38,7 +38,7 @@ const ModalChat = ({
   onClearHistory
 }: ModalChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const hasOnlyButtonOptions = isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
+  const hasOnlyButtonOptions = currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
   const [streamingPlaceholder, setStreamingPlaceholder] = useState('');
 
   // Update streaming placeholder when typing
@@ -176,7 +176,7 @@ const ModalChat = ({
 
           {isTyping && <TypingIndicator />}
 
-          {isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && onFlowChoice && (
+          {currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && onFlowChoice && (
             <div className="space-y-3 mt-6">
               {currentStep.userOptions.map((option, index) => (
                 <Button
