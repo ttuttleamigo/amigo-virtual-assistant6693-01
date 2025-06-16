@@ -106,10 +106,10 @@ const ModalChat = ({
         <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6 min-h-[500px] bg-gradient-to-b from-blue-50 via-blue-25 to-white">
           {/* Title and timestamp - now in scrollable area */}
           <div className="text-center pb-4 border-b border-blue-200">
-            <h2 className="text-2xl font-semibold text-blue-600 mb-2">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
               How can <span className="text-blue-500">Amigo</span> help?
             </h2>
-            <p className="text-blue-500 text-sm font-medium">
+            <p className="text-black text-sm font-medium">
               Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
             </p>
           </div>
