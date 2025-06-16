@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
@@ -26,7 +27,8 @@ const ChatWidget = () => {
     resetFlow,
     addRegularMessage,
     addRegularMessageWithTyping,
-    setTextInputAllowed
+    setTextInputAllowed,
+    downloadTranscript
   } = useConversationFlow();
 
   // Function to check if a string looks like a serial number
@@ -245,6 +247,7 @@ const ChatWidget = () => {
         onFlowChoice={handleFlowChoice}
         isTyping={isTyping}
         isInputDisabled={isInputDisabled}
+        onDownloadTranscript={downloadTranscript}
       />
     );
   }
@@ -263,6 +266,7 @@ const ChatWidget = () => {
         onFlowChoice={handleFlowChoice}
         isTyping={isTyping}
         isInputDisabled={isInputDisabled}
+        onDownloadTranscript={downloadTranscript}
       />
     );
   }

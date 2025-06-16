@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
+import { MessageCircle, X, Minimize2, Send, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ConversationMessage } from '@/hooks/useConversationFlow';
@@ -19,6 +19,7 @@ interface ModalChatProps {
   onFlowChoice?: (choice: string, nextStep: string) => void;
   isTyping?: boolean;
   isInputDisabled?: boolean;
+  onDownloadTranscript?: () => void;
 }
 
 const ModalChat = ({
@@ -32,7 +33,8 @@ const ModalChat = ({
   currentStep = null,
   onFlowChoice,
   isTyping = false,
-  isInputDisabled = false
+  isInputDisabled = false,
+  onDownloadTranscript
 }: ModalChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasOnlyButtonOptions = isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
@@ -82,6 +84,17 @@ const ModalChat = ({
               className="h-10 object-contain"
             />
             <div className="flex items-center space-x-2">
+              {onDownloadTranscript && conversationHistory.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onDownloadTranscript}
+                  className="text-white hover:text-white hover:bg-white/20 h-10 w-10 p-0 rounded-full"
+                  title="Download Transcript"
+                >
+                  <Download className="w-5 h-5" />
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 size="sm"

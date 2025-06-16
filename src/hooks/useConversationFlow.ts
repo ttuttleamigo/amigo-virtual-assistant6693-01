@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { conversationFlow, ConversationStep } from '@/data/conversationFlow';
 import { smartShopperFlow } from '@/data/smartShopperFlow';
@@ -152,6 +151,31 @@ export const useConversationFlow = () => {
     setAllowTextInput(allowed);
   };
 
+  const downloadTranscript = () => {
+    const transcript = conversationHistory
+      .filter(msg => msg.text !== 'typing')
+      .map(msg => {
+        const timestamp = msg.timestamp.toLocaleString();
+        const sender = msg.sender === 'user' ? 'Customer' : 'Amigo Assistant';
+        return `[${timestamp}] ${sender}: ${msg.text}`;
+      })
+      .join('\n\n');
+
+    const header = `Amigo Chat Transcript\nGenerated: ${new Date().toLocaleString()}\nFlow: ${activeFlow}\nCurrent Step: ${currentStep}\n${'='.repeat(50)}\n\n`;
+    
+    const fullTranscript = header + transcript;
+    
+    const blob = new Blob([fullTranscript], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `amigo-chat-transcript-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return {
     currentStep: showUserOptions ? getCurrentStep() : null, // Only return current step when options should be shown
     conversationHistory,
@@ -164,6 +188,7 @@ export const useConversationFlow = () => {
     resetFlow,
     addRegularMessage,
     addRegularMessageWithTyping,
-    setTextInputAllowed
+    setTextInputAllowed,
+    downloadTranscript
   };
 };
