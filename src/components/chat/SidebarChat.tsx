@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
+import { MessageCircle, X, ArrowRight, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ConversationMessage } from '@/hooks/useConversationFlow';
@@ -78,7 +78,7 @@ const SidebarChat = ({
         </div>
         <div className="flex space-x-1">
           <Button variant="ghost" size="sm" onClick={onMinimize} className="text-white hover:text-white hover:bg-white/20 h-8 w-8 p-0">
-            <Minimize2 className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4" />
           </Button>
           <Button variant="ghost" size="sm" onClick={onClose} className="text-white hover:text-white hover:bg-white/20 h-8 w-8 p-0">
             <X className="w-4 h-4" />
