@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
@@ -6,9 +5,8 @@ import ChatButton from './chat/ChatButton';
 import HorizontalChat from './chat/HorizontalChat';
 import ModalChat from './chat/ModalChat';
 import SidebarChat from './chat/SidebarChat';
-import MinimizedChat from './chat/MinimizedChat';
 
-type ChatState = 'hidden' | 'horizontal' | 'modal' | 'sidebar' | 'minimized';
+type ChatState = 'hidden' | 'horizontal' | 'modal' | 'sidebar';
 
 const ChatWidget = () => {
   const [chatState, setChatState] = useState<ChatState>('horizontal');
@@ -145,11 +143,7 @@ const ChatWidget = () => {
   };
 
   const handleMinimize = () => {
-    setChatState('minimized');
-  };
-
-  const handleRestore = () => {
-    setChatState('sidebar');
+    setChatState('modal'); // Changed from 'minimized' to 'modal'
   };
 
   const handleClose = () => {
@@ -250,20 +244,6 @@ const ChatWidget = () => {
         currentStep={currentStep}
         onFlowChoice={handleFlowChoice}
         isTyping={isTyping}
-        isInputDisabled={isInputDisabled}
-      />
-    );
-  }
-
-  if (chatState === 'minimized') {
-    return (
-      <MinimizedChat
-        conversationHistory={conversationHistory}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        sendMessage={sendMessage}
-        onClose={handleClose}
-        onRestore={handleRestore}
         isInputDisabled={isInputDisabled}
       />
     );
