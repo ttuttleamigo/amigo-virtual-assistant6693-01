@@ -12,11 +12,20 @@ const TypingIndicator = () => {
             className="w-6 h-6 object-contain"
           />
         </div>
-        <div className="bg-white border border-gray-100 rounded-lg rounded-bl-none p-4 shadow-sm min-w-[120px]">
-          <div className="space-y-2">
-            <div className="h-3 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300 rounded animate-pulse" style={{ animationDuration: '2s' }}></div>
-            <div className="h-3 bg-gradient-to-r from-gray-400 via-gray-500 to-gray-400 rounded animate-pulse w-4/5" style={{ animationDelay: '0.3s', animationDuration: '2s' }}></div>
-            <div className="h-3 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300 rounded animate-pulse w-3/5" style={{ animationDelay: '0.6s', animationDuration: '2s' }}></div>
+        <div className="bg-white border border-gray-100 rounded-lg rounded-bl-none p-4 shadow-sm min-w-[200px]">
+          <div className="space-y-3">
+            <div 
+              className="h-4 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 rounded-full animate-pulse" 
+              style={{ animationDuration: '1.5s' }}
+            ></div>
+            <div 
+              className="h-4 bg-gradient-to-r from-blue-300 via-blue-400 to-blue-300 rounded-full animate-pulse w-4/5" 
+              style={{ animationDelay: '0.3s', animationDuration: '1.5s' }}
+            ></div>
+            <div 
+              className="h-4 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 rounded-full animate-pulse w-3/5" 
+              style={{ animationDelay: '0.6s', animationDuration: '1.5s' }}
+            ></div>
           </div>
         </div>
       </div>
