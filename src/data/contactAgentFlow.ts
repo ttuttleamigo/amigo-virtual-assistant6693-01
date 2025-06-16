@@ -4,9 +4,7 @@ import { ConversationFlow } from './conversationFlow';
 export const contactAgentFlow: ConversationFlow = {
   greeting: {
     id: 'greeting',
-    botMessage: [
-      "I'd be happy to help you with your customer service need! To provide you with the best assistance, I can connect you with one of our service agents."
-    ],
+    botMessage: "I'd be happy to help you with your customer service need! To provide you with the best assistance, I can connect you with one of our service agents.",
     userOptions: [
       { text: "Continue", nextStep: "contact_agent" }
     ]
@@ -14,9 +12,7 @@ export const contactAgentFlow: ConversationFlow = {
 
   contact_agent: {
     id: 'contact_agent',
-    botMessage: [
-      "Would you prefer to receive a phone call or an email?"
-    ],
+    botMessage: "Would you prefer to receive a phone call or an email?",
     userOptions: [
       { text: "Phone call", nextStep: "phone_call" },
       { text: "Email", nextStep: "send_email" }
@@ -25,10 +21,7 @@ export const contactAgentFlow: ConversationFlow = {
 
   phone_call: {
     id: 'phone_call',
-    botMessage: [
-      "Perfect! Our friendly Amigo service agents are available by phone Monday through Friday from 7:30 a.m. to 5:30 p.m. EST and can contact you within the next business day.",
-      "Is this convenient for you, or would you prefer to call customer support directly?"
-    ],
+    botMessage: "Perfect! Our friendly Amigo service agents are available by phone Monday through Friday from 7:30 a.m. to 5:30 p.m. EST and can contact you within the next business day. Is this convenient for you, or would you prefer to call customer support directly?",
     userOptions: [
       { text: "Please call me", nextStep: "enter_contact_info" },
       { text: "I will call", nextStep: "call_phone_number" }
@@ -45,10 +38,7 @@ export const contactAgentFlow: ConversationFlow = {
 
   contact_info_received: {
     id: 'contact_info_received',
-    botMessage: [
-      "Thank you! We've received your information and one of our service agents will be in touch within the next business day to help with your Amigo cart.",
-      "Thank you for choosing Amigo for your mobility needs!"
-    ],
+    botMessage: "Thank you! We've received your information and one of our service agents will be in touch within the next business day to help with your Amigo cart. Thank you for choosing Amigo for your mobility needs!",
     userOptions: []
   },
 
@@ -60,10 +50,7 @@ export const contactAgentFlow: ConversationFlow = {
 
   send_email: {
     id: 'send_email',
-    botMessage: [
-      "That works perfectly! Please email service@myamigo.com with your name, company, phone number, and a brief description of what you need help with. One of our service agents will respond within the next business day.",
-      "Thank you for choosing Amigo for your mobility needs!"
-    ],
+    botMessage: "That works perfectly! Please email service@myamigo.com with your name, company, phone number, and a brief description of what you need help with. One of our service agents will respond within the next business day. Thank you for choosing Amigo for your mobility needs!",
     userOptions: []
   }
 };

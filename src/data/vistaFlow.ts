@@ -4,10 +4,7 @@ import { ConversationStep } from '@/data/conversationFlow';
 export const vistaFlow = {
   greeting: {
     id: 'greeting',
-    botMessage: [
-      "Hello! I'm Amigo Mobility's virtual assistant, and I'm here to help you troubleshoot your Vista.",
-      "What seems to be the issue you're experiencing?"
-    ],
+    botMessage: "Hello! I'm Amigo Mobility's virtual assistant, and I'm here to help you troubleshoot your Vista. What seems to be the issue you're experiencing?",
     userOptions: [
       {
         text: "My Vista turns on, but the charger will not turn on or the batteries do not hold a charge",
@@ -26,379 +23,310 @@ export const vistaFlow = {
 
   step_for_vista_battery_troubleshooting: {
     id: 'step_for_vista_battery_troubleshooting',
-    botMessage: [
-      "Connect the AC cord to the wall outlet.",
-      "For the throttle enclosure LED battery gage: does the battery gage on the throttle enclosure flash for 10-30 seconds before going solid?",
-      "For the throttle enclosure LCD throttle display: does the display show a green rectangle at the bottom with the text \"CHARGING\"?"
-    ],
+    botMessage: "Let's start by checking your charger connection. Please plug the AC cord into the wall outlet and let me know what you see.",
     userOptions: [
-      { text: "Yes", nextStep: "charge_batteries_measure_voltage" },
-      { text: "No", nextStep: "ac_cord_illuminate" }
+      { text: "Okay, I've plugged it in. What should I look for?", nextStep: "check_charging_indicators" }
+    ]
+  },
+
+  check_charging_indicators: {
+    id: 'check_charging_indicators',
+    botMessage: "Great! Now let's check if your Vista is showing that it's charging. If you have an LED battery gauge on your throttle, does it flash for 10-30 seconds before going solid? Or if you have an LCD display, does it show a green rectangle at the bottom with 'CHARGING' text?",
+    userOptions: [
+      { text: "Yes, I see the charging indicator", nextStep: "charge_batteries_measure_voltage" },
+      { text: "No, I don't see any charging indicator", nextStep: "ac_cord_illuminate" }
     ]
   },
 
   charge_batteries_measure_voltage: {
     id: 'charge_batteries_measure_voltage',
-    botMessage: [
-      "With the Ac cord disconnected from the wall outlet, measure and record the voltage on the batteries.",
-      "Now connect the Ac cord into the wall outlet and let the batteries charge for two minutes.",
-      "Now measure the battery voltage, has it increased to a minimum of 25 volts?"
-    ],
+    botMessage: "Perfect! Now let's test your battery voltage. First, unplug the AC cord from the wall and measure the voltage on your batteries. Then plug it back in, wait 2 minutes, and measure again. Has the voltage increased to at least 25 volts?",
     userOptions: [
-      { text: "Yes", nextStep: "charger_fine_replace_batteries" },
-      { text: "No", nextStep: "replace_charger" }
+      { text: "Yes, the voltage increased to 25 volts or more", nextStep: "charger_fine_replace_batteries" },
+      { text: "No, the voltage didn't reach 25 volts", nextStep: "replace_charger" }
     ]
   },
 
   charger_fine_replace_batteries: {
     id: 'charger_fine_replace_batteries',
-    botMessage: [
-      "The charger is operating properly, but the battery/batteries have reached a state where they can no longer hold a charge and should be replaced.",
-      "Do you need to order parts?"
-    ],
+    botMessage: "Your charger is working properly, but your batteries have reached the end of their life and can no longer hold a proper charge. They'll need to be replaced. Would you like help ordering new batteries?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "Yes, I need to order new batteries", nextStep: "order_parts" },
+      { text: "No, I'll handle the replacement myself", nextStep: "end_conversation" }
     ]
   },
 
   replace_charger: {
     id: 'replace_charger',
-    botMessage: [
-      "The battery charger is not outputting the proper Dc voltage, so you need to replace the battery charger.",
-      "Do you need to order parts?"
-    ],
+    botMessage: "It looks like your battery charger isn't outputting the proper voltage and needs to be replaced. Would you like help ordering a replacement charger?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "Yes, I need to order a new charger", nextStep: "order_parts" },
+      { text: "No, I'll handle the replacement myself", nextStep: "end_conversation" }
     ]
   },
 
   ac_cord_illuminate: {
     id: 'ac_cord_illuminate',
-    botMessage: "Does the Ac cord end illuminate?",
+    botMessage: "Let's check if your AC cord is working. Look at the end of the AC cord that plugs into the wall - does it have a small light that illuminates when plugged in?",
     userOptions: [
-      { text: "Yes", nextStep: "charger_not_turning_on" },
-      { text: "No", nextStep: "wall_outlet_replace_cord" }
+      { text: "Yes, there's a light on the AC cord", nextStep: "charger_not_turning_on" },
+      { text: "No, there's no light on the AC cord", nextStep: "wall_outlet_replace_cord" }
     ]
   },
 
   wall_outlet_replace_cord: {
     id: 'wall_outlet_replace_cord',
-    botMessage: [
-      "Check to see if the wall outlet is working. If the wall outlet is working, you need to replace the AC cord.",
-      "Do you need to order parts?"
-    ],
+    botMessage: "Let's make sure your wall outlet is working by testing it with another device. If the outlet works fine, then your AC cord needs to be replaced. Do you need help ordering a replacement AC cord?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "Yes, I need to order a new AC cord", nextStep: "order_parts" },
+      { text: "No, I'll handle the replacement myself", nextStep: "end_conversation" }
     ]
   },
 
   charger_not_turning_on: {
     id: 'charger_not_turning_on',
-    botMessage: [
-      "This indicates the charger is not turning on. Let's determine why it will not turn on.",
-      "Check the 11024-IEC Receptacle for continuity."
-    ],
+    botMessage: "Since your AC cord is getting power but the charger isn't turning on, let's check the IEC receptacle connection. Can you check if there's continuity in the 11024-IEC Receptacle?",
     userOptions: [
-      { text: "Yes continuity", nextStep: "check_battery_voltage" },
-      { text: "No continuity", nextStep: "replace_batteries" }
+      { text: "Yes, there is continuity", nextStep: "check_battery_voltage" },
+      { text: "No, there's no continuity", nextStep: "replace_receptacle" }
+    ]
+  },
+
+  replace_receptacle: {
+    id: 'replace_receptacle',
+    botMessage: "You'll need to replace the 11024-Receptacle. Would you like help ordering this part?",
+    userOptions: [
+      { text: "Yes, I need to order the receptacle", nextStep: "order_parts" },
+      { text: "No, I'll handle the replacement myself", nextStep: "end_conversation" }
     ]
   },
 
   check_battery_voltage: {
     id: 'check_battery_voltage',
-    botMessage: "If you have AGM batteries, measure the voltage on both batteries in the series; they must have a minimum combined voltage of 16 volts. If you have a single lithium battery it must have a minimum voltage of 21 volts.",
+    botMessage: "Now let's check your battery voltage. If you have AGM batteries, measure both batteries together - they need at least 16 volts combined. If you have a single lithium battery, it needs at least 21 volts. What's your voltage reading?",
     userOptions: [
-      { text: "Batteries are under voltage", nextStep: "replace_batteries" },
-      { text: "Batteries have minimum required voltage", nextStep: "check_circuit_breaker" }
+      { text: "The batteries are under the minimum voltage", nextStep: "replace_batteries" },
+      { text: "The batteries meet the minimum voltage requirement", nextStep: "check_circuit_breaker" }
     ]
   },
 
   replace_batteries: {
     id: 'replace_batteries',
-    botMessage: [
-      "You need to replace the battery/batteries.",
-      "Do you need to order parts?"
-    ],
+    botMessage: "Your batteries need to be replaced since they're not holding enough voltage. Would you like help ordering replacement batteries?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "Yes, I need to order new batteries", nextStep: "order_parts" },
+      { text: "No, I'll handle the replacement myself", nextStep: "end_conversation" }
     ]
   },
 
   check_circuit_breaker: {
     id: 'check_circuit_breaker',
-    botMessage: "Check if there is continuity of circuit breaker.",
+    botMessage: "Let's check your circuit breaker. Can you test the continuity of the circuit breaker to see if it's working properly?",
     userOptions: [
-      { text: "Yes continuity", nextStep: "check_dc_wiring" },
-      { text: "No continuity", nextStep: "replace_breaker" }
+      { text: "Yes, the circuit breaker has continuity", nextStep: "check_dc_wiring" },
+      { text: "No, the circuit breaker has no continuity", nextStep: "replace_breaker" }
     ]
   },
 
   replace_breaker: {
     id: 'replace_breaker',
-    botMessage: [
-      "You need to replace the 12038-Circuit Breaker.",
-      "Do you need to order parts?"
-    ],
+    botMessage: "You'll need to replace the 12038-Circuit Breaker. Would you like help ordering this part?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "Yes, I need to order the circuit breaker", nextStep: "order_parts" },
+      { text: "No, I'll handle the replacement myself", nextStep: "end_conversation" }
     ]
   },
 
   check_dc_wiring: {
     id: 'check_dc_wiring',
-    botMessage: "Check to make sure the Dc wiring connections from the charger are securely connected to the controller.",
+    botMessage: "Let's check your wiring connections. Please make sure all the DC wiring connections from the charger to the controller are tight and secure. How do the connections look?",
     userOptions: [
-      { text: "Dc wiring harness is bad", nextStep: "replace_harness" },
-      { text: "Dc wiring is good", nextStep: "replace_battery_charger" }
+      { text: "The DC wiring harness looks damaged or loose", nextStep: "replace_harness" },
+      { text: "The DC wiring connections look good", nextStep: "replace_battery_charger" }
     ]
   },
 
   replace_harness: {
     id: 'replace_harness',
-    botMessage: [
-      "You need to replace the 7852.10-Dc Cable Harness if the battery charger has a removable Dc cable. If the Dc cable is hard-wired into the charger, you must replace the battery charger.",
-      "Do you need to order parts?"
-    ],
+    botMessage: "You'll need to replace the DC cable harness. If your charger has a removable DC cable, you can order the 7852.10-DC Cable Harness. If it's hard-wired, you'll need a new battery charger. Would you like help ordering the right part?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "Yes, I need help ordering the right part", nextStep: "order_parts" },
+      { text: "No, I'll handle the replacement myself", nextStep: "end_conversation" }
     ]
   },
 
   replace_battery_charger: {
     id: 'replace_battery_charger',
-    botMessage: [
-      "You need to replace the battery charger.",
-      "Do you need to order parts?"
-    ],
+    botMessage: "Based on our troubleshooting, your battery charger needs to be replaced. Would you like help ordering a replacement charger?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "Yes, I need to order a new charger", nextStep: "order_parts" },
+      { text: "No, I'll handle the replacement myself", nextStep: "end_conversation" }
     ]
   },
 
   step_for_vista_wont_move: {
     id: 'step_for_vista_wont_move',
-    botMessage: "Does the battery display or diagnostic code window on the throttle enclosure illuminate when the key is turned on?",
+    botMessage: "Let's start by checking if your Vista is getting power. When you turn it on, does the battery display or diagnostic window on the throttle light up?",
     userOptions: [
-      { text: "Yes", nextStep: "battery_display_flashing" },
-      { text: "No", nextStep: "test_battery_voltage" }
+      { text: "Yes, the display lights up", nextStep: "battery_display_flashing" },
+      { text: "No, nothing lights up", nextStep: "test_battery_voltage" }
     ]
   },
 
   battery_display_flashing: {
     id: 'battery_display_flashing',
-    botMessage: "Is the battery display flashing?",
+    botMessage: "Great! Now let's check if there are any error codes. Is the battery display flashing?",
     userOptions: [
-      { text: "Yes", nextStep: "numeral_2_illuminate" },
-      { text: "No", nextStep: "make_sure_sitting_try_again" }
+      { text: "Yes, the display is flashing", nextStep: "numeral_2_illuminate" },
+      { text: "No, the display is steady", nextStep: "make_sure_sitting_try_again" }
     ]
   },
 
   numeral_2_illuminate: {
     id: 'numeral_2_illuminate',
-    botMessage: "Is the numeral \"2\" illuminated in the diagnostic window?",
+    botMessage: "Let's check what error code is showing. Is the numeral \"2\" illuminated in the diagnostic window?",
     userOptions: [
-      { text: "Yes", nextStep: "brake_circuit_open" },
-      { text: "No", nextStep: "diagnostic_code_guide" }
+      { text: "Yes, it's showing a \"2\"", nextStep: "brake_circuit_open" },
+      { text: "No, it's a different number", nextStep: "diagnostic_code_guide" }
     ]
   },
 
   diagnostic_code_guide: {
     id: 'diagnostic_code_guide',
-    botMessage: "If the numeral is something other than \"2,\" refer to the diagnostic code guide and use those troubleshooting steps to determine the root cause of the diagnostic code.",
-    userOptions: [
-      { text: "Start over", nextStep: "greeting" }
-    ],
-    isEndStep: true
+    botMessage: "The number you're seeing is a diagnostic code that indicates a specific issue. Please refer to your Amigo Diagnostic Code Guide for the exact troubleshooting steps for that code, or contact our support team for assistance.",
+    userOptions: []
   },
 
   brake_circuit_open: {
     id: 'brake_circuit_open',
-    botMessage: [
-      "This indicates the brake circuit is open.",
-      "Turn the key off and check to make sure the freewheel lever in the rear of the Vista is in the Normal position.",
-      "Turn the key back on, and if the \"2\" code is still illuminated, check the continuity on the brake wiring. If the wires are good replace the 11087-Brake.",
-      "Do you need to order parts?"
-    ],
+    botMessage: "The \"2\" code indicates the brake circuit is open. Let's check your freewheel lever position. Turn the key off, reach through the slot in the cover next to the right rear wheel, and make sure the freewheel lever is pulled all the way to the rear in the Normal position. Turn the key back on - is the \"2\" code still showing?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "No, the code is gone now", nextStep: "problem_resolved" },
+      { text: "Yes, the \"2\" code is still there", nextStep: "check_brake_wiring" }
+    ]
+  },
+
+  check_brake_wiring: {
+    id: 'check_brake_wiring',
+    botMessage: "Let's check the brake wiring for continuity. If the wires are good, you'll need to replace the 11087-Brake. Would you like help ordering this part?",
+    userOptions: [
+      { text: "Yes, I need to order the brake", nextStep: "order_parts" },
+      { text: "No, I'll handle the replacement myself", nextStep: "end_conversation" }
     ]
   },
 
   make_sure_sitting_try_again: {
     id: 'make_sure_sitting_try_again',
-    botMessage: "Make sure you are properly seated and depress the seat switch under the seat cover. Does the Vista now run?",
+    botMessage: "Your Vista has a safety feature that requires someone to be sitting in the seat. Please sit in the seat and make sure you're pressing down on the seat switch under the seat cover. Does your Vista move now?",
     userOptions: [
-      { text: "Yes", nextStep: "problem_resolved" },
-      { text: "No", nextStep: "throttle_lever_activated" }
+      { text: "Yes, it moves now!", nextStep: "problem_resolved" },
+      { text: "No, it still won't move", nextStep: "throttle_lever_activated" }
     ]
   },
 
   problem_resolved: {
     id: 'problem_resolved',
-    botMessage: "Your problem has been resolved.",
-    userOptions: [
-      { text: "Start over", nextStep: "greeting" }
-    ],
-    isEndStep: true
+    botMessage: "Wonderful! Your Vista is working properly now. The issue was simply the safety switch needing to be activated. If you have any other questions, feel free to ask!",
+    userOptions: []
   },
 
   throttle_lever_activated: {
     id: 'throttle_lever_activated',
-    botMessage: [
-      "Disconnect the two wires from the seat switch terminals coming off 10947-Wire asm. Create a short circuit across the two female terminals you just disconnected.",
-      "Does the Vista now run if the throttle lever is activated?"
-    ],
+    botMessage: "Let's test if the seat switch is working properly. Carefully disconnect the two wires from the seat switch terminals coming off the 10947-Wire assembly and create a temporary jumper connection across the two wires. Does your Vista move now when you operate the throttle?",
     userOptions: [
-      { text: "Yes", nextStep: "replace_wire_assembly" },
-      { text: "No", nextStep: "swap_parts" }
+      { text: "Yes, it moves with the jumper connection", nextStep: "replace_wire_assembly" },
+      { text: "No, it still doesn't move", nextStep: "swap_parts" }
     ]
   },
 
   replace_wire_assembly: {
     id: 'replace_wire_assembly',
-    botMessage: [
-      "You need to replace the 10947-Wire Assembly.",
-      "Do you need to order parts?"
-    ],
+    botMessage: "Perfect! That confirms your seat switch needs to be replaced. You'll need to replace the 10947-Wire Assembly. Would you like help ordering this part?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "Yes, I need to order the wire assembly", nextStep: "order_parts" },
+      { text: "No, I'll handle the replacement myself", nextStep: "end_conversation" }
     ]
   },
 
   swap_parts: {
     id: 'swap_parts',
-    botMessage: [
-      "This means one of four components is faulty. Swap them in the following order:",
-      "1. Replace the 8969-Handle Cable",
-      "2. Replace the enclosure matching the current style on the Vista",
-      "3. Replace the motor controller matching the current style on the Vista",
-      "4. If none of the previous three parts resolved the issue, then replace the 11042-Drive",
-      "Do you need to order parts?"
-    ],
+    botMessage: "We'll need to test some components to find the faulty part. Try substituting these parts one at a time: 1) Replace the 8969-Handle Cable, 2) Replace the throttle enclosure, 3) Replace the motor controller, 4) If none work, replace the 11042-Drive. Would you like help ordering these parts for testing?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "Yes, I need help ordering parts for testing", nextStep: "order_parts" },
+      { text: "No, I'll handle the testing myself", nextStep: "end_conversation" }
     ]
   },
 
   test_battery_voltage: {
     id: 'test_battery_voltage',
-    botMessage: [
-      "Remove the 7/16\" bolt underneath the front of the seat that runs between the seat release levers. Test the battery voltage at the controller.",
-      "Is the battery voltage greater than 21 volts?"
-    ],
+    botMessage: "Since there's no power to the display, let's check your battery. You'll need to remove the 7/16\" bolt underneath the front of the seat that runs between the seat release levers to access the controller. Can you test the battery voltage at the controller? It should be greater than 21 volts.",
     userOptions: [
-      { text: "Yes", nextStep: "check_wiring" },
-      { text: "No", nextStep: "recharge_batteries_replace_batteries" }
+      { text: "Yes, the battery voltage is above 21 volts", nextStep: "check_wiring" },
+      { text: "No, the battery voltage is 21 volts or less", nextStep: "recharge_batteries_replace_batteries" }
     ]
   },
 
   recharge_batteries_replace_batteries: {
     id: 'recharge_batteries_replace_batteries',
-    botMessage: [
-      "Recharge the battery/batteries and allow them to go through a completed charge cycle. If cart still has no power replace the batteries.",
-      "Do you need to order parts?"
-    ],
+    botMessage: "Your battery needs to be recharged or replaced. Try recharging your battery completely first. If it still doesn't hold a charge above 21 volts, you'll need new batteries. Would you like help ordering replacement batteries?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "Yes, I need to order new batteries", nextStep: "order_parts" },
+      { text: "No, I'll handle the replacement myself", nextStep: "end_conversation" }
     ]
   },
 
   check_wiring: {
     id: 'check_wiring',
-    botMessage: [
-      "Check to ensure all wiring connections from the handle enclosure, breakout board, and controller are securely connected.",
-      "Measure the battery voltage at the controller; it should match the battery voltage measured at the battery/batteries. Are the wires secure and battery at the controller? Does voltage at the battery/batteries at the controller match the voltage at the battery?"
-    ],
+    botMessage: "Let's check all your wiring connections. Make sure all wires from the handle enclosure, breakout board, and controller are securely connected, then measure the battery voltage at the controller. Does it match the voltage you measured at the battery itself?",
     userOptions: [
-      { text: "Yes", nextStep: "substitute_parts" },
-      { text: "No", nextStep: "check_continuity" }
+      { text: "Yes, the voltages match and connections are secure", nextStep: "substitute_parts" },
+      { text: "No, the voltages don't match or connections are loose", nextStep: "check_continuity" }
     ]
   },
 
   substitute_parts: {
     id: 'substitute_parts',
-    botMessage: [
-      "Substitute the following parts in order until the faulty part is found:",
-      "1. 8969-Handle cable",
-      "2. Enclosure",
-      "3. Controller",
-      "Do you need to order parts?"
-    ],
+    botMessage: "We'll need to test some components to find the faulty part. Try substituting these parts one at a time: 1) 8969-Handle cable, 2) Throttle enclosure, 3) Controller. Would you like help ordering these parts for testing?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "Yes, I need help ordering parts for testing", nextStep: "order_parts" },
+      { text: "No, I'll handle the testing myself", nextStep: "end_conversation" }
     ]
   },
 
   check_continuity: {
     id: 'check_continuity',
-    botMessage: "Check to make sure there is continuity through the 12038-Circuit Breaker. Is there continuity?",
+    botMessage: "Let's check your circuit breaker. Can you test for continuity through the 12038-Circuit Breaker?",
     userOptions: [
-      { text: "Yes", nextStep: "replace_battery_harness" },
-      { text: "No", nextStep: "replace_breaker" }
+      { text: "Yes, there is continuity through the breaker", nextStep: "replace_battery_harness" },
+      { text: "No, there is no continuity", nextStep: "replace_breaker" }
     ]
   },
 
   replace_battery_harness: {
     id: 'replace_battery_harness',
-    botMessage: [
-      "You need to replace the battery harnesses with a 9853-Battery Harness Kit.",
-      "Do you need to order parts?"
-    ],
+    botMessage: "The issue is with your battery wire connections. You'll need to replace the battery harnesses with a 9853-Battery Harness Kit. Would you like help ordering this part?",
     userOptions: [
-      { text: "Yes", nextStep: "order_parts" },
-      { text: "No", nextStep: "end_conversation" }
+      { text: "Yes, I need to order the battery harness kit", nextStep: "order_parts" },
+      { text: "No, I'll handle the replacement myself", nextStep: "end_conversation" }
     ]
   },
 
   // Shared end states
   contact_agent: {
     id: 'contact_agent',
-    botMessage: [
-      "I'll connect you with our customer service team for additional assistance.",
-      "You can reach our support team at 1-800-692-6446 or email support@amigomobility.com"
-    ],
-    userOptions: [
-      { text: "Start over", nextStep: "greeting" }
-    ],
-    isEndStep: true
+    botMessage: "I'll connect you with our customer service team for additional assistance. You can reach our support team at 1-800-692-6446 or email support@amigomobility.com",
+    userOptions: []
   },
 
   order_parts: {
     id: 'order_parts',
-    botMessage: [
-      "You can order parts through several methods:",
-      "• Call our parts department at 1-800-692-6446",
-      "• Email parts@amigomobility.com",
-      "• Visit our website at amigomobility.com/parts",
-      "Please have your Vista model number and serial number ready when ordering."
-    ],
-    userOptions: [
-      { text: "Start over", nextStep: "greeting" }
-    ],
-    isEndStep: true
+    botMessage: "I'll connect you with our parts department to help you order the required components. They'll make sure you get exactly what you need for your Vista!",
+    userOptions: []
   },
 
   end_conversation: {
     id: 'end_conversation',
-    botMessage: [
-      "Great! I hope this troubleshooting guide was helpful.",
-      "If you need further assistance, don't hesitate to contact our support team at 1-800-692-6446."
-    ],
-    userOptions: [
-      { text: "Start over", nextStep: "greeting" }
-    ],
-    isEndStep: true
+    botMessage: "Thank you for using Amigo's troubleshooting assistant! If you need any further help, please don't hesitate to contact us. We're always here to help!",
+    userOptions: []
   }
 };
