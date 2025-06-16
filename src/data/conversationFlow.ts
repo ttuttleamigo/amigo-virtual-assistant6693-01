@@ -1,4 +1,3 @@
-
 export type ConversationStep = {
   id: string;
   botMessage: string | string[];
@@ -9,7 +8,9 @@ export type ConversationStep = {
   isEndStep?: boolean;
 };
 
-export const conversationFlow: Record<string, ConversationStep> = {
+export type ConversationFlow = Record<string, ConversationStep>;
+
+export const conversationFlow: ConversationFlow = {
   greeting: {
     id: 'greeting',
     botMessage: [
