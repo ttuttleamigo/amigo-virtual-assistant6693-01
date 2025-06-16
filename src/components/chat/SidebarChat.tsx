@@ -29,6 +29,8 @@ const SidebarChat = ({
   currentStep,
   onFlowChoice
 }: SidebarChatProps) => {
+  const hasOnlyButtonOptions = isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
+
   return (
     <div className="fixed right-0 top-0 bottom-0 w-80 bg-white shadow-2xl z-50 animate-slide-in-right">
       <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-600 to-green-500 text-white">
@@ -102,24 +104,26 @@ const SidebarChat = ({
         )}
       </div>
 
-      <div className="p-4 border-t">
-        <div className="flex space-x-2">
-          <Input
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Message Amigo Assistant"
-            className="flex-1"
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          />
-          <Button
-            onClick={sendMessage}
-            size="sm"
-            className="bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600"
-          >
-            <Send className="w-4 h-4" />
-          </Button>
+      {!hasOnlyButtonOptions && (
+        <div className="p-4 border-t">
+          <div className="flex space-x-2">
+            <Input
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Message Amigo Assistant"
+              className="flex-1"
+              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+            />
+            <Button
+              onClick={sendMessage}
+              size="sm"
+              className="bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600"
+            >
+              <Send className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

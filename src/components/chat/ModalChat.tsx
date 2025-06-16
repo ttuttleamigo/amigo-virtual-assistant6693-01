@@ -29,6 +29,8 @@ const ModalChat = ({
   currentStep = null,
   onFlowChoice
 }: ModalChatProps) => {
+  const hasOnlyButtonOptions = isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 animate-scale-in">
@@ -67,7 +69,7 @@ const ModalChat = ({
           
           <div className="space-y-3 max-h-60 overflow-y-auto">
             {conversationHistory.slice(-5).map(message => (
-              <div key={message.id} className={`flex items-start space-x-2 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div key={message.id} className={`flex items-start space-x-2 ${message.sender === 'user' ? 'justify-end flex-row-reverse space-x-reverse' : 'justify-start'}`}>
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
                   message.sender === 'agent' ? 'bg-gradient-to-r from-blue-600 to-green-500' : 'bg-gray-600'
                 }`}>
@@ -106,24 +108,26 @@ const ModalChat = ({
           </Button>
         </div>
 
-        <div className="p-4 border-t">
-          <div className="flex space-x-2">
-            <Input
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Message Amigo Assistant"
-              className="flex-1"
-              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            />
-            <Button
-              onClick={sendMessage}
-              size="sm"
-              className="bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
+        {!hasOnlyButtonOptions && (
+          <div className="p-4 border-t">
+            <div className="flex space-x-2">
+              <Input
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Message Amigo Assistant"
+                className="flex-1"
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              />
+              <Button
+                onClick={sendMessage}
+                size="sm"
+                className="bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600"
+              >
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
