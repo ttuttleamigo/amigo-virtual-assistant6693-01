@@ -92,18 +92,44 @@ const ChatWidget = () => {
 
   const handleSuggestedAction = (action: string, flowType?: FlowType) => {
     setChatState('modal');
-    if (action === 'Start troubleshooting' && flowType) {
-      startFlow(flowType);
-    } else if (action === 'Connect me with support') {
-      startFlow('contactAgent');
-    } else {
-      const newMessage = {
-        id: Date.now().toString(),
-        text: action,
-        sender: 'user' as const,
-        timestamp: new Date()
-      };
-      addRegularMessage(newMessage);
+    
+    // Add user message
+    const newMessage = {
+      id: Date.now().toString(),
+      text: action,
+      sender: 'user' as const,
+      timestamp: new Date()
+    };
+    addRegularMessage(newMessage);
+
+    // Handle different actions
+    if (action === 'I need help with an Amigo cart repair') {
+      // Ask for serial number first
+      setTimeout(() => {
+        const botResponse = {
+          id: (Date.now() + 1).toString(),
+          text: "I'd be happy to help you with your Amigo cart repair! To provide the most accurate troubleshooting steps, could you please provide your cart's serial number? You can find it on a label typically located on the back or bottom of your cart.",
+          sender: 'agent' as const,
+          timestamp: new Date()
+        };
+        addRegularMessage(botResponse);
+      }, 1000);
+    } else if (action === 'I need to buy a part for an Amigo cart') {
+      // Direct to parts ordering
+      setTimeout(() => {
+        const botResponse = {
+          id: (Date.now() + 1).toString(),
+          text: "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n\n• Call our parts department at 1-800-692-6446\n• Email parts@amigomobility.com\n• Visit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?",
+          sender: 'agent' as const,
+          timestamp: new Date()
+        };
+        addRegularMessage(botResponse);
+      }, 1000);
+    } else if (action === 'I have a different customer service need') {
+      // Start contact agent flow
+      setTimeout(() => {
+        startFlow('contactAgent');
+      }, 1000);
     }
   };
 

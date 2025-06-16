@@ -73,7 +73,7 @@ const HorizontalChat = ({
             {/* Action Buttons */}
             <div className="flex space-x-3">
               <Button
-                onClick={() => onSuggestedAction('I need help with an Amigo cart repair')}
+                onClick={() => onSuggestedAction('I need help with an Amigo cart repair', 'general')}
                 className="bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
               >
                 I need help with an Amigo cart repair
