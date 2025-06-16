@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -132,7 +131,7 @@ const ModalChat = ({
                   key={index}
                   onClick={() => onFlowChoice(option.text, option.nextStep)}
                   variant="outline"
-                  className="w-full justify-start text-left h-auto p-3 border-blue-200 hover:bg-blue-50 hover:border-blue-300"
+                  className="w-full justify-start text-left h-auto p-3 border-blue-200 hover:bg-blue-50 hover:border-blue-300 whitespace-normal break-words"
                 >
                   {option.text}
                 </Button>
