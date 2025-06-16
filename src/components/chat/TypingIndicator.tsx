@@ -12,17 +12,17 @@ const TypingIndicator = () => {
             className="w-6 h-6 object-contain"
           />
         </div>
-        <div className="flex flex-col space-y-2 pt-2">
+        <div className="flex flex-col space-y-4 pt-2 min-w-[300px]">
           <div 
-            className="h-3 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 rounded-full animate-pulse w-16" 
+            className="h-5 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 rounded-full animate-pulse w-full" 
             style={{ animationDuration: '1.5s' }}
           ></div>
           <div 
-            className="h-3 bg-gradient-to-r from-blue-300 via-blue-400 to-blue-300 rounded-full animate-pulse w-12" 
+            className="h-5 bg-gradient-to-r from-blue-300 via-blue-400 to-blue-300 rounded-full animate-pulse w-4/5" 
             style={{ animationDelay: '0.3s', animationDuration: '1.5s' }}
           ></div>
           <div 
-            className="h-3 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 rounded-full animate-pulse w-20" 
+            className="h-5 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 rounded-full animate-pulse w-3/5" 
             style={{ animationDelay: '0.6s', animationDuration: '1.5s' }}
           ></div>
         </div>
