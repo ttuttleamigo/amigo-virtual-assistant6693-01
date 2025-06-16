@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
@@ -84,19 +83,27 @@ const ChatWidget = () => {
         }, 1500);
         
       } else {
-        // Serial number not found or no model data
+        // Serial number not found or no model data - offer retry option
         setTimeout(() => {
           addRegularMessageWithTyping([
-            "I couldn't find that serial number in our system. Please double-check the serial number or contact our support team at 1-800-692-6446 for assistance."
+            "I couldn't find that serial number in our system. This could be due to a typo or the serial number might not be in our database yet.\n\nWould you like to try entering your serial number again, or would you prefer to contact our support team at 1-800-692-6446?"
           ], 1000);
+          
+          // Keep expecting serial number for retry
+          setExpectingSerialNumber(true);
+          setTextInputAllowed(true);
         }, 1500);
       }
     } catch (error) {
-      // Error occurred during lookup
+      // Error occurred during lookup - offer retry option
       setTimeout(() => {
         addRegularMessageWithTyping([
-          "I'm having trouble looking up that serial number right now. Please try again later or contact our support team at 1-800-692-6446."
+          "I'm having trouble looking up that serial number right now. This could be a temporary connection issue.\n\nWould you like to try entering your serial number again, or contact our support team at 1-800-692-6446?"
         ], 1000);
+        
+        // Keep expecting serial number for retry
+        setExpectingSerialNumber(true);
+        setTextInputAllowed(true);
       }, 1500);
     }
     
