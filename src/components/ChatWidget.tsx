@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
@@ -14,6 +15,7 @@ const ChatWidget = () => {
   const [inputValue, setInputValue] = useState('');
   const [productInfo, setProductInfo] = useState<ProductInfo | null>(null);
   const [expectingSerialNumber, setExpectingSerialNumber] = useState(false);
+  const [expectingModel, setExpectingModel] = useState(false);
   const { 
     currentStep, 
     conversationHistory, 
@@ -37,6 +39,20 @@ const ChatWidget = () => {
     const cleanText = text.replace(/\s+/g, '').toUpperCase();
     // Check if it matches common serial number patterns (letters and numbers, typically 6+ characters)
     return /^[A-Z0-9]{6,}$/.test(cleanText) || /^\d{6,}$/.test(cleanText);
+  };
+
+  // Function to check if a string looks like a model name
+  const isModelFormat = (text: string): boolean => {
+    const cleanText = text.toLowerCase().trim();
+    // Check for common Amigo model patterns
+    return cleanText.includes('smartshopper') || 
+           cleanText.includes('smart shopper') ||
+           cleanText.includes('valueshopper') || 
+           cleanText.includes('value shopper') ||
+           cleanText.includes('vista') ||
+           cleanText.includes('max cr') ||
+           cleanText.includes('maxcr') ||
+           /^(ss|vs|v|mc)\d*$/.test(cleanText); // Common abbreviations
   };
 
   const handleSerialNumberSubmit = async (serialNumber: string) => {
@@ -84,32 +100,65 @@ const ChatWidget = () => {
         }, 1500);
         
       } else {
-        // Serial number not found or no model data - offer retry option
+        // Serial number not found - offer helpful alternatives
         setTimeout(() => {
           addRegularMessageWithTyping([
-            "I couldn't find that serial number in our system. This could be due to a typo or the serial number might not be in our database yet.\n\nWould you like to try entering your serial number again, or would you prefer to contact our support team at 1-800-692-6446?"
+            "I couldn't find that serial number in our system. Let me help you with some alternatives:\n\n• **Try again** - Double-check the serial number (it's usually on a label on the back or bottom of your cart)\n• **Enter your model** - If you know your cart model (like SmartShopper, ValueShopper, Vista, or Max CR), I can help based on that\n• **Get help locating** - I can guide you on where to find your serial number\n• **Contact support** - Call 1-800-692-6446 for direct assistance\n\nWhat would you prefer to do?"
           ], 1000);
           
           // Keep expecting serial number for retry
           setExpectingSerialNumber(true);
+          setExpectingModel(true);
           setTextInputAllowed(true);
         }, 1500);
       }
     } catch (error) {
-      // Error occurred during lookup - offer retry option
+      // Error occurred during lookup - offer helpful alternatives
       setTimeout(() => {
         addRegularMessageWithTyping([
-          "I'm having trouble looking up that serial number right now. This could be a temporary connection issue.\n\nWould you like to try entering your serial number again, or contact our support team at 1-800-692-6446?"
+          "I'm having trouble looking up that serial number right now. Let me offer some alternatives:\n\n• **Try again** - This might be a temporary connection issue\n• **Enter your model** - If you know your cart model, I can help based on that\n• **Find your serial number** - I can help you locate it on your cart\n• **Contact support** - Call 1-800-692-6446 for immediate assistance\n\nWhat would you like to do?"
         ], 1000);
         
         // Keep expecting serial number for retry
         setExpectingSerialNumber(true);
+        setExpectingModel(true);
         setTextInputAllowed(true);
       }, 1500);
     }
+  };
+
+  const handleModelSubmit = (model: string) => {
+    // Don't change state if we're already in sidebar - stay in sidebar
+    if (chatState !== 'sidebar') {
+      setChatState('modal');
+      setPreviousState('modal'); // Update previous state
+    }
     
+    // Add user message with model
+    const userMessage = {
+      id: Date.now().toString(),
+      text: `My model is: ${model}`,
+      sender: 'user' as const,
+      timestamp: new Date()
+    };
+    addRegularMessage(userMessage);
+
+    // Determine the appropriate flow based on the model
+    const flowType = determineFlowFromModel(model);
+    
+    // Add confirmation message with typing delay
+    addRegularMessageWithTyping([
+      `Great! I can help you with your ${model}. Let me start the troubleshooting process for you.`
+    ], 1000);
+    
+    // Start the appropriate flow after delay
+    setTimeout(() => {
+      startFlow(flowType);
+    }, 2500);
+    
+    setExpectingModel(false);
     setExpectingSerialNumber(false);
-    setTextInputAllowed(false); // Disable text input after serial number submission
+    setTextInputAllowed(false);
   };
 
   const handleSuggestedAction = (action: string, flowType?: FlowType) => {
@@ -127,18 +176,19 @@ const ChatWidget = () => {
 
     // Handle different actions
     if (action === 'I need help with an Amigo cart repair') {
-      // Ask for serial number first
+      // Ask for serial number first with helpful guidance
       addRegularMessageWithTyping([
-        "I'd be happy to help you with your Amigo cart repair! To provide the most accurate troubleshooting steps, could you please provide your cart's serial number? You can find it on a label typically located on the back or bottom of your cart."
+        "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\n• **Serial number** (found on a label, usually on the back or bottom of your cart)\n• **Model name** (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!"
       ], 1500);
       setExpectingSerialNumber(true);
-      setTextInputAllowed(true); // Allow text input for serial number
+      setExpectingModel(true);
+      setTextInputAllowed(true);
     } else if (action === 'I need to buy a part for an Amigo cart') {
       // Direct to parts ordering
       addRegularMessageWithTyping([
         "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n\n• Call our parts department at 1-800-692-6446\n• Email parts@amigomobility.com\n• Visit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
       ], 1500);
-      setTextInputAllowed(false); // No text input needed for this flow
+      setTextInputAllowed(false);
     } else if (action === 'I have a different customer service need') {
       // Start contact agent flow
       setTimeout(() => {
@@ -191,6 +241,13 @@ const ChatWidget = () => {
       return;
     }
     
+    // Check if we're expecting a model and the input looks like one
+    if (expectingModel && isModelFormat(inputValue)) {
+      handleModelSubmit(inputValue);
+      setInputValue('');
+      return;
+    }
+    
     const newMessage = {
       id: Date.now().toString(),
       text: inputValue,
@@ -198,16 +255,40 @@ const ChatWidget = () => {
       timestamp: new Date()
     };
     addRegularMessage(newMessage);
+    
+    const userInput = inputValue.toLowerCase().trim();
     setInputValue('');
 
-    if (!isInFlow && !expectingSerialNumber) {
+    // Handle specific requests for help
+    if (userInput.includes('help') && (userInput.includes('find') || userInput.includes('locate')) && userInput.includes('serial')) {
       addRegularMessageWithTyping([
-        "I can help you troubleshoot your Amigo cart. For the most accurate assistance, could you provide your serial number? You can click 'Enter Serial #' or just tell me what issue you're experiencing."
+        "I can help you find your serial number! Here's where to look:\n\n**Most Common Locations:**\n• **Back of the cart** - Look for a white or silver label\n• **Bottom/underside** - May be on the base or frame\n• **Near the battery compartment** - Sometimes inside or nearby\n• **On the controller** - Some models have it there\n\n**What to look for:**\n• A label with \"S/N\" or \"Serial Number\"\n• Usually starts with letters like \"AMI\" followed by numbers\n• Typically 8-12 characters long\n\nOnce you find it, just type it here and I'll look up your cart information!"
       ], 1500);
-    } else if (expectingSerialNumber && !isSerialNumberFormat(inputValue)) {
-      // User entered text that doesn't look like a serial number
+      setExpectingSerialNumber(true);
+      setTextInputAllowed(true);
+      return;
+    }
+
+    if (userInput.includes('model') && (userInput.includes('help') || userInput.includes('what') || userInput.includes('which'))) {
       addRegularMessageWithTyping([
-        "I didn't recognize that as a serial number. Serial numbers are typically 6 or more characters long and contain letters and numbers. Could you please double-check and enter your serial number again? You can also contact our support team at 1-800-692-6446 if you need help locating it."
+        "I can help you identify your Amigo model! Here are our main models:\n\n**SmartShopper** - Compact shopping cart, great for stores\n**ValueShopper** - Affordable option with essential features\n**Vista** - Mid-range model with enhanced comfort\n**Max CR** - Heavy-duty model for outdoor use\n\n**Where to find your model:**\n• Look for a label on your cart (same place as serial number)\n• Check your paperwork or receipt\n• The model name is usually clearly marked\n\nJust tell me which model you have, or describe your cart and I can help identify it!"
+      ], 1500);
+      setExpectingModel(true);
+      setTextInputAllowed(true);
+      return;
+    }
+
+    if (!isInFlow && !expectingSerialNumber && !expectingModel) {
+      addRegularMessageWithTyping([
+        "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I can work with either:\n\n• **Your serial number** - for precise troubleshooting\n• **Your model name** - for general guidance\n\nWhich would you prefer to provide? Or if you need help finding either, just let me know!"
+      ], 1500);
+      setExpectingSerialNumber(true);
+      setExpectingModel(true);
+      setTextInputAllowed(true);
+    } else if ((expectingSerialNumber || expectingModel) && !isSerialNumberFormat(inputValue) && !isModelFormat(inputValue)) {
+      // User entered text that doesn't look like a serial number or model
+      addRegularMessageWithTyping([
+        "I didn't recognize that as a serial number or model name. \n\n**For serial numbers:** Look for 6+ characters with letters and numbers (often starting with AMI)\n**For models:** Try SmartShopper, ValueShopper, Vista, or Max CR\n\nNeed help finding either? Just ask \"help find serial number\" or \"help identify model\" and I'll guide you!"
       ], 1500);
     }
   };
