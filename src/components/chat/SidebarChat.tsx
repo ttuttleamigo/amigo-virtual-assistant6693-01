@@ -76,9 +76,17 @@ const SidebarChat = ({
           <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`flex items-start space-x-3 max-w-[85%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                message.sender === 'agent' ? 'bg-blue-600' : 'bg-gray-600'
+                message.sender === 'agent' ? 'bg-white border border-gray-200' : 'bg-gray-600'
               }`}>
-                <MessageCircle className="w-4 h-4 text-white" />
+                {message.sender === 'agent' ? (
+                  <img 
+                    src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" 
+                    alt="Amigo" 
+                    className="w-6 h-6 object-contain"
+                  />
+                ) : (
+                  <MessageCircle className="w-4 h-4 text-white" />
+                )}
               </div>
               <div className={`text-sm p-3 rounded-lg whitespace-pre-wrap ${
                 message.sender === 'user' 
@@ -94,8 +102,12 @@ const SidebarChat = ({
         {isLoading && (
           <div className="flex justify-start">
             <div className="flex items-start space-x-3 max-w-[85%]">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                <MessageCircle className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center flex-shrink-0">
+                <img 
+                  src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" 
+                  alt="Amigo" 
+                  className="w-6 h-6 object-contain"
+                />
               </div>
               <div className="bg-white border border-gray-100 rounded-lg rounded-bl-none p-3 shadow-sm">
                 <div className="space-y-2">
@@ -130,13 +142,17 @@ const SidebarChat = ({
             <Input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask me about your Amigo cart troubleshooting or connect to support."
+              placeholder="Type your message here..."
               className="w-full bg-gray-50 border-gray-200 rounded-lg pl-12 pr-12 py-3 text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
             />
             <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-              <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                <MessageCircle className="w-4 h-4 text-white" />
+              <div className="w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" 
+                  alt="Amigo" 
+                  className="w-4 h-4 object-contain"
+                />
               </div>
             </div>
             <Button

@@ -37,7 +37,7 @@ const ModalChat = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white">
           <div className="flex items-center space-x-3">
             <img 
               src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
@@ -50,7 +50,7 @@ const ModalChat = ({
               variant="ghost"
               size="sm"
               onClick={onModalToSidebar}
-              className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 h-8 w-8 p-0"
+              className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 h-8 w-8 p-0"
             >
               <Minimize2 className="w-4 h-4" />
             </Button>
@@ -58,7 +58,7 @@ const ModalChat = ({
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 h-8 w-8 p-0"
+              className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 h-8 w-8 p-0"
             >
               <X className="w-4 h-4" />
             </Button>
@@ -81,9 +81,17 @@ const ModalChat = ({
             <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`flex items-start space-x-3 max-w-[80%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  message.sender === 'agent' ? 'bg-blue-600' : 'bg-gray-500'
+                  message.sender === 'agent' ? 'bg-white border border-gray-200' : 'bg-gray-500'
                 }`}>
-                  <MessageCircle className="w-4 h-4 text-white" />
+                  {message.sender === 'agent' ? (
+                    <img 
+                      src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" 
+                      alt="Amigo" 
+                      className="w-6 h-6 object-contain"
+                    />
+                  ) : (
+                    <MessageCircle className="w-4 h-4 text-white" />
+                  )}
                 </div>
                 <div className={`px-4 py-2 rounded-lg text-sm whitespace-pre-wrap ${
                   message.sender === 'user' 
@@ -99,8 +107,12 @@ const ModalChat = ({
           {isLoading && (
             <div className="flex justify-start">
               <div className="flex items-start space-x-3 max-w-[80%]">
-                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                  <MessageCircle className="w-4 h-4 text-white" />
+                <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center flex-shrink-0">
+                  <img 
+                    src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" 
+                    alt="Amigo" 
+                    className="w-6 h-6 object-contain"
+                  />
                 </div>
                 <div className="bg-gray-100 border rounded-lg rounded-tl-sm px-4 py-2">
                   <div className="flex space-x-1">
