@@ -48,26 +48,26 @@ const SidebarChat = ({
   return (
     <div className="fixed right-0 top-0 bottom-0 w-96 shadow-2xl z-50 animate-slide-in-right border-l border-gray-200 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-blue-400 flex-shrink-0 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600">
+      <div className="flex items-center justify-between p-4 border-b border-blue-100 flex-shrink-0 bg-gradient-to-r from-blue-100 via-blue-50 to-white">
         <div className="flex items-center space-x-3">
           <img src="/lovable-uploads/4b9131f2-ab48-4c5a-951f-e24f1806cf8e.png" alt="Amigo Virtual Assistant" className="h-8 object-contain" />
         </div>
         <div className="flex space-x-1">
-          <Button variant="ghost" size="sm" onClick={onMinimize} className="text-white hover:text-white hover:bg-white/20 h-8 w-8 p-0">
+          <Button variant="ghost" size="sm" onClick={onMinimize} className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 h-8 w-8 p-0">
             <Minimize2 className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="sm" onClick={onClose} className="text-white hover:text-white hover:bg-white/20 h-8 w-8 p-0">
+          <Button variant="ghost" size="sm" onClick={onClose} className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 h-8 w-8 p-0">
             <X className="w-4 h-4" />
           </Button>
         </div>
       </div>
       
       {/* Title */}
-      <div className="px-6 py-4 text-center border-b border-blue-400 flex-shrink-0 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600">
-        <h2 className="text-xl font-light text-white mb-2">
-          How can <span className="text-blue-100 font-medium">Amigo</span> help?
+      <div className="px-6 py-4 text-center border-b border-blue-100 flex-shrink-0 bg-gradient-to-r from-blue-100 via-blue-50 to-white">
+        <h2 className="text-xl font-semibold text-gray-800 mb-2">
+          How can <span className="text-blue-600">Amigo</span> help?
         </h2>
-        <p className="text-blue-100 text-sm">
+        <p className="text-blue-600 text-sm font-medium">
           Amigo Support joined • {new Date().toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit'
@@ -111,22 +111,22 @@ const SidebarChat = ({
 
       {/* Input - Fixed at bottom */}
       {!hasOnlyButtonOptions && (
-        <div className="p-4 border-t border-blue-400 flex-shrink-0 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600">
+        <div className="p-4 border-t border-blue-100 flex-shrink-0 bg-gradient-to-r from-blue-100 via-blue-50 to-white">
           <div className="relative">
             <Input 
               value={inputValue} 
               onChange={e => setInputValue(e.target.value)} 
               placeholder={isInputDisabled ? "Please select an option above" : "Type your message here..."} 
-              className="w-full bg-white border-0 rounded-lg pl-12 pr-12 py-3 text-gray-700 placeholder-gray-500 focus:ring-2 focus:ring-white" 
+              className="w-full bg-white border-2 border-blue-100 focus:border-blue-300 focus:ring-2 focus:ring-blue-100 rounded-lg pl-12 pr-12 py-3 text-gray-700 placeholder-gray-500"
               onKeyPress={e => e.key === 'Enter' && !isInputDisabled && sendMessage()}
               disabled={isInputDisabled}
             />
             <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-              <div className="w-6 h-6 bg-blue-600 border border-blue-500 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 bg-white border-2 border-blue-100 rounded-full flex items-center justify-center shadow-sm">
                 <img src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" alt="Amigo" className="w-4 h-4 object-contain" />
               </div>
             </div>
-            <Button onClick={sendMessage} size="sm" className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-700 hover:bg-blue-800 text-white border-0 h-8 w-8 p-0" disabled={!inputValue.trim() || isInputDisabled}>
+            <Button onClick={sendMessage} size="sm" className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white border-0 h-8 w-8 p-0 rounded-lg" disabled={!inputValue.trim() || isInputDisabled}>
               <Send className="w-4 h-4" />
             </Button>
           </div>
