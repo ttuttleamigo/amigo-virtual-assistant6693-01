@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
@@ -38,7 +39,10 @@ const ChatWidget = () => {
   };
 
   const handleSerialNumberSubmit = async (serialNumber: string) => {
-    setChatState('modal');
+    // Don't change state if we're already in sidebar - stay in sidebar
+    if (chatState !== 'sidebar') {
+      setChatState('modal');
+    }
     
     // Add user message with serial number
     const userMessage = {
@@ -186,6 +190,15 @@ const ChatWidget = () => {
     }
   };
 
+  // Separate send message for horizontal chat that doesn't add to conversation history
+  const sendHorizontalMessage = () => {
+    if (!inputValue.trim()) return;
+    
+    // For horizontal chat, we just handle suggested actions, not free text
+    // This prevents messages from horizontal appearing in modal/sidebar
+    setInputValue('');
+  };
+
   // Calculate if input should be disabled
   const isInputDisabled = !allowTextInput || (isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0);
 
@@ -198,7 +211,7 @@ const ChatWidget = () => {
       <HorizontalChat
         inputValue={inputValue}
         setInputValue={setInputValue}
-        sendMessage={sendMessage}
+        sendMessage={sendHorizontalMessage}
         onClose={handleClose}
         onSuggestedAction={handleSuggestedAction}
         onSerialNumberSubmit={handleSerialNumberSubmit}
