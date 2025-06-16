@@ -5,6 +5,7 @@ import { valueShopperFlow } from '@/data/valueShopperFlow';
 import { vistaFlow } from '@/data/vistaFlow';
 import { maxCRFlow } from '@/data/maxCRFlow';
 import { contactAgentFlow } from '@/data/contactAgentFlow';
+import { endConversationFlow } from '@/data/endConversationFlow';
 
 export interface ConversationMessage {
   id: string;
@@ -14,7 +15,7 @@ export interface ConversationMessage {
   isFlowMessage?: boolean;
 }
 
-export type FlowType = 'general' | 'smartShopper' | 'valueShopper' | 'vista' | 'maxCR' | 'contactAgent';
+export type FlowType = 'general' | 'smartShopper' | 'valueShopper' | 'vista' | 'maxCR' | 'contactAgent' | 'endConversation';
 
 const flowMap = {
   general: conversationFlow,
@@ -22,7 +23,8 @@ const flowMap = {
   valueShopper: valueShopperFlow,
   vista: vistaFlow,
   maxCR: maxCRFlow,
-  contactAgent: contactAgentFlow
+  contactAgent: contactAgentFlow,
+  endConversation: endConversationFlow
 };
 
 export const useConversationFlow = () => {
