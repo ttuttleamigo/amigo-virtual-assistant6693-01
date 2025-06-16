@@ -57,16 +57,22 @@ const ChatWidget = () => {
     try {
       const productData = await lookupSerialNumber(serialNumber);
       
-      if (productData) {
+      if (productData && productData.model) {
         setProductInfo(productData);
         
         // Determine the appropriate flow based on the model
         const flowType = determineFlowFromModel(productData.model);
         
-        // Add success message with product info
+        // Create detailed success message with product info
+        let successText = `Found your ${productData.model}!`;
+        if (productData.purchaseDate) {
+          successText += ` (Purchased: ${productData.purchaseDate})`;
+        }
+        successText += ` Let me start the appropriate troubleshooting guide for you.`;
+        
         const successMessage = {
           id: (Date.now() + 2).toString(),
-          text: `Found your ${productData.model}! Let me start the appropriate troubleshooting guide for you.`,
+          text: successText,
           sender: 'agent' as const,
           timestamp: new Date()
         };
@@ -78,7 +84,7 @@ const ChatWidget = () => {
         }, 1000);
         
       } else {
-        // Serial number not found
+        // Serial number not found or no model data
         const errorMessage = {
           id: (Date.now() + 2).toString(),
           text: "I couldn't find that serial number in our system. Please double-check the serial number or contact our support team at 1-800-692-6446 for assistance.",
