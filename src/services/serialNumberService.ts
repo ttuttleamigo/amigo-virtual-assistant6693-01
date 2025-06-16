@@ -1,3 +1,4 @@
+
 import { FlowType } from '@/hooks/useConversationFlow';
 
 export interface ProductInfo {
@@ -31,11 +32,14 @@ export const lookupSerialNumber = async (serialNumber: string): Promise<ProductI
     // Format the serial number according to requirements
     const formattedSerialNumber = formatSerialNumber(serialNumber);
     
-    // Use Vite proxy in development, direct URL in production
+    // NetSuite direct URL
+    const netsuiteUrl = `https://4086366.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=6223&deploy=1&compid=4086366&ns-at=AAEJ7tMQZmDLpO0msvndzhyIbhPPdD7U3fcHROrep1qJ6u8nu-w&snar=${formattedSerialNumber}`;
+    
+    // Use Vite proxy in development, CORS proxy in production
     const isDevelopment = import.meta.env.DEV;
     const apiUrl = isDevelopment 
       ? `/api/netsuite/app/site/hosting/scriptlet.nl?script=6223&deploy=1&compid=4086366&ns-at=AAEJ7tMQZmDLpO0msvndzhyIbhPPdD7U3fcHROrep1qJ6u8nu-w&snar=${formattedSerialNumber}`
-      : `https://4086366.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=6223&deploy=1&compid=4086366&ns-at=AAEJ7tMQZmDLpO0msvndzhyIbhPPdD7U3fcHROrep1qJ6u8nu-w&snar=${formattedSerialNumber}`;
+      : `https://api.allorigins.win/get?url=${encodeURIComponent(netsuiteUrl)}`;
     
     console.log(`Making request to: ${apiUrl}`);
     
@@ -48,7 +52,17 @@ export const lookupSerialNumber = async (serialNumber: string): Promise<ProductI
     });
 
     if (response.ok) {
-      const data = await response.json();
+      let data;
+      
+      if (isDevelopment) {
+        // Direct JSON response in development
+        data = await response.json();
+      } else {
+        // AllOrigins wraps the response in a "contents" field
+        const proxyResponse = await response.json();
+        data = JSON.parse(proxyResponse.contents);
+      }
+      
       console.log('Successfully retrieved data:', data);
       
       // Extract the required fields from the response
