@@ -66,9 +66,9 @@ const ModalChat = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-gradient-to-b from-blue-50 via-blue-25 to-white rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden border border-blue-100">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden border border-blue-100">
         {/* Header */}
-        <div className="px-8 py-6 border-b border-blue-100 bg-gradient-to-b from-white to-blue-50/30 flex-shrink-0">
+        <div className="px-8 py-6 border-b border-blue-100 bg-gradient-to-b from-blue-600 to-blue-500 flex-shrink-0">
           <div className="flex items-center justify-between mb-4">
             <div></div>
             <div className="flex items-center space-x-2">
@@ -76,7 +76,7 @@ const ModalChat = ({
                 variant="ghost"
                 size="sm"
                 onClick={onModalToSidebar}
-                className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 h-10 w-10 p-0 rounded-full"
+                className="text-white hover:text-white hover:bg-white/20 h-10 w-10 p-0 rounded-full"
               >
                 <Minimize2 className="w-5 h-5" />
               </Button>
@@ -84,7 +84,7 @@ const ModalChat = ({
                 variant="ghost"
                 size="sm"
                 onClick={onClose}
-                className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 h-10 w-10 p-0 rounded-full"
+                className="text-white hover:text-white hover:bg-white/20 h-10 w-10 p-0 rounded-full"
               >
                 <X className="w-5 h-5" />
               </Button>
@@ -99,17 +99,17 @@ const ModalChat = ({
                 className="h-12 object-contain"
               />
             </div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-              How can <span className="text-blue-600">Amigo</span> help?
+            <h2 className="text-2xl font-semibold text-white mb-2">
+              How can <span className="text-blue-100">Amigo</span> help?
             </h2>
-            <p className="text-blue-600 text-sm font-medium">
+            <p className="text-blue-100 text-sm font-medium">
               Amigo Support joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
             </p>
           </div>
         </div>
 
         {/* Messages Container - Fixed height with scroll */}
-        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6 min-h-[500px]">
+        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6 min-h-[500px] bg-gradient-to-b from-blue-50 via-blue-25 to-white">
           {conversationHistory.filter(msg => msg.text !== 'typing').slice(-10).map(message => (
             <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`flex items-start space-x-4 max-w-[75%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
