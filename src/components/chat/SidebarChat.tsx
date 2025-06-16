@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,7 +34,16 @@ const SidebarChat = ({
   isTyping = false,
   isInputDisabled = false
 }: SidebarChatProps) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasOnlyButtonOptions = isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversationHistory, isTyping, currentStep]);
 
   return (
     <div className="fixed right-0 top-0 bottom-0 w-96 shadow-2xl z-50 animate-slide-in-right border-l border-gray-200 flex flex-col bg-slate-200">
@@ -96,6 +105,8 @@ const SidebarChat = ({
             ))}
           </div>
         )}
+        
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Input - Fixed at bottom */}

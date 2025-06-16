@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,7 +34,16 @@ const ModalChat = ({
   isTyping = false,
   isInputDisabled = false
 }: ModalChatProps) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasOnlyButtonOptions = isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversationHistory, isTyping, currentStep]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -123,6 +132,8 @@ const ModalChat = ({
               ))}
             </div>
           )}
+
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Input Section */}
