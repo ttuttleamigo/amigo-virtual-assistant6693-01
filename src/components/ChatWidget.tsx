@@ -335,6 +335,7 @@ const ChatWidget = () => {
 
   // Create custom step with buttons when not in flow and expecting input
   const customStep = (!isInFlow && !expectingSerialNumber && !expectingModel && conversationHistory.length > 0) ? {
+    id: 'custom_help_options',
     botMessage: "",
     userOptions: [
       { text: "Enter serial number", nextStep: "" },
