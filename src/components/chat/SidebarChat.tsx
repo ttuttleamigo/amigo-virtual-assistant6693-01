@@ -74,7 +74,7 @@ const SidebarChat = ({
               }`}>
                 <MessageCircle className="w-3 h-3 text-white" />
               </div>
-              <div className={`text-sm p-3 rounded-lg ${
+              <div className={`text-sm p-3 rounded-lg whitespace-pre-wrap ${
                 message.sender === 'user' 
                   ? 'bg-blue-600 text-white' 
                   : 'bg-gray-100 text-gray-800'
@@ -85,7 +85,7 @@ const SidebarChat = ({
           </div>
         ))}
         
-        {isInFlow && currentStep && currentStep.userOptions.length > 0 && (
+        {isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && (
           <div className="space-y-2">
             {currentStep.userOptions.map((option, index) => (
               <Button

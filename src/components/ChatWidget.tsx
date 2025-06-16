@@ -95,6 +95,14 @@ const ChatWidget = () => {
     setChatState('modal');
     if (action === 'Start troubleshooting' && flowType) {
       startFlow(flowType);
+    } else if (action === 'Connect me with support') {
+      const supportMessage = {
+        id: Date.now().toString(),
+        text: "I'll connect you with our support team. You can reach them at 1-800-692-6446 or email support@amigomobility.com",
+        sender: 'agent' as const,
+        timestamp: new Date()
+      };
+      addRegularMessage(supportMessage);
     } else {
       const newMessage = {
         id: Date.now().toString(),
@@ -179,6 +187,9 @@ const ChatWidget = () => {
         sendMessage={sendMessage}
         onClose={handleClose}
         onModalToSidebar={handleModalToSidebar}
+        isInFlow={isInFlow}
+        currentStep={currentStep}
+        onFlowChoice={handleFlowChoice}
       />
     );
   }
@@ -187,7 +198,7 @@ const ChatWidget = () => {
     return (
       <SidebarChat
         conversationHistory={conversationHistory}
-        inputValue={inputValue}
+        inputValue={setInputValue}
         setInputValue={setInputValue}
         sendMessage={sendMessage}
         onClose={handleClose}

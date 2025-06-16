@@ -4,6 +4,7 @@ import { MessageCircle, X, Minimize2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ConversationMessage } from '@/hooks/useConversationFlow';
+import { ConversationStep } from '@/data/conversationFlow';
 
 interface ModalChatProps {
   conversationHistory: ConversationMessage[];
@@ -12,6 +13,9 @@ interface ModalChatProps {
   sendMessage: () => void;
   onClose: () => void;
   onModalToSidebar: () => void;
+  isInFlow?: boolean;
+  currentStep?: ConversationStep | null;
+  onFlowChoice?: (choice: string, nextStep: string) => void;
 }
 
 const ModalChat = ({
@@ -20,7 +24,10 @@ const ModalChat = ({
   setInputValue,
   sendMessage,
   onClose,
-  onModalToSidebar
+  onModalToSidebar,
+  isInFlow = false,
+  currentStep = null,
+  onFlowChoice
 }: ModalChatProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
@@ -59,17 +66,37 @@ const ModalChat = ({
           <p className="text-gray-600 text-sm mb-4">Amigo Assistant joined • {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
           
           <div className="space-y-3 max-h-60 overflow-y-auto">
-            {conversationHistory.slice(-3).map(message => (
-              <div key={message.id} className="flex items-start space-x-2">
-                <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+            {conversationHistory.slice(-5).map(message => (
+              <div key={message.id} className={`flex items-start space-x-2 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  message.sender === 'agent' ? 'bg-gradient-to-r from-blue-600 to-green-500' : 'bg-gray-600'
+                }`}>
                   <MessageCircle className="w-3 h-3 text-white" />
                 </div>
-                <div className="text-left text-gray-700 text-sm">
+                <div className={`text-left text-sm whitespace-pre-wrap ${
+                  message.sender === 'user' ? 'text-blue-700' : 'text-gray-700'
+                }`}>
                   {message.text}
                 </div>
               </div>
             ))}
           </div>
+
+          {isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && onFlowChoice && (
+            <div className="space-y-2 mt-4">
+              {currentStep.userOptions.map((option, index) => (
+                <Button
+                  key={index}
+                  onClick={() => onFlowChoice(option.text, option.nextStep)}
+                  variant="outline"
+                  size="sm"
+                  className="w-full text-left justify-start text-xs border-blue-200 text-blue-700 hover:bg-blue-50 min-h-[2.5rem] h-auto py-2 px-3 whitespace-normal leading-tight"
+                >
+                  {option.text}
+                </Button>
+              ))}
+            </div>
+          )}
           
           <Button
             onClick={onModalToSidebar}
