@@ -1,4 +1,5 @@
 
+
 export const valueShopperFlow = {
   greeting: {
     botMessage: "What seems to be the issue you're experiencing?",
@@ -44,17 +45,27 @@ export const valueShopperFlow = {
     ]
   },
   chargerReplacement: {
-    botMessage: "It appears your charger may need replacement. Here's what to do:\n\n• Contact our parts department at 1-800-692-6446\n• Have your ValueShopper model and serial number ready\n• They can help you order the correct replacement charger\n\nIs there anything else I can help you with today?",
+    botMessage: "It appears your charger may need replacement. Here's what to do:\n\n• Contact our parts department at 1-800-692-6446\n• Have your ValueShopper model and serial number ready\n• They can help you order the correct replacement charger\n\nWould you like additional assistance or have other questions?",
     userOptions: [
       { text: "No, that's all I need", nextStep: "endConversation" },
-      { text: "Yes, I have another question", nextStep: "contactAgent" }
+      { text: "Yes, I have another question", nextStep: "contactAgent" },
+      { text: "Help me find my serial number", nextStep: "serialNumberHelp" }
     ]
   },
   batteryReplacement: {
-    botMessage: "Your batteries may need replacement. ValueShopper batteries typically last 1-2 years depending on usage:\n\n• Contact our parts department at 1-800-692-6446\n• Have your ValueShopper model and serial number ready\n• They can help you order the correct replacement batteries\n\nIs there anything else I can help you with today?",
+    botMessage: "Your batteries may need replacement. ValueShopper batteries typically last 1-2 years depending on usage:\n\n• Contact our parts department at 1-800-692-6446\n• Have your ValueShopper model and serial number ready\n• They can help you order the correct replacement batteries\n\nWould you like additional assistance or have other questions?",
     userOptions: [
       { text: "No, that's all I need", nextStep: "endConversation" },
-      { text: "Yes, I have another question", nextStep: "contactAgent" }
+      { text: "Yes, I have another question", nextStep: "contactAgent" },
+      { text: "Help me find my serial number", nextStep: "serialNumberHelp" }
+    ]
+  },
+  serialNumberHelp: {
+    botMessage: "I can help you find your serial number! Here's where to look:\n\nMost Common Locations:\n• Back of the cart - Look for a white or silver label\n• Bottom/underside - May be on the base or frame\n• Near the battery compartment - Sometimes inside or nearby\n• On the controller - Some models have it there\n\nWhat to look for:\n• A label with \"S/N\" or \"Serial Number\"\n• Usually starts with letters like \"AMI\" followed by numbers\n• Typically 8-12 characters long\n\nDid this help you locate your serial number?",
+    userOptions: [
+      { text: "Yes, I found it", nextStep: "endConversation" },
+      { text: "No, I still can't find it", nextStep: "contactAgent" },
+      { text: "I have another question", nextStep: "contactAgent" }
     ]
   },
   movementIssue: {
@@ -93,3 +104,4 @@ export const valueShopperFlow = {
     ]
   }
 };
+
