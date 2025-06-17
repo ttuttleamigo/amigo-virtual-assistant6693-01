@@ -1,3 +1,4 @@
+
 import { useCallback } from 'react';
 import { botMessages } from '@/data/botMessages';
 import { useChatStateMachine } from './useChatStateMachine';
@@ -75,7 +76,7 @@ export const useChatActions = ({
     }
     
     const newMessage = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random()}`,
       text: inputValue,
       sender: 'user' as const,
       timestamp: new Date()

@@ -1,3 +1,4 @@
+
 import { useReducer, useCallback } from 'react';
 import { FlowType, ConversationMessage } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel } from '@/services/serialNumberService';
@@ -168,7 +169,7 @@ export const useChatStateMachine = (
       console.log('[DEBUG] State Machine: Set UI state to modal');
       
       const userMessage: ConversationMessage = {
-        id: Date.now().toString(),
+        id: `${Date.now()}-${Math.random()}`,
         text: action,
         sender: 'user',
         timestamp: new Date()
@@ -197,7 +198,7 @@ export const useChatStateMachine = (
 
   const handleSerialNumberSubmit = useCallback(async (serialNumber: string) => {
     const userMessage = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random()}`,
       text: `My serial number is: ${serialNumber}`,
       sender: 'user' as const,
       timestamp: new Date()
@@ -251,7 +252,7 @@ export const useChatStateMachine = (
 
   const handleModelSubmit = useCallback((model: string) => {
     const userMessage = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random()}`,
       text: `My model is: ${model}`,
       sender: 'user' as const,
       timestamp: new Date()
@@ -271,7 +272,7 @@ export const useChatStateMachine = (
 
   const handleHelpButtonClick = useCallback((action: string) => {
     const userMessage: ConversationMessage = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random()}`,
       text: action,
       sender: 'user',
       timestamp: new Date()
