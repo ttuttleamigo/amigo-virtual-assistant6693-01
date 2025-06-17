@@ -1,3 +1,4 @@
+
 import { useState, useReducer, useCallback, useEffect } from 'react';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
 import { FlowType } from '@/hooks/useConversationFlow';
@@ -62,8 +63,6 @@ const initialState: ChatState = {
 };
 
 const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
-  console.log('🔥🔥🔥 ChatStateMachine - Action:', action.type, action);
-  
   switch (action.type) {
     case 'SET_UI_STATE':
       return { ...state, uiState: action.uiState };
@@ -72,7 +71,6 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
       return { ...state, previousUIState: action.previousUIState };
     
     case 'SET_MODE':
-      console.log('🔥🔥🔥 ChatStateMachine - Mode change:', state.mode, '->', action.mode);
       return { ...state, mode: action.mode };
     
     case 'SET_INPUT_VALUE':
@@ -85,7 +83,6 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
       return { ...state, productInfo: action.productInfo };
     
     case 'SET_SHOW_INITIAL_BUTTONS':
-      console.log('🔥🔥🔥 ChatStateMachine - Setting showInitialButtons to:', action.show);
       return { 
         ...state, 
         showInitialButtons: action.show,
@@ -130,7 +127,6 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
       };
     
     case 'SHOW_OPTIONS':
-      console.log('🔥🔥🔥 ChatStateMachine - SHOW_OPTIONS: transitioning from horizontal to modal');
       return {
         ...state,
         mode: 'showing_options',
@@ -141,7 +137,6 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
       };
     
     case 'AUTO_SHOW_MAIN_OPTIONS':
-      console.log('🔥🔥🔥 ChatStateMachine - Auto showing main options and transitioning to modal');
       return {
         ...state,
         mode: 'showing_options',
@@ -194,15 +189,10 @@ export const useChatStateMachine = (
 ): ChatStateMachine => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
 
-  // Fixed auto-transition logic - only transition when buttons are actually needed
+  // Auto-transition logic - only transition when buttons are actually needed
   useEffect(() => {
-    console.log('🔥🔥🔥 ChatStateMachine - useEffect triggered');
-    console.log('🔥🔥🔥 UI State:', state.uiState, 'Mode:', state.mode, 'ShowButtons:', state.showInitialButtons);
-    
     // Only handle case where we're showing options but still in horizontal mode
-    // This happens when a conversation flow triggers buttons while in horizontal mode
     if (state.uiState === 'horizontal' && state.showInitialButtons) {
-      console.log('🔥🔥🔥 ChatStateMachine - Buttons needed, transitioning to modal');
       dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
       dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
     }
@@ -210,7 +200,6 @@ export const useChatStateMachine = (
 
   // UI Action Handlers
   const handleChatButtonClick = useCallback(() => {
-    console.log('🔥🔥🔥 ChatStateMachine - Chat button clicked, current state:', state.uiState);
     if (state.previousUIState !== 'horizontal') {
       dispatch({ type: 'SET_UI_STATE', uiState: state.previousUIState });
     } else {
@@ -261,9 +250,6 @@ export const useChatStateMachine = (
 
   // Core Action Handlers
   const handleSuggestedAction = useCallback(async (action: string) => {
-    console.log('🔥🔥🔥 ChatStateMachine - handleSuggestedAction called with:', action);
-    console.log('🔥🔥🔥 ChatStateMachine - Current state before action:', state);
-    
     try {
       // Add user message
       const newMessage = {
@@ -275,7 +261,6 @@ export const useChatStateMachine = (
       addRegularMessage(newMessage);
 
       if (action === 'Enter serial number') {
-        console.log('🔥🔥🔥 Handling: Enter serial number');
         addRegularMessageWithTyping([
           "Great! Please enter your serial number. You can find it on a label, usually on the back or bottom of your cart."
         ], 1000);
@@ -283,7 +268,6 @@ export const useChatStateMachine = (
         dispatch({ type: 'START_SERIAL_COLLECTION' });
         
       } else if (action === 'Enter model name') {
-        console.log('🔥🔥🔥 Handling: Enter model name');
         addRegularMessageWithTyping([
           "Perfect! Please enter your model name. Common models include SmartShopper, ValueShopper, Vista, or Max CR."
         ], 1000);
@@ -291,7 +275,6 @@ export const useChatStateMachine = (
         dispatch({ type: 'START_MODEL_COLLECTION' });
         
       } else if (action === "I'm not sure") {
-        console.log('🔥🔥🔥 Handling: I\'m not sure');
         addRegularMessageWithTyping([
           "No problem! I can help you find the information we need. Here are some options:\n\nI can guide you on where to find your serial number\nI can help you identify your model\nYou can contact our support team at 1-800-692-6446\n\nWhat would you prefer?"
         ], 1500);
@@ -300,7 +283,6 @@ export const useChatStateMachine = (
         dispatch({ type: 'SET_SHOW_INITIAL_BUTTONS', show: false });
         
       } else if (action === 'I need help with an Amigo cart repair') {
-        console.log('🔥🔥🔥 Handling: I need help with an Amigo cart repair');
         addRegularMessageWithTyping([
           "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\nSerial number (found on a label, usually on the back or bottom of your cart)\nModel name (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!"
         ], 1500);
@@ -310,7 +292,6 @@ export const useChatStateMachine = (
         }, 2000);
         
       } else if (action === 'I need to buy a part for an Amigo cart') {
-        console.log('🔥🔥🔥 Handling: I need to buy a part for an Amigo cart');
         addRegularMessageWithTyping([
           "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n\nCall our parts department at 1-800-692-6446\nEmail parts@amigomobility.com\nVisit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
         ], 1500);
@@ -318,24 +299,17 @@ export const useChatStateMachine = (
         dispatch({ type: 'SET_INPUT_DISABLED', disabled: true });
         
       } else if (action === 'I have a different customer service need') {
-        console.log('🔥🔥🔥 Handling: I have a different customer service need');
         setTimeout(() => {
           startFlow('contactAgent');
           dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
         }, 1500);
-      } else {
-        console.warn('🔥🔥🔥 Unhandled action:', action);
       }
-      
-      console.log('🔥🔥🔥 ChatStateMachine - Action handled successfully');
     } catch (error) {
-      console.error('🔥🔥🔥 ChatStateMachine - Error in handleSuggestedAction:', error);
+      console.error('Error in handleSuggestedAction:', error);
     }
   }, [addRegularMessage, addRegularMessageWithTyping, startFlow, state]);
 
   const handleSerialNumberSubmit = useCallback(async (serialNumber: string) => {
-    console.log('🔥 ChatStateMachine - handleSerialNumberSubmit:', serialNumber);
-    
     const userMessage = {
       id: Date.now().toString(),
       text: `My serial number is: ${serialNumber}`,
@@ -392,8 +366,6 @@ export const useChatStateMachine = (
   }, [addRegularMessage, addRegularMessageWithTyping, startFlow]);
 
   const handleModelSubmit = useCallback(async (model: string) => {
-    console.log('🔥 ChatStateMachine - handleModelSubmit:', model);
-    
     const userMessage = {
       id: Date.now().toString(),
       text: `My model is: ${model}`,

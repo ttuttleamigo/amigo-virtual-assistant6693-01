@@ -32,7 +32,6 @@ const ChatWidget = () => {
   );
 
   const handleFlowChoice = (choice: string, nextStep: string) => {
-    console.log('🔥 ChatWidget - handleFlowChoice called:', choice, nextStep);
     handleUserChoice(choice, nextStep);
   };
 
@@ -41,41 +40,26 @@ const ChatWidget = () => {
     resetFlow();
   };
 
-  // Enhanced custom button handler with detailed logging
   const handleCustomButtonClick = (action: string) => {
-    console.log('🔥🔥🔥 ChatWidget - Custom button clicked:', action);
-    console.log('🔥🔥🔥 Current state before click:', chatMachine.state);
-    
-    // Call the state machine's action handler
-    chatMachine.handleSuggestedAction(action).then(() => {
-      console.log('🔥🔥🔥 State after action completed:', chatMachine.state);
-    }).catch((error) => {
-      console.error('🔥🔥🔥 Error in handleSuggestedAction:', error);
-    });
+    chatMachine.handleSuggestedAction(action);
   };
 
   const sendMessage = () => {
-    console.log('🔥 ChatWidget - sendMessage called with input:', chatMachine.state.inputValue);
-    console.log('🔥 Current state:', chatMachine.state);
-    
     if (!chatMachine.state.inputValue.trim()) return;
     
     // Handle different modes
     if (chatMachine.state.mode === 'collecting_serial' && chatMachine.isSerialNumberFormat(chatMachine.state.inputValue)) {
-      console.log('🔥 Processing as serial number');
       chatMachine.handleSerialNumberSubmit(chatMachine.state.inputValue);
       chatMachine.setInputValue('');
       return;
     }
     
     if (chatMachine.state.mode === 'collecting_model' && chatMachine.isModelFormat(chatMachine.state.inputValue)) {
-      console.log('🔥 Processing as model name');
       chatMachine.handleModelSubmit(chatMachine.state.inputValue);
       chatMachine.setInputValue('');
       return;
     }
     
-    console.log('🔥 Processing as regular message');
     const newMessage = {
       id: Date.now().toString(),
       text: chatMachine.state.inputValue,
@@ -148,12 +132,6 @@ const ChatWidget = () => {
   
   const shouldShowFlowStep = isInFlow && currentStep && !isExpectingManualInput;
   const displayStep = customStep || (shouldShowFlowStep ? currentStep : null);
-  
-  console.log('🔥 ChatWidget - State machine mode:', chatMachine.state.mode);
-  console.log('🔥 ChatWidget - showInitialButtons:', chatMachine.state.showInitialButtons);
-  console.log('🔥 ChatWidget - customStep:', customStep);
-  console.log('🔥 ChatWidget - displayStep:', displayStep);
-  console.log('🔥🔥🔥 ChatWidget - Button handler function:', handleCustomButtonClick);
 
   if (chatMachine.state.uiState === 'hidden') {
     return <ChatButton onClick={chatMachine.handleChatButtonClick} />;
