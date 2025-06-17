@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { MessageCircle, X, Minimize2, Send, Download, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,9 @@ import { Input } from '@/components/ui/input';
 import { ConversationMessage } from '@/hooks/useConversationFlow';
 import { ConversationStep } from '@/data/conversationFlow';
 import TypingIndicator from './TypingIndicator';
+import ButtonGroup from '@/components/visual/ButtonGroup';
+import { ButtonConfig } from '@/config/buttonConfig';
+import { visualConfig } from '@/config/visualConfig';
 
 interface ModalChatProps {
   conversationHistory: ConversationMessage[];
@@ -42,6 +46,7 @@ const ModalChat = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasOnlyButtonOptions = currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
   const [streamingPlaceholder, setStreamingPlaceholder] = useState('');
+  const [buttonsVisible, setButtonsVisible] = useState(false);
 
   // Check if we're in serial collection mode
   const isSerialCollectionMode = currentStep?.id === 'serial_collection';
@@ -64,6 +69,19 @@ const ModalChat = ({
     };
   }, [isTyping]);
 
+  // Handle button visibility with proper timing
+  useEffect(() => {
+    if (currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && showButtons) {
+      setButtonsVisible(false);
+      const timer = setTimeout(() => {
+        setButtonsVisible(true);
+      }, visualConfig.timing.buttonDelay);
+      return () => clearTimeout(timer);
+    } else {
+      setButtonsVisible(false);
+    }
+  }, [currentStep, showButtons]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -74,9 +92,9 @@ const ModalChat = ({
 
   const getPlaceholderText = () => {
     if (isTyping) return streamingPlaceholder;
-    if (isSerialCollectionMode) return "Enter your serial number here...";
-    if (isInputDisabled) return "Please select an option above";
-    return "Type your message here...";
+    if (isSerialCollectionMode) return visualConfig.input.serialPlaceholder;
+    if (isInputDisabled) return visualConfig.input.disabledPlaceholder;
+    return visualConfig.input.defaultPlaceholder;
   };
 
   const handleClearHistory = () => {
@@ -87,9 +105,20 @@ const ModalChat = ({
     }
   };
 
-  const handleButtonClick = (option: any, index: number) => {
+  const convertToButtonConfig = (options: any[]): ButtonConfig[] => {
+    return options.map((option, index) => ({
+      id: `option_${index}`,
+      text: option.text.length > visualConfig.buttons.maxTextLength 
+        ? option.text.substring(0, visualConfig.buttons.maxTextLength) + '...'
+        : option.text,
+      action: option.text,
+      variant: option.text.toLowerCase().includes("can't find") || option.text.toLowerCase().includes("help") ? 'help' : 'primary'
+    }));
+  };
+
+  const handleButtonClick = (button: ButtonConfig) => {
     if (onFlowChoice) {
-      onFlowChoice(option.text, option.nextStep);
+      onFlowChoice(button.action, "");
     }
   };
 
@@ -192,17 +221,15 @@ const ModalChat = ({
           {isTyping && <TypingIndicator />}
 
           {currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && onFlowChoice && showButtons && (
-            <div className="space-y-3 mt-6">
-              {currentStep.userOptions.map((option, index) => (
-                <Button
-                  key={index}
-                  onClick={() => handleButtonClick(option, index)}
-                  className="w-full justify-start text-left h-auto p-3 bg-blue-600 hover:bg-blue-700 text-white border-0 whitespace-normal break-words shadow-md rounded-lg font-medium text-sm leading-tight max-w-full"
-                  style={{ wordBreak: 'break-word', hyphens: 'auto' }}
-                >
-                  <span className="block">{option.text}</span>
-                </Button>
-              ))}
+            <div className={`transition-all duration-${visualConfig.animations.fadeInDuration} ${
+              buttonsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+            }`}>
+              <ButtonGroup
+                buttons={convertToButtonConfig(currentStep.userOptions)}
+                onButtonClick={handleButtonClick}
+                disabled={!buttonsVisible}
+                variant="chat"
+              />
             </div>
           )}
 
