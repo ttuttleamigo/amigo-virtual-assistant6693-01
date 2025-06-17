@@ -110,11 +110,10 @@ const ChatWidget = () => {
     chatMachine.setInputValue('');
   };
 
-  // Calculate input disabled state
-  const isInputDisabled = chatMachine.state.isInputDisabled || 
-                         (isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0);
+  // Simplified input disabled state - state machine is single source of truth
+  const isInputDisabled = chatMachine.state.isInputDisabled;
 
-  // Create custom step with buttons when we should show initial buttons
+  // Simplified step display logic - remove conflicting conditions
   const customStep = chatMachine.state.showInitialButtons ? {
     id: 'custom_main_options',
     botMessage: "",
@@ -125,13 +124,8 @@ const ChatWidget = () => {
     ]
   } : null;
 
-  // Fix the display step logic
-  const isExpectingManualInput = (chatMachine.state.mode === 'collecting_serial') || 
-                                 (chatMachine.state.mode === 'collecting_model') || 
-                                 chatMachine.state.showInitialButtons;
-  
-  const shouldShowFlowStep = isInFlow && currentStep && !isExpectingManualInput;
-  const displayStep = customStep || (shouldShowFlowStep ? currentStep : null);
+  // Clear display step logic - either custom step or flow step, not both
+  const displayStep = customStep || (isInFlow && currentStep ? currentStep : null);
 
   if (chatMachine.state.uiState === 'hidden') {
     return <ChatButton onClick={chatMachine.handleChatButtonClick} />;

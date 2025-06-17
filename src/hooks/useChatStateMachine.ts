@@ -85,7 +85,8 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
       return { 
         ...state, 
         showInitialButtons: action.show,
-        isInputDisabled: action.show // Disable input when showing buttons
+        // Clear input disabled when hiding buttons, set when showing
+        isInputDisabled: action.show
       };
     
     case 'SET_TYPING':
@@ -122,7 +123,8 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
         ...state,
         mode: 'processing_lookup',
         isInputDisabled: true,
-        isTyping: true
+        isTyping: true,
+        showInitialButtons: false
       };
     
     case 'SHOW_OPTIONS':
