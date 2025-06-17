@@ -130,20 +130,25 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
       };
     
     case 'SHOW_OPTIONS':
+      console.log('🔥🔥🔥 ChatStateMachine - SHOW_OPTIONS: transitioning from horizontal to modal');
       return {
         ...state,
         mode: 'showing_options',
         showInitialButtons: true,
-        isInputDisabled: true
+        isInputDisabled: true,
+        uiState: state.uiState === 'horizontal' ? 'modal' : state.uiState,
+        previousUIState: state.uiState === 'horizontal' ? 'modal' : state.previousUIState
       };
     
     case 'AUTO_SHOW_MAIN_OPTIONS':
-      console.log('🔥🔥🔥 ChatStateMachine - Auto showing main options');
+      console.log('🔥🔥🔥 ChatStateMachine - Auto showing main options and transitioning to modal');
       return {
         ...state,
         mode: 'showing_options',
         showInitialButtons: true,
-        isInputDisabled: true
+        isInputDisabled: true,
+        uiState: 'modal',
+        previousUIState: 'modal'
       };
     
     case 'ENTER_DIAGNOSTIC_FLOW':
@@ -189,25 +194,33 @@ export const useChatStateMachine = (
 ): ChatStateMachine => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
 
-  // Auto-show main options when transitioning from horizontal to modal/sidebar
+  // Enhanced auto-transition logic - now handles button display scenarios
   useEffect(() => {
     console.log('🔥🔥🔥 ChatStateMachine - useEffect triggered');
     console.log('🔥🔥🔥 UI State:', state.uiState, 'Mode:', state.mode, 'ShowButtons:', state.showInitialButtons);
     
-    if ((state.uiState === 'modal' || state.uiState === 'sidebar') && 
-        state.mode === 'idle' && 
-        !state.showInitialButtons) {
-      console.log('🔥🔥🔥 ChatStateMachine - Auto-triggering main options');
+    // Auto-transition to modal when in horizontal mode and need to show interactive content
+    if (state.uiState === 'horizontal' && state.mode === 'idle' && !state.showInitialButtons) {
+      console.log('🔥🔥🔥 ChatStateMachine - Auto-triggering main options and modal transition');
       dispatch({ type: 'AUTO_SHOW_MAIN_OPTIONS' });
+    }
+    
+    // Also handle case where we're showing options but still in horizontal mode
+    if (state.uiState === 'horizontal' && state.showInitialButtons) {
+      console.log('🔥🔥🔥 ChatStateMachine - Buttons needed, transitioning to modal');
+      dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
+      dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
     }
   }, [state.uiState, state.mode, state.showInitialButtons]);
 
   // UI Action Handlers
   const handleChatButtonClick = useCallback(() => {
+    console.log('🔥🔥🔥 ChatStateMachine - Chat button clicked, current state:', state.uiState);
     if (state.previousUIState !== 'horizontal') {
       dispatch({ type: 'SET_UI_STATE', uiState: state.previousUIState });
     } else {
-      dispatch({ type: 'SET_UI_STATE', uiState: 'horizontal' });
+      dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
+      dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
     }
   }, [state.previousUIState]);
 
