@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import ChatButton from './chat/ChatButton';
@@ -87,6 +86,7 @@ const ChatWidget = () => {
   };
 
   const handleFlowChoice = (choice: string, nextStep: string) => {
+    console.log('🔥 ChatWidget - handleFlowChoice called:', choice, nextStep);
     handleUserChoice(choice, nextStep);
   };
 
@@ -101,9 +101,19 @@ const ChatWidget = () => {
   };
 
   const sendMessage = () => {
+    console.log('🔥 ChatWidget - sendMessage called with input:', inputState.inputValue);
+    console.log('🔥 Current states:');
+    console.log('  - expectingSerialNumber:', inputState.expectingSerialNumber);
+    console.log('  - allowSerialNumberEntry:', inputState.allowSerialNumberEntry);
+    console.log('  - expectingModel:', inputState.expectingModel);
+    console.log('  - allowTextInput:', allowTextInput);
+    console.log('  - isInFlow:', isInFlow);
+    console.log('  - showInitialButtons:', inputState.showInitialButtons);
+    
     if (!inputState.inputValue.trim()) return;
     
     if (inputState.expectingSerialNumber && inputState.allowSerialNumberEntry && isSerialNumberFormat(inputState.inputValue)) {
+      console.log('🔥 Processing as serial number');
       handleSerialNumberSubmit(inputState.inputValue);
       inputState.setInputValue('');
       inputState.setAllowSerialNumberEntry(false);
@@ -111,11 +121,13 @@ const ChatWidget = () => {
     }
     
     if (inputState.expectingModel && isModelFormat(inputState.inputValue)) {
+      console.log('🔥 Processing as model name');
       handleModelSubmit(inputState.inputValue);
       inputState.setInputValue('');
       return;
     }
     
+    console.log('🔥 Processing as regular message');
     const newMessage = {
       id: Date.now().toString(),
       text: inputState.inputValue,
@@ -170,7 +182,18 @@ const ChatWidget = () => {
     inputState.setInputValue('');
   };
 
+  // DEBUG: Log the current state for input calculation
+  console.log('🔥 ChatWidget - Calculating isInputDisabled:');
+  console.log('  - allowTextInput:', allowTextInput);
+  console.log('  - isInFlow:', isInFlow);
+  console.log('  - currentStep:', currentStep);
+  console.log('  - showInitialButtons:', inputState.showInitialButtons);
+  console.log('  - expectingSerialNumber:', inputState.expectingSerialNumber);
+  console.log('  - allowSerialNumberEntry:', inputState.allowSerialNumberEntry);
+
   const isInputDisabled = !allowTextInput || (isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0) || inputState.showInitialButtons;
+  
+  console.log('🔥 ChatWidget - Final isInputDisabled:', isInputDisabled);
 
   // Create custom step with buttons when we should show initial buttons
   const customStep = inputState.showInitialButtons ? {
@@ -184,6 +207,9 @@ const ChatWidget = () => {
   } : null;
 
   const displayStep = customStep || currentStep;
+  
+  console.log('🔥 ChatWidget - displayStep:', displayStep);
+  console.log('🔥 ChatWidget - customStep:', customStep);
 
   if (chatStateManager.chatState === 'hidden') {
     return <ChatButton onClick={chatStateManager.handleChatButtonClick} />;
