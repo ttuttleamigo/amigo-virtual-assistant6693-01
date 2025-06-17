@@ -15,6 +15,7 @@ const ChatWidget = () => {
     activeFlow,
     isTyping,
     allowTextInput,
+    showButtons,
     startFlow, 
     handleUserChoice, 
     resetFlow,
@@ -22,7 +23,8 @@ const ChatWidget = () => {
     addRegularMessageWithTyping,
     setTextInputAllowed,
     downloadTranscript,
-    clearChatHistory
+    clearChatHistory,
+    setShowButtons
   } = useConversationFlow();
 
   const chatMachine = useChatStateMachine(
@@ -45,6 +47,9 @@ const ChatWidget = () => {
   };
 
   const handleCustomButtonClick = (action: string) => {
+    // Immediately hide buttons to prevent double-clicking
+    setShowButtons(false);
+    
     if (action === "Serial number") {
       // Add user message
       const userMessage = {
@@ -63,7 +68,8 @@ const ChatWidget = () => {
       // Start serial number collection mode
       setTimeout(() => {
         chatMachine.dispatch({ type: 'START_SERIAL_COLLECTION' });
-      }, 2000);
+        setShowButtons(true); // Show the "I can't find it" button
+      }, 3000);
       
     } else if (action === "Model name") {
       // Add user message
@@ -83,7 +89,7 @@ const ChatWidget = () => {
       // Start model collection mode
       setTimeout(() => {
         chatMachine.dispatch({ type: 'START_MODEL_COLLECTION' });
-      }, 2500);
+      }, 3000);
       
     } else if (action === "I'm not sure") {
       // Add user message
@@ -103,7 +109,8 @@ const ChatWidget = () => {
       // Show options to help find either
       setTimeout(() => {
         chatMachine.dispatch({ type: 'SHOW_HELP_OPTIONS' });
-      }, 2000);
+        setShowButtons(true);
+      }, 2500);
       
     } else if (action === "I can't find it" || action === "Help find serial number" || action === "Help identify model") {
       chatMachine.handleHelpButtonClick(action);
@@ -217,6 +224,9 @@ const ChatWidget = () => {
   // Clear display step logic - prioritize states in order
   const displayStep = serialCollectionStep || helpOptionsStep || customStep || (isInFlow && currentStep ? currentStep : null);
 
+  // Determine if we should show buttons based on context
+  const shouldShowButtons = isInFlow ? showButtons : chatMachine.state.showInitialButtons || chatMachine.state.showHelpOptions || (chatMachine.state.mode === 'collecting_serial');
+
   // If the state is hidden, show just the button (even though we start in horizontal now)
   if (chatMachine.state.uiState === 'hidden') {
     return <ChatButton onClick={chatMachine.handleChatButtonClick} />;
@@ -253,6 +263,7 @@ const ChatWidget = () => {
         isInputDisabled={isInputDisabled}
         onDownloadTranscript={downloadTranscript}
         onClearHistory={clearChatHistory}
+        showButtons={shouldShowButtons}
       />
     );
   }
@@ -274,6 +285,7 @@ const ChatWidget = () => {
         isInputDisabled={isInputDisabled}
         onDownloadTranscript={downloadTranscript}
         onClearHistory={clearChatHistory}
+        showButtons={shouldShowButtons}
       />
     );
   }

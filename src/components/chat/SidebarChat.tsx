@@ -21,6 +21,7 @@ interface SidebarChatProps {
   isInputDisabled?: boolean;
   onDownloadTranscript?: () => void;
   onClearHistory?: () => void;
+  showButtons?: boolean;
 }
 
 const SidebarChat = ({
@@ -36,7 +37,8 @@ const SidebarChat = ({
   isTyping = false,
   isInputDisabled = false,
   onDownloadTranscript,
-  onClearHistory
+  onClearHistory,
+  showButtons = true
 }: SidebarChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [streamingPlaceholder, setStreamingPlaceholder] = useState('');
@@ -160,15 +162,16 @@ const SidebarChat = ({
         
         {isTyping && <TypingIndicator />}
 
-        {currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && (
-          <div className="space-y-2">
+        {currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && showButtons && (
+          <div className="space-y-2 animate-fade-in">
             {currentStep.userOptions.map((option, index) => (
               <Button 
                 key={index} 
                 onClick={() => handleButtonClick(option, index)}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-md px-4 py-3 text-sm font-medium whitespace-normal text-left leading-relaxed min-h-[44px] h-auto shadow-md"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-md px-3 py-2 text-xs font-medium whitespace-normal text-left leading-tight min-h-[36px] h-auto shadow-md break-words"
+                style={{ wordBreak: 'break-word', hyphens: 'auto' }}
               >
-                {option.text}
+                <span className="block">{option.text}</span>
               </Button>
             ))}
           </div>

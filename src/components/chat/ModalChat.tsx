@@ -21,6 +21,7 @@ interface ModalChatProps {
   isInputDisabled?: boolean;
   onDownloadTranscript?: () => void;
   onClearHistory?: () => void;
+  showButtons?: boolean;
 }
 
 const ModalChat = ({
@@ -36,7 +37,8 @@ const ModalChat = ({
   isTyping = false,
   isInputDisabled = false,
   onDownloadTranscript,
-  onClearHistory
+  onClearHistory,
+  showButtons = true
 }: ModalChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasOnlyButtonOptions = currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
@@ -190,15 +192,16 @@ const ModalChat = ({
 
           {isTyping && <TypingIndicator />}
 
-          {currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && onFlowChoice && (
-            <div className="space-y-3 mt-6">
+          {currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && onFlowChoice && showButtons && (
+            <div className="space-y-3 mt-6 animate-fade-in">
               {currentStep.userOptions.map((option, index) => (
                 <Button
                   key={index}
                   onClick={() => handleButtonClick(option, index)}
-                  className="w-full justify-start text-left h-auto p-4 bg-blue-600 hover:bg-blue-700 text-white border-0 whitespace-normal break-words shadow-md rounded-xl font-medium"
+                  className="w-full justify-start text-left h-auto p-4 bg-blue-600 hover:bg-blue-700 text-white border-0 whitespace-normal break-words shadow-md rounded-xl font-medium text-sm leading-tight max-w-full"
+                  style={{ wordBreak: 'break-word', hyphens: 'auto' }}
                 >
-                  {option.text}
+                  <span className="block">{option.text}</span>
                 </Button>
               ))}
             </div>
