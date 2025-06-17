@@ -26,14 +26,6 @@ export const useChatActions = ({
   const handleCustomButtonClick = useCallback((action: string) => {
     console.log('handleCustomButtonClick called with:', action);
     
-    const userMessage = {
-      id: Date.now().toString(),
-      text: action,
-      sender: 'user' as const,
-      timestamp: new Date()
-    };
-    addRegularMessage(userMessage);
-
     if (action === "Serial number") {
       addRegularMessageWithTyping([botMessages.serialNumberHelp], 1500);
       setTimeout(() => {
@@ -57,7 +49,7 @@ export const useChatActions = ({
     } else {
       chatMachine.handleSuggestedAction(action);
     }
-  }, [addRegularMessage, addRegularMessageWithTyping, chatMachine]);
+  }, [addRegularMessageWithTyping, chatMachine]);
 
   const sendSuggestedAction = useCallback((action: string) => {
     console.log('[DEBUG] Step 1: sendSuggestedAction was called with:', action);
