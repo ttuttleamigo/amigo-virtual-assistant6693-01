@@ -1,95 +1,406 @@
 
 export const smartShopperFlow = {
   greeting: {
-    botMessage: "What seems to be the issue you're experiencing?",
+    id: 'greeting',
+    botMessage: [
+      "Hello, this is the bot.",
+      "What seems to be the issue?"
+    ],
     userOptions: [
-      { text: "My SmartShopper turns on, but the charger will not turn on or the batteries do not hold a charge", nextStep: "chargerIssue" },
-      { text: "My SmartShopper will not move", nextStep: "movementIssue" },
-      { text: "I have a different customer service need", nextStep: "contactAgent" }
+      { text: "My SmartShopper turns on, but the charger will not turn on or the batteries do not hold a charge", nextStep: "step_for_ss_battery_troubleshooting" },
+      { text: "My SmartShopper will not move", nextStep: "step_for_ss_wont_move" }
     ]
   },
-  chargerIssue: {
-    botMessage: "Let's troubleshoot your charging issue. First, let's check the basics:\n\n1. Make sure the charger is plugged into a working wall outlet\n2. Ensure the charger cord is fully inserted into the charging port on your SmartShopper\n3. Check that the charger indicator light is on\n\nIs the charger indicator light on?",
+
+  step_for_ss_battery_troubleshooting: {
+    id: 'step_for_ss_battery_troubleshooting',
+    botMessage: [
+      "Connect the AC cord to the wall outlet.",
+      "For the LED throttle enclosure battery gage: does the battery gage on the throttle enclosure flash for 10-30 seconds before going solid?",
+      "For the LCD throttle enclosure display: does the display show a green rectangle at the bottom with the text \"CHARGING\"?"
+    ],
     userOptions: [
-      { text: "Yes, the charger light is on", nextStep: "chargerLightOn" },
-      { text: "No, the charger light is not on", nextStep: "chargerLightOff" }
+      { text: "Yes", nextStep: "ac_cord_illuminate" },
+      { text: "No", nextStep: "measure_record_voltage" }
     ]
   },
-  chargerLightOn: {
-    botMessage: "Good! Since the charger light is on, let's check the battery connections:\n\n1. Make sure your SmartShopper is turned OFF\n2. Locate the battery compartment (usually under the seat)\n3. Check that all battery connections are tight and secure\n4. Look for any signs of corrosion on the battery terminals\n\nAre the battery connections secure and free of corrosion?",
+
+  ac_cord_illuminate: {
+    id: 'ac_cord_illuminate',
+    botMessage: "Does the AC cord end illuminate?",
     userOptions: [
-      { text: "Yes, connections look good", nextStep: "batteryTest" },
-      { text: "No, I see loose connections or corrosion", nextStep: "batteryMaintenance" }
+      { text: "Yes", nextStep: "charger_not_turning_on" },
+      { text: "No", nextStep: "wall_outlet_replace_cord" }
     ]
   },
-  chargerLightOff: {
-    botMessage: "If the charger light is not on, let's check a few things:\n\n1. Try a different wall outlet\n2. Check if the charger cord is damaged\n3. Make sure the charger plug is fully inserted into the charging port\n\nAfter checking these items, is the charger light now on?",
+
+  wall_outlet_replace_cord: {
+    id: 'wall_outlet_replace_cord',
+    botMessage: [
+      "Check to see if the wall outlet is working. If the wall outlet is working replace the AC cord.",
+      "Do you need to order parts?"
+    ],
     userOptions: [
-      { text: "Yes, the charger light is now on", nextStep: "chargerLightOn" },
-      { text: "No, the charger light is still off", nextStep: "chargerReplacement" }
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
     ]
   },
-  batteryTest: {
-    botMessage: "Let's test the battery performance:\n\n1. Fully charge your SmartShopper (leave it plugged in overnight)\n2. Unplug the charger\n3. Turn on your SmartShopper and check the battery indicator\n4. Try using it for a short distance\n\nHow does the battery perform after a full charge?",
+
+  charger_not_turning_on: {
+    id: 'charger_not_turning_on',
+    botMessage: [
+      "This indicates the charger is not turning on. Let's determine why it won't turn on.",
+      "Check the 11024-IEC Receptacle for continuity."
+    ],
     userOptions: [
-      { text: "Battery works well after charging", nextStep: "resolved" },
-      { text: "Battery drains quickly or won't hold charge", nextStep: "batteryReplacement" }
+      { text: "Yes continuity", nextStep: "measure_voltage" },
+      { text: "No continuity", nextStep: "replace_receptacle" }
     ]
   },
-  batteryMaintenance: {
-    botMessage: "Battery maintenance is important for proper operation:\n\n1. Turn OFF your SmartShopper and unplug the charger\n2. Clean any corrosion from battery terminals with a wire brush\n3. Ensure all connections are tight\n4. If connections are damaged, they may need replacement\n\nAfter cleaning and tightening connections, try charging again. Is the issue resolved?",
+
+  replace_receptacle: {
+    id: 'replace_receptacle',
+    botMessage: [
+      "You need to replace the 11024-Receptacle.",
+      "Do you need to order parts?"
+    ],
     userOptions: [
-      { text: "Yes, it's working now", nextStep: "resolved" },
-      { text: "No, still having issues", nextStep: "batteryReplacement" }
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
     ]
   },
-  chargerReplacement: {
-    botMessage: "It appears your charger may need replacement. Here's what to do:\n\n• Contact our parts department at 1-800-692-6446\n• Have your SmartShopper model and serial number ready\n• They can help you order the correct replacement charger\n\nIs there anything else I can help you with today?",
+
+  measure_voltage: {
+    id: 'measure_voltage',
+    botMessage: "If you have AGM batteries, measure the voltage on both batteries in the series; they must have a minimum combined voltage of 16 volts. If you have a single lithium battery it must have a minimum voltage of 21 volts.",
     userOptions: [
-      { text: "No, that's all I need", nextStep: "endConversation" },
-      { text: "Yes, I have another question", nextStep: "contactAgent" }
+      { text: "Batteries are under voltage", nextStep: "replace_batteries" },
+      { text: "Batteries have the minimum required voltage", nextStep: "check_circuit_breaker" }
     ]
   },
-  batteryReplacement: {
-    botMessage: "Your batteries may need replacement. SmartShopper batteries typically last 1-2 years depending on usage:\n\n• Contact our parts department at 1-800-692-6446\n• Have your SmartShopper model and serial number ready\n• They can help you order the correct replacement batteries\n\nIs there anything else I can help you with today?",
+
+  replace_batteries: {
+    id: 'replace_batteries',
+    botMessage: [
+      "You need to replace the battery/batteries.",
+      "Do you need to order parts?"
+    ],
     userOptions: [
-      { text: "No, that's all I need", nextStep: "endConversation" },
-      { text: "Yes, I have another question", nextStep: "contactAgent" }
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
     ]
   },
-  movementIssue: {
-    botMessage: "Let's troubleshoot why your SmartShopper won't move:\n\n1. Check that your SmartShopper is turned ON\n2. Ensure the battery is charged (check the battery indicator)\n3. Make sure you're not in freewheel mode\n4. Check that the speed control is set above the minimum\n\nAfter checking these items, does your SmartShopper move?",
+
+  check_circuit_breaker: {
+    id: 'check_circuit_breaker',
+    botMessage: "Check continuity of circuit breaker",
     userOptions: [
-      { text: "Yes, it's moving now", nextStep: "resolved" },
-      { text: "No, it still won't move", nextStep: "movementTroubleshooting" }
+      { text: "No continuity", nextStep: "replace_breaker" },
+      { text: "Yes continuity", nextStep: "check_dc_wiring" }
     ]
   },
-  movementTroubleshooting: {
-    botMessage: "Let's try a few more troubleshooting steps:\n\n1. Check if the seat is properly positioned and locked\n2. Ensure the joystick is centered and not stuck\n3. Look for any error codes on the display\n4. Try turning the unit OFF and ON again\n\nAre you seeing any error codes or unusual behavior?",
+
+  replace_breaker: {
+    id: 'replace_breaker',
+    botMessage: [
+      "You need to replace the 12038-Circuit Breaker.",
+      "Do you need to order parts?"
+    ],
     userOptions: [
-      { text: "No error codes, but still won't move", nextStep: "technicalSupport" },
-      { text: "I see error codes on the display", nextStep: "errorCodes" }
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
     ]
   },
-  errorCodes: {
-    botMessage: "Error codes can help diagnose the issue. Common SmartShopper error codes include:\n\n• Code 1: Battery low\n• Code 2: Motor issue\n• Code 3: Controller problem\n\nFor specific error code diagnosis and repair, please contact our technical support team at 1-800-692-6446. They can provide detailed troubleshooting based on your specific error code.\n\nIs there anything else I can help you with?",
+
+  check_dc_wiring: {
+    id: 'check_dc_wiring',
+    botMessage: "Check to make sure the Dc wiring connections from the charger are securely connected to the controller.",
     userOptions: [
-      { text: "No, I'll call technical support", nextStep: "endConversation" },
-      { text: "Yes, I have another question", nextStep: "contactAgent" }
+      { text: "The Dc wiring harness is bad", nextStep: "replace_harness_or_charger" },
+      { text: "Dc wiring is good", nextStep: "replace_battery_charger" }
     ]
   },
-  technicalSupport: {
-    botMessage: "For advanced troubleshooting of movement issues, I recommend contacting our technical support team:\n\n• Call 1-800-692-6446\n• Have your SmartShopper model and serial number ready\n• They can walk you through advanced diagnostics\n\nIs there anything else I can help you with today?",
+
+  replace_harness_or_charger: {
+    id: 'replace_harness_or_charger',
+    botMessage: [
+      "You need to replace the 7852.10-Dc Cable Harness if the battery charger has a removable Dc cable. If the Dc cable is hard-wired into the charger, you must replace the battery charger.",
+      "Do you need to order parts?"
+    ],
     userOptions: [
-      { text: "No, that's all I need", nextStep: "endConversation" },
-      { text: "Yes, I have another question", nextStep: "contactAgent" }
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
     ]
   },
-  resolved: {
-    botMessage: "Great! I'm glad we could resolve the issue. For future reference:\n\n• Charge your SmartShopper regularly\n• Keep battery terminals clean\n• Store in a dry location\n\nIs there anything else I can help you with today?",
+
+  replace_battery_charger: {
+    id: 'replace_battery_charger',
+    botMessage: [
+      "The battery charger needs to be replaced.",
+      "Do you need to order parts?"
+    ],
     userOptions: [
-      { text: "No, that's all I need", nextStep: "endConversation" },
-      { text: "Yes, I have another question", nextStep: "contactAgent" }
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
     ]
+  },
+
+  measure_record_voltage: {
+    id: 'measure_record_voltage',
+    botMessage: [
+      "With the Ac cord disconnected from the wall outlet, measure and record the voltage on the batteries. Now connect the Ac cord to the wall outlet, and let the batteries charge for two minutes.",
+      "Now measure the battery voltage, has it increased to a minimum of 25 volts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "replace_batteries_charged" },
+      { text: "No", nextStep: "replace_battery_charger_voltage" }
+    ]
+  },
+
+  replace_batteries_charged: {
+    id: 'replace_batteries_charged',
+    botMessage: [
+      "The charger is operating properly, but the battery/batteries have reached a state where they can no longer hold a charge and should be replaced.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  replace_battery_charger_voltage: {
+    id: 'replace_battery_charger_voltage',
+    botMessage: [
+      "The battery charger is not outputting the proper Dc voltage. You need to replace the battery charger.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  step_for_ss_wont_move: {
+    id: 'step_for_ss_wont_move',
+    botMessage: "Does the battery display or diagnostic code window on the throttle enclosure illuminate when the SmartShopper is turned on?",
+    userOptions: [
+      { text: "Yes", nextStep: "numeral_diagnostic_window" },
+      { text: "No", nextStep: "remove_seat_test_voltage" }
+    ]
+  },
+
+  numeral_diagnostic_window: {
+    id: 'numeral_diagnostic_window',
+    botMessage: "Is there a numeral illuminated in the diagnostic window?",
+    userOptions: [
+      { text: "Yes", nextStep: "diagnostic_issue" },
+      { text: "No", nextStep: "sit_on_ss_try_again" }
+    ]
+  },
+
+  sit_on_ss_try_again: {
+    id: 'sit_on_ss_try_again',
+    botMessage: "There must be a rider activating the safety switch in the seat. Sit in the seat and make sure the switch is has been depressed. Does the SmartShopper now move?",
+    userOptions: [
+      { text: "Yes", nextStep: "problem_resolved" },
+      { text: "No", nextStep: "disconnect_seat_switch" }
+    ]
+  },
+
+  problem_resolved: {
+    id: 'problem_resolved',
+    botMessage: "Your problem has been resolved.",
+    userOptions: [
+      { text: "Continue", nextStep: "end_conversation" }
+    ]
+  },
+
+  disconnect_seat_switch: {
+    id: 'disconnect_seat_switch',
+    botMessage: "Disconnect the seat switch wires from the seat switch. Jumper across the two seat switch wires you just disconnected to complete the circuit. Does the SmartShopper move now when the throttle lever is operated?",
+    userOptions: [
+      { text: "Yes", nextStep: "replace_seat_switch" },
+      { text: "No", nextStep: "replace_wire_harness" }
+    ]
+  },
+
+  replace_seat_switch: {
+    id: 'replace_seat_switch',
+    botMessage: [
+      "You need to replace the seat switch.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  replace_wire_harness: {
+    id: 'replace_wire_harness',
+    botMessage: [
+      "You need to replace the 10947-18 Pin Wire Harness.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  diagnostic_issue: {
+    id: 'diagnostic_issue',
+    botMessage: "This indicates the motor controller has detected a diagnostic issue. Is the numeral in the diagnostic window a \"2\"? Usually, the numeral \"2\" displays because the brake circuit is open.",
+    userOptions: [
+      { text: "Yes", nextStep: "freewheel_lever" },
+      { text: "No", nextStep: "diagnostic_code_guide" }
+    ]
+  },
+
+  freewheel_lever: {
+    id: 'freewheel_lever',
+    botMessage: [
+      "Turn the SmartShopper off, reach through the slot in the cover next to the right rear wheel and make sure the freewheel lever is pulled all the way to the rear in the Normal position.",
+      "Turn the key back on. If the \"2\" code is still illuminated, check the continuity on the brake wiring. If the wires are good, you need to replace the 11087-Brake.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  diagnostic_code_guide: {
+    id: 'diagnostic_code_guide',
+    botMessage: "Use the Amigo Diagnostic Code Guide to review the next steps to take to replace the component causing the diagnostic code.",
+    userOptions: [
+      { text: "Continue", nextStep: "end_conversation" }
+    ]
+  },
+
+  remove_seat_test_voltage: {
+    id: 'remove_seat_test_voltage',
+    botMessage: "Remove the seat assembly and rear cover. Test the battery voltage at the controller. Is the battery voltage greater than 21 volts?",
+    userOptions: [
+      { text: "Yes", nextStep: "check_wiring" },
+      { text: "No", nextStep: "recharge_batteries" }
+    ]
+  },
+
+  recharge_batteries: {
+    id: 'recharge_batteries',
+    botMessage: [
+      "Recharge the battery/batteries and allow them to go through a completed charge cycle. If cart still has no power, replace the 12168.20-Battery (Lithium) or 8967-Batteries (AGM Type).",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  check_wiring: {
+    id: 'check_wiring',
+    botMessage: "Check to ensure all wiring connections from the handle enclosure and controller are securely connected. Measure the battery voltage at the controller, it should match the battery voltage measured at the battery/batteries. Are the wires secure and battery at the controller? Does the voltage at the controller's battery/batteries match the voltage at the battery?",
+    userOptions: [
+      { text: "Yes", nextStep: "substitute_parts" },
+      { text: "No", nextStep: "check_circuit_breaker_continuity" }
+    ]
+  },
+
+  substitute_parts: {
+    id: 'substitute_parts',
+    botMessage: [
+      "Substitute the following parts in order until the faulty part is found:",
+      "1. Handle cable",
+      "2. Throttle Assembly",
+      "3. Controller",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  check_circuit_breaker_continuity: {
+    id: 'check_circuit_breaker_continuity',
+    botMessage: "Check to make sure there is continuity through the 12038-Circuit Breaker. Is there continuity?",
+    userOptions: [
+      { text: "Yes", nextStep: "replace_battery_wire" },
+      { text: "No", nextStep: "replace_breaker_continuity" }
+    ]
+  },
+
+  replace_battery_wire: {
+    id: 'replace_battery_wire',
+    botMessage: [
+      "You need to replace the battery wire asms with a 9853-Battery Wire Disconnect kit.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  replace_breaker_continuity: {
+    id: 'replace_breaker_continuity',
+    botMessage: [
+      "You need to replace the 12038-Circuit Breaker.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  order_parts: {
+    id: 'order_parts',
+    botMessage: "I'll connect you with our parts department to help you order the required components. They'll make sure you get exactly what you need for your SmartShopper!",
+    userOptions: [
+      { text: "Continue", nextStep: "contact_agent" }
+    ]
+  },
+
+  contact_agent: {
+    id: 'contact_agent',
+    botMessage: "I'll connect you with our parts department to help you order the required components. They'll make sure you get exactly what you need for your SmartShopper!",
+    userOptions: []
+  },
+
+  end_conversation: {
+    id: 'end_conversation',
+    botMessage: "Did I solve your issue today?",
+    userOptions: [
+      { text: "Yes", nextStep: "glad_to_help_anything_else" },
+      { text: "No", nextStep: "sorry_talk_to_agent" }
+    ]
+  },
+
+  glad_to_help_anything_else: {
+    id: 'glad_to_help_anything_else',
+    botMessage: "Glad I could help! Are there other service needs you need help you with today?",
+    userOptions: [
+      { text: "Yes", nextStep: "contact_agent" },
+      { text: "No", nextStep: "thank_you_goodbye" }
+    ]
+  },
+
+  sorry_talk_to_agent: {
+    id: 'sorry_talk_to_agent',
+    botMessage: "Sorry I couldn't help. Looks like you need to talk to a factory service agent.",
+    userOptions: [
+      { text: "Continue", nextStep: "contact_agent" }
+    ]
+  },
+
+  thank_you_goodbye: {
+    id: 'thank_you_goodbye',
+    botMessage: "Thank you for choosing Amigo for your mobility needs. Have a great day!",
+    userOptions: [],
+    isEndStep: true
   }
 };

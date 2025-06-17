@@ -1,107 +1,403 @@
 
-
 export const valueShopperFlow = {
   greeting: {
-    botMessage: "What seems to be the issue you're experiencing?",
+    id: 'greeting',
+    botMessage: [
+      "Hello, this is the bot.",
+      "What seems to be the issue?"
+    ],
     userOptions: [
-      { text: "My ValueShopper turns on, but the charger will not turn on or the batteries do not hold a charge", nextStep: "chargerIssue" },
-      { text: "My ValueShopper will not move", nextStep: "movementIssue" },
-      { text: "I have a different customer service need", nextStep: "contactAgent" }
+      { text: "My ValueShopper turns on, but the charger will not turn on or the batteries do not hold a charge", nextStep: "step_for_vs_battery_troubleshooting" },
+      { text: "My ValueShopper will not move", nextStep: "step_for_vs_wont_move" },
+      { text: "I have a different customer service need", nextStep: "contact_agent" }
     ]
   },
-  chargerIssue: {
-    botMessage: "Let's troubleshoot your charging issue. First, let's check the basics:\n\n1. Make sure the charger is plugged into a working wall outlet\n2. Ensure the charger cord is fully inserted into the charging port on your ValueShopper\n3. Check that the charger indicator light is on\n\nIs the charger indicator light on?",
+
+  step_for_vs_battery_troubleshooting: {
+    id: 'step_for_vs_battery_troubleshooting',
+    botMessage: [
+      "Connect the AC cord to the wall outlet.",
+      "For the throttle enclosure LED battery gage: does the battery gage on the throttle enclosure flash for 10-30 seconds before going solid?",
+      "For the throttle enclosure LCD display: does the display show a green rectangle at the bottom with the text \"CHARGING\"?"
+    ],
     userOptions: [
-      { text: "Yes, the charger light is on", nextStep: "chargerLightOn" },
-      { text: "No, the charger light is not on", nextStep: "chargerLightOff" }
+      { text: "Yes", nextStep: "measure_record_battery_voltage" },
+      { text: "No", nextStep: "ac_cord_illuminate" }
     ]
   },
-  chargerLightOn: {
-    botMessage: "Good! Since the charger light is on, let's check the battery connections:\n\n1. Make sure your ValueShopper is turned OFF\n2. Locate the battery compartment (usually under the seat)\n3. Check that all battery connections are tight and secure\n4. Look for any signs of corrosion on the battery terminals\n\nAre the battery connections secure and free of corrosion?",
+
+  measure_record_battery_voltage: {
+    id: 'measure_record_battery_voltage',
+    botMessage: [
+      "With the AC cord disconnected from the wall outlet, measure and record the voltage on the batteries. Now connect the AC cord into the wall outlet and let the batteries charge for two minutes.",
+      "Now measure the battery voltage, has it increased to a minimum of 25 volts?"
+    ],
     userOptions: [
-      { text: "Yes, connections look good", nextStep: "batteryTest" },
-      { text: "No, I see loose connections or corrosion", nextStep: "batteryMaintenance" }
+      { text: "Yes", nextStep: "replace_batteries" },
+      { text: "No", nextStep: "replace_battery_charger" }
     ]
   },
-  chargerLightOff: {
-    botMessage: "If the charger light is not on, let's check a few things:\n\n1. Try a different wall outlet\n2. Check if the charger cord is damaged\n3. Make sure the charger plug is fully inserted into the charging port\n\nAfter checking these items, is the charger light now on?",
+
+  replace_batteries: {
+    id: 'replace_batteries',
+    botMessage: [
+      "The charger is operating properly, but the battery/batteries have reached a state where they can no longer hold a charge and should be replaced.",
+      "Do you need to order parts?"
+    ],
     userOptions: [
-      { text: "Yes, the charger light is now on", nextStep: "chargerLightOn" },
-      { text: "No, the charger light is still off", nextStep: "chargerReplacement" }
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
     ]
   },
-  batteryTest: {
-    botMessage: "Let's test the battery performance:\n\n1. Fully charge your ValueShopper (leave it plugged in overnight)\n2. Unplug the charger\n3. Turn on your ValueShopper and check the battery indicator\n4. Try using it for a short distance\n\nHow does the battery perform after a full charge?",
+
+  replace_battery_charger: {
+    id: 'replace_battery_charger',
+    botMessage: [
+      "The battery charger is not outputting the proper DC voltage, so you need to replace the battery charger.",
+      "Do you need to order parts?"
+    ],
     userOptions: [
-      { text: "Battery works well after charging", nextStep: "resolved" },
-      { text: "Battery drains quickly or won't hold charge", nextStep: "batteryReplacement" }
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
     ]
   },
-  batteryMaintenance: {
-    botMessage: "Battery maintenance is important for proper operation:\n\n1. Turn OFF your ValueShopper and unplug the charger\n2. Clean any corrosion from battery terminals with a wire brush\n3. Ensure all connections are tight\n4. If connections are damaged, they may need replacement\n\nAfter cleaning and tightening connections, try charging again. Is the issue resolved?",
+
+  ac_cord_illuminate: {
+    id: 'ac_cord_illuminate',
+    botMessage: "Does the AC cord end illuminate?",
     userOptions: [
-      { text: "Yes, it's working now", nextStep: "resolved" },
-      { text: "No, still having issues", nextStep: "batteryReplacement" }
+      { text: "Yes", nextStep: "charger_not_turning_on" },
+      { text: "No", nextStep: "wall_outlet_ac_replacement" }
     ]
   },
-  chargerReplacement: {
-    botMessage: "It appears your charger may need replacement. Here's what to do:\n\n• Contact our parts department at 1-800-692-6446\n• Have your ValueShopper model and serial number ready\n• They can help you order the correct replacement charger\n\nWould you like additional assistance or have other questions?",
+
+  wall_outlet_ac_replacement: {
+    id: 'wall_outlet_ac_replacement',
+    botMessage: [
+      "Check to see if the wall outlet is working. If the wall outlet is working replace the Ac cord.",
+      "Do you need to order parts?"
+    ],
     userOptions: [
-      { text: "No, that's all I need", nextStep: "endConversation" },
-      { text: "Yes, I have another question", nextStep: "contactAgent" },
-      { text: "Help me find my serial number", nextStep: "serialNumberHelp" }
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
     ]
   },
-  batteryReplacement: {
-    botMessage: "Your batteries may need replacement. ValueShopper batteries typically last 1-2 years depending on usage:\n\n• Contact our parts department at 1-800-692-6446\n• Have your ValueShopper model and serial number ready\n• They can help you order the correct replacement batteries\n\nWould you like additional assistance or have other questions?",
+
+  charger_not_turning_on: {
+    id: 'charger_not_turning_on',
+    botMessage: [
+      "This indicates the charger is not turning on. Let's determine why it will not turn on.",
+      "Check the 11024-IEC Receptacle for continuity."
+    ],
     userOptions: [
-      { text: "No, that's all I need", nextStep: "endConversation" },
-      { text: "Yes, I have another question", nextStep: "contactAgent" },
-      { text: "Help me find my serial number", nextStep: "serialNumberHelp" }
+      { text: "No continuity", nextStep: "replace_11024_receptacle" },
+      { text: "Yes continuity", nextStep: "measure_the_voltage" }
     ]
   },
-  serialNumberHelp: {
-    botMessage: "I can help you find your serial number! Here's where to look:\n\nMost Common Locations:\n• Back of the cart - Look for a white or silver label\n• Bottom/underside - May be on the base or frame\n• Near the battery compartment - Sometimes inside or nearby\n• On the controller - Some models have it there\n\nWhat to look for:\n• A label with \"S/N\" or \"Serial Number\"\n• Usually starts with letters like \"AMI\" followed by numbers\n• Typically 8-12 characters long\n\nDid this help you locate your serial number?",
+
+  replace_11024_receptacle: {
+    id: 'replace_11024_receptacle',
+    botMessage: [
+      "Replace the 11024-Receptacle.",
+      "Do you need to order parts?"
+    ],
     userOptions: [
-      { text: "Yes, I found it", nextStep: "endConversation" },
-      { text: "No, I still can't find it", nextStep: "contactAgent" },
-      { text: "I have another question", nextStep: "contactAgent" }
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
     ]
   },
-  movementIssue: {
-    botMessage: "Let's troubleshoot why your ValueShopper won't move:\n\n1. Check that your ValueShopper is turned ON\n2. Ensure the battery is charged (check the battery indicator)\n3. Make sure you're not in freewheel mode\n4. Check that the speed control is set above the minimum\n\nAfter checking these items, does your ValueShopper move?",
+
+  measure_the_voltage: {
+    id: 'measure_the_voltage',
+    botMessage: "If you have AGM batteries, measure the voltage on both batteries in series. They must have a minimum combined voltage of 16 volts. If you have a single lithium battery, it must have a minimum voltage of 21 volts.",
     userOptions: [
-      { text: "Yes, it's moving now", nextStep: "resolved" },
-      { text: "No, it still won't move", nextStep: "movementTroubleshooting" }
+      { text: "Batteries under voltage", nextStep: "replace_batteries_under" },
+      { text: "Batteries have minimum required voltage", nextStep: "check_circuit_breaker" }
     ]
   },
-  movementTroubleshooting: {
-    botMessage: "Let's try a few more troubleshooting steps:\n\n1. Check if the seat is properly positioned and locked\n2. Ensure the joystick is centered and not stuck\n3. Look for any error codes on the display\n4. Try turning the unit OFF and ON again\n\nAre you seeing any error codes or unusual behavior?",
+
+  replace_batteries_under: {
+    id: 'replace_batteries_under',
+    botMessage: [
+      "Replace the battery/batteries.",
+      "Do you need to order parts?"
+    ],
     userOptions: [
-      { text: "No error codes, but still won't move", nextStep: "technicalSupport" },
-      { text: "I see error codes on the display", nextStep: "errorCodes" }
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
     ]
   },
-  errorCodes: {
-    botMessage: "Error codes can help diagnose the issue. Common ValueShopper error codes include:\n\n• Code 1: Battery low\n• Code 2: Motor issue\n• Code 3: Controller problem\n\nFor specific error code diagnosis and repair, please contact our technical support team at 1-800-692-6446. They can provide detailed troubleshooting based on your specific error code.\n\nIs there anything else I can help you with?",
+
+  check_circuit_breaker: {
+    id: 'check_circuit_breaker',
+    botMessage: "Check the continuity of circuit breaker.",
     userOptions: [
-      { text: "No, I'll call technical support", nextStep: "endConversation" },
-      { text: "Yes, I have another question", nextStep: "contactAgent" }
+      { text: "Yes continuity", nextStep: "dc_wiring_connections" },
+      { text: "No continuity", nextStep: "replace_circuit_breaker" }
     ]
   },
-  technicalSupport: {
-    botMessage: "For advanced troubleshooting of movement issues, I recommend contacting our technical support team:\n\n• Call 1-800-692-6446\n• Have your ValueShopper model and serial number ready\n• They can walk you through advanced diagnostics\n\nIs there anything else I can help you with today?",
+
+  replace_circuit_breaker: {
+    id: 'replace_circuit_breaker',
+    botMessage: [
+      "Replace the 12038-Circuit Breaker.",
+      "Do you need to order parts?"
+    ],
     userOptions: [
-      { text: "No, that's all I need", nextStep: "endConversation" },
-      { text: "Yes, I have another question", nextStep: "contactAgent" }
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
     ]
   },
-  resolved: {
-    botMessage: "Great! I'm glad we could resolve the issue. For future reference:\n\n• Charge your ValueShopper regularly\n• Keep battery terminals clean\n• Store in a dry location\n\nIs there anything else I can help you with today?",
+
+  dc_wiring_connections: {
+    id: 'dc_wiring_connections',
+    botMessage: "Check to make sure the Dc wiring connections from the charger are securely connected to the controller.",
     userOptions: [
-      { text: "No, that's all I need", nextStep: "endConversation" },
-      { text: "Yes, I have another question", nextStep: "contactAgent" }
+      { text: "The Dc wiring harness is bad", nextStep: "replace_harness" },
+      { text: "The Dc wiring is good", nextStep: "replace_battery_charger_wiring" }
     ]
+  },
+
+  replace_harness: {
+    id: 'replace_harness',
+    botMessage: [
+      "Replace the 7852.10-Dc Cable Harness if the battery charger has a removable Dc cable. If the Dc cable is hard-wired into the charger, you must replace the battery charger.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  replace_battery_charger_wiring: {
+    id: 'replace_battery_charger_wiring',
+    botMessage: [
+      "The battery charger needs to be replaced.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  step_for_vs_wont_move: {
+    id: 'step_for_vs_wont_move',
+    botMessage: "Does the battery display or diagnostic code window on the throttle enclosure illuminate when the ValueShopper is turned on?",
+    userOptions: [
+      { text: "Yes", nextStep: "numeral_diagnostic_window" },
+      { text: "No", nextStep: "test_battery_voltage" }
+    ]
+  },
+
+  numeral_diagnostic_window: {
+    id: 'numeral_diagnostic_window',
+    botMessage: "Is there a numeral illuminated in the diagnostic window?",
+    userOptions: [
+      { text: "Yes", nextStep: "diagnose_code_guide" },
+      { text: "No", nextStep: "sit_on_vs_seat" }
+    ]
+  },
+
+  diagnose_code_guide: {
+    id: 'diagnose_code_guide',
+    botMessage: "This indicates the motor controller has detected a diagnostic issue. Use the Amigo Diagnostic Code Guide to review the next steps to take to replace the component causing the diagnostic code.",
+    userOptions: [
+      { text: "Continue", nextStep: "end_conversation" }
+    ]
+  },
+
+  sit_on_vs_seat: {
+    id: 'sit_on_vs_seat',
+    botMessage: "There must be a rider activating the safety switch in the seat. Sit in the seat and make sure the switch has been depressed. Does the ValueShopper now move?",
+    userOptions: [
+      { text: "Yes", nextStep: "problem_resolved" },
+      { text: "No", nextStep: "disconnect_seat_switch_wires" }
+    ]
+  },
+
+  problem_resolved: {
+    id: 'problem_resolved',
+    botMessage: "Your problem has been resolved.",
+    userOptions: [
+      { text: "Continue", nextStep: "end_conversation" }
+    ]
+  },
+
+  disconnect_seat_switch_wires: {
+    id: 'disconnect_seat_switch_wires',
+    botMessage: "Disconnect the seat switch wires from the seat switch. Jumper across the two-seat switch wires you just disconnected to complete the circuit. Does the ValueShopper move now when the throttle lever is operated?",
+    userOptions: [
+      { text: "Yes", nextStep: "replace_seat_switch" },
+      { text: "No", nextStep: "replace_wire_harness_vs" }
+    ]
+  },
+
+  replace_seat_switch: {
+    id: 'replace_seat_switch',
+    botMessage: [
+      "You need to replace the seat switch.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  replace_wire_harness_vs: {
+    id: 'replace_wire_harness_vs',
+    botMessage: [
+      "You need to replace the 10947-18 Pin Wire Harness.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  test_battery_voltage: {
+    id: 'test_battery_voltage',
+    botMessage: "Remove the seat assembly and rear cover. Test the battery voltage at the controller. Is the battery voltage greater than 21 volts?",
+    userOptions: [
+      { text: "Yes", nextStep: "check_wiring_connections" },
+      { text: "No", nextStep: "recharge_battery_or_replace" }
+    ]
+  },
+
+  recharge_battery_or_replace: {
+    id: 'recharge_battery_or_replace',
+    botMessage: "Recharge the battery/batteries and allow them to go through a completed charge cycle. If the cart still has no power replace the 12168.20-Battery (Lithium) or 8967-Batteries (AGM Type).",
+    userOptions: [
+      { text: "I need to order new batteries", nextStep: "order_parts" },
+      { text: "Continue", nextStep: "end_conversation" }
+    ]
+  },
+
+  check_wiring_connections: {
+    id: 'check_wiring_connections',
+    botMessage: "Check to ensure all wiring connections from the handle enclosure and controller are securely connected. Measure the battery voltage at the controller; it should match the battery voltage measured at the battery/batteries. Are the wires secure and battery at the controller? Does the voltage at the controller battery/batteries match the voltage at the battery/batteries?",
+    userOptions: [
+      { text: "Yes", nextStep: "check_label_motor_controller" },
+      { text: "No", nextStep: "check_continuity_thru_breaker" }
+    ]
+  },
+
+  check_continuity_thru_breaker: {
+    id: 'check_continuity_thru_breaker',
+    botMessage: "Check to make sure there is continuity through the 12038-Circuit Breaker. Is there continuity?",
+    userOptions: [
+      { text: "Yes", nextStep: "replace_battery_wire" },
+      { text: "No", nextStep: "replace_circuit_breaker_vs" }
+    ]
+  },
+
+  replace_circuit_breaker_vs: {
+    id: 'replace_circuit_breaker_vs',
+    botMessage: [
+      "Replace the 12038-Circuit Breaker.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  replace_battery_wire: {
+    id: 'replace_battery_wire',
+    botMessage: [
+      "Replace the Battery wire asms with a 9853-Battery Wire Disconnect kit.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  check_label_motor_controller: {
+    id: 'check_label_motor_controller',
+    botMessage: "Check the part number label on the motor controller. Does it match the type of handle the cart has (LED or LCD)?",
+    userOptions: [
+      { text: "Yes", nextStep: "substitute_parts" },
+      { text: "No", nextStep: "replace_motor_controller" }
+    ]
+  },
+
+  substitute_parts: {
+    id: 'substitute_parts',
+    botMessage: [
+      "Substitute the following parts in order until the faulty part is found:",
+      "1. Handle cable",
+      "2. Throttle assembly",
+      "3. Controller",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  replace_motor_controller: {
+    id: 'replace_motor_controller',
+    botMessage: [
+      "Replace the motor controller with the correct version.",
+      "Do you need to order parts?"
+    ],
+    userOptions: [
+      { text: "Yes", nextStep: "order_parts" },
+      { text: "No", nextStep: "end_conversation" }
+    ]
+  },
+
+  order_parts: {
+    id: 'order_parts',
+    botMessage: "I'll connect you with our parts department to help you order the required components. They'll make sure you get exactly what you need for your ValueShopper!",
+    userOptions: [
+      { text: "Continue", nextStep: "contact_agent" }
+    ]
+  },
+
+  contact_agent: {
+    id: 'contact_agent',
+    botMessage: "I'll connect you with our parts department to help you order the required components. They'll make sure you get exactly what you need for your ValueShopper!",
+    userOptions: []
+  },
+
+  end_conversation: {
+    id: 'end_conversation',
+    botMessage: "Did I solve your issue today?",
+    userOptions: [
+      { text: "Yes", nextStep: "glad_to_help_anything_else" },
+      { text: "No", nextStep: "sorry_talk_to_agent" }
+    ]
+  },
+
+  glad_to_help_anything_else: {
+    id: 'glad_to_help_anything_else',
+    botMessage: "Glad I could help! Are there other service needs you need help you with today?",
+    userOptions: [
+      { text: "Yes", nextStep: "contact_agent" },
+      { text: "No", nextStep: "thank_you_goodbye" }
+    ]
+  },
+
+  sorry_talk_to_agent: {
+    id: 'sorry_talk_to_agent',
+    botMessage: "Sorry I couldn't help. Looks like you need to talk to a factory service agent.",
+    userOptions: [
+      { text: "Continue", nextStep: "contact_agent" }
+    ]
+  },
+
+  thank_you_goodbye: {
+    id: 'thank_you_goodbye',
+    botMessage: "Thank you for choosing Amigo for your mobility needs. Have a great day!",
+    userOptions: [],
+    isEndStep: true
   }
 };
-

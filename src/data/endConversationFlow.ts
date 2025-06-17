@@ -4,7 +4,7 @@ import { ConversationFlow } from './conversationFlow';
 export const endConversationFlow: ConversationFlow = {
   end_conversation: {
     id: 'end_conversation',
-    botMessage: "Were we able to resolve your issue today?",
+    botMessage: "Did I solve your issue today?",
     userOptions: [
       { text: "Yes", nextStep: "glad_to_help_anything_else" },
       { text: "No", nextStep: "sorry_talk_to_agent" }
@@ -13,7 +13,7 @@ export const endConversationFlow: ConversationFlow = {
 
   glad_to_help_anything_else: {
     id: 'glad_to_help_anything_else',
-    botMessage: "Wonderful! I'm so glad we could help you with your Amigo cart. Is there anything else I can assist you with today?",
+    botMessage: "Glad I could help! Are there other service needs you need help you with today?",
     userOptions: [
       { text: "Yes", nextStep: "contact_agent" },
       { text: "No", nextStep: "thank_you_goodbye" }
@@ -22,7 +22,7 @@ export const endConversationFlow: ConversationFlow = {
 
   sorry_talk_to_agent: {
     id: 'sorry_talk_to_agent',
-    botMessage: "I'm sorry I wasn't able to fully resolve your issue. Let me connect you with one of our service agents who can provide additional assistance.",
+    botMessage: "Sorry I couldn't help. Looks like you need to talk to a factory service agent.",
     userOptions: [
       { text: "Continue", nextStep: "contact_agent" }
     ]
@@ -36,7 +36,7 @@ export const endConversationFlow: ConversationFlow = {
 
   thank_you_goodbye: {
     id: 'thank_you_goodbye',
-    botMessage: "It's been my pleasure helping you today! Thank you for choosing Amigo for your mobility needs. Have a wonderful day!",
+    botMessage: "Thank you for choosing Amigo for your mobility needs. Have a great day!",
     userOptions: [],
     isEndStep: true
   }
