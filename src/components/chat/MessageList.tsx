@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { MessageCircle } from 'lucide-react';
 import { ConversationMessage } from '@/hooks/useConversationFlow';
@@ -74,6 +75,12 @@ const MessageList = ({
     }
   };
 
+  // Move console.log outside of JSX to prevent the void/ReactNode error
+  const buttonGroupToRender = currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && onFlowChoice && showButtons;
+  if (buttonGroupToRender) {
+    console.log('[DEBUG] MessageList: About to render ButtonGroup with buttons:', convertToButtonConfig(currentStep.userOptions));
+  }
+
   return (
     <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6 min-h-[500px] bg-gradient-to-b from-blue-50 via-blue-25 to-white">
       {/* Title and timestamp - now in scrollable area */}
@@ -115,11 +122,10 @@ const MessageList = ({
 
       {isTyping && <TypingIndicator />}
 
-      {currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && onFlowChoice && showButtons && (
+      {buttonGroupToRender && (
         <div className={`transition-all duration-${visualConfig.animations.fadeInDuration} ${
           buttonsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
         }`}>
-          {console.log('[DEBUG] MessageList: About to render ButtonGroup with buttons:', convertToButtonConfig(currentStep.userOptions))}
           <ButtonGroup
             buttons={convertToButtonConfig(currentStep.userOptions)}
             onButtonClick={handleButtonClick}
