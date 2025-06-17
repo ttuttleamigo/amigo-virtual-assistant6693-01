@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useChat } from '@/hooks/useChat';
+import { useChatContext } from '@/context/ChatContext';
 import ChatButton from './chat/ChatButton';
 import HorizontalChat from './chat/HorizontalChat';
 import ModalChat from './chat/ModalChat';
@@ -8,7 +8,7 @@ import SidebarChat from './chat/SidebarChat';
 
 const ChatWidget = () => {
   const {
-    uiState,
+    view,
     inputValue,
     setInputValue,
     sendMessage,
@@ -16,15 +16,15 @@ const ChatWidget = () => {
     sendSerialNumber,
     handleClose,
     handleChatButtonClick
-  } = useChat();
+  } = useChatContext();
 
-  // If the state is hidden, show just the button
-  if (uiState === 'hidden') {
+  // If the view is closed, show just the button
+  if (view === 'closed') {
     return <ChatButton onClick={handleChatButtonClick} />;
   }
 
-  // If the state is horizontal, show the horizontal chat
-  if (uiState === 'horizontal') {
+  // If the view is horizontal, show the horizontal chat
+  if (view === 'horizontal') {
     return (
       <HorizontalChat
         inputValue={inputValue}
@@ -37,13 +37,13 @@ const ChatWidget = () => {
     );
   }
 
-  // If the state is modal, show the modal chat
-  if (uiState === 'modal') {
+  // If the view is modal, show the modal chat
+  if (view === 'modal') {
     return <ModalChat />;
   }
 
-  // If the state is sidebar, show the sidebar chat
-  if (uiState === 'sidebar') {
+  // If the view is sidebar, show the sidebar chat
+  if (view === 'sidebar') {
     return <SidebarChat />;
   }
 
