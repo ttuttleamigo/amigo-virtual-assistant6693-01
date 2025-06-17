@@ -7,8 +7,6 @@ import ModalChat from './chat/ModalChat';
 import SidebarChat from './chat/SidebarChat';
 
 const ChatWidget = () => {
-  console.log('[DEBUG] ChatWidget component rendering');
-  
   const {
     view,
     inputValue,
@@ -16,15 +14,13 @@ const ChatWidget = () => {
     sendMessage,
     sendSuggestedAction,
     sendSerialNumber,
-    handleClose,
-    handleChatButtonClick
+    closeChat,
+    openHorizontal
   } = useChatContext();
-
-  console.log('[DEBUG] ChatWidget context values - view:', view, 'inputValue:', inputValue);
 
   // If the view is closed, show just the button
   if (view === 'closed') {
-    return <ChatButton onClick={handleChatButtonClick} />;
+    return <ChatButton onClick={openHorizontal} />;
   }
 
   // If the view is horizontal, show the horizontal chat
@@ -34,7 +30,7 @@ const ChatWidget = () => {
         inputValue={inputValue}
         setInputValue={setInputValue}
         sendMessage={sendMessage}
-        onClose={handleClose}
+        onClose={closeChat}
         onSuggestedAction={sendSuggestedAction}
         onSerialNumberSubmit={sendSerialNumber}
       />

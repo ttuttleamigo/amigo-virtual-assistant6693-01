@@ -1,136 +1,236 @@
 
-import { useConversationFlow } from './useConversationFlow';
-import { useChatStateMachine } from './useChatStateMachine';
-import { useChatViewManager } from './useChatViewManager';
-import { useChatActions } from './useChatActions';
-import { FlowType } from './useConversationFlow';
+import { useState, useCallback, useReducer } from 'react';
 import { botMessages } from '@/data/botMessages';
 
+// Define the possible views our chat can be in
+type ChatView = 'closed' | 'horizontal' | 'modal' | 'sidebar';
+
+// Define the shape of a message
+interface Message {
+  id: string;
+  text: string;
+  sender: 'user' | 'agent';
+  timestamp: Date;
+}
+
+// Define the shape of our state
+interface ChatState {
+  view: ChatView;
+  conversationHistory: Message[];
+  isTyping: boolean;
+  currentStep: any;
+}
+
+// Define the actions our reducer can handle
+type ChatAction =
+  | { type: 'SET_VIEW'; view: ChatView }
+  | { type: 'ADD_MESSAGE'; message: Message }
+  | { type: 'ADD_MESSAGES'; messages: Message[] }
+  | { type: 'SET_TYPING'; isTyping: boolean }
+  | { type: 'SET_CURRENT_STEP'; step: any }
+  | { type: 'CLEAR_HISTORY' };
+
+// The reducer function is a pure function that calculates the next state
+const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
+  switch (action.type) {
+    case 'SET_VIEW':
+      return { ...state, view: action.view };
+    case 'ADD_MESSAGE':
+      return { ...state, conversationHistory: [...state.conversationHistory, action.message] };
+    case 'ADD_MESSAGES':
+      return { ...state, isTyping: false, conversationHistory: [...state.conversationHistory, ...action.messages] };
+    case 'SET_TYPING':
+      return { ...state, isTyping: action.isTyping };
+    case 'SET_CURRENT_STEP':
+      return { ...state, isTyping: false, currentStep: action.step };
+    case 'CLEAR_HISTORY':
+      return { ...state, conversationHistory: [] };
+    default:
+      return state;
+  }
+};
+
+const initialState: ChatState = {
+  view: 'horizontal',
+  conversationHistory: [],
+  isTyping: false,
+  currentStep: null,
+};
+
+// The final, stable hook
 export const useChat = () => {
-  console.log('[DEBUG] useChat hook called');
-  
-  // 1. Call all our specialized hooks
-  const conversationFlow = useConversationFlow();
-  console.log('[DEBUG] conversationFlow initialized');
-  
-  const viewManager = useChatViewManager('horizontal'); // Start with horizontal view
-  console.log('[DEBUG] viewManager initialized with view:', viewManager.view);
+  const [state, dispatch] = useReducer(chatReducer, initialState);
+  const [inputValue, setInputValue] = useState('');
 
-  const chatMachine = useChatStateMachine(
-    conversationFlow.addRegularMessage,
-    conversationFlow.addRegularMessageWithTyping,
-    (flowType: FlowType) => {
-      chatMachine.dispatch({ type: 'SET_TYPING', isTyping: false });
-      conversationFlow.startFlow(flowType);
-    },
-    viewManager.setViewMode
-  );
-  console.log('[DEBUG] chatMachine initialized');
+  const sendMessage = useCallback(() => {
+    if (!inputValue.trim()) return;
 
-  const actions = useChatActions({
-    chatMachine,
-    addRegularMessage: conversationFlow.addRegularMessage,
-    addRegularMessageWithTyping: conversationFlow.addRegularMessageWithTyping,
-    startFlow: conversationFlow.startFlow,
-    setView: viewManager.setViewMode,
-    isInFlow: conversationFlow.isInFlow,
-  });
-  console.log('[DEBUG] actions initialized');
+    const userMessage: Message = {
+      id: `${Date.now()}-${Math.random()}`,
+      text: inputValue,
+      sender: 'user',
+      timestamp: new Date(),
+    };
 
-  // 2. Handle any logic that combines state from multiple hooks
-  const isTypingIndicatorVisible = conversationFlow.isInFlow 
-    ? conversationFlow.isTyping 
-    : (conversationFlow.isTyping || chatMachine.state.isTyping);
-
-  // Create proper custom step with matching bot message when showing initial buttons
-  console.log('[DEBUG] useChat: Checking for customStep - showInitialButtons:', chatMachine.state.showInitialButtons);
-  const customStep = chatMachine.state.showInitialButtons ? {
-    id: 'custom_serial_options',
-    botMessage: botMessages.initialOptionsPrompt,
-    userOptions: [
-      { text: "Serial number", nextStep: "" },
-      { text: "Model name", nextStep: "" },
-      { text: "I'm not sure", nextStep: "" }
-    ]
-  } : null;
-  console.log('[DEBUG] useChat: customStep created:', customStep);
-
-  // Handle serial number collection state with custom buttons
-  console.log('[DEBUG] useChat: Checking for serialCollectionStep - mode:', chatMachine.state.mode);
-  const serialCollectionStep = chatMachine.state.mode === 'collecting_serial' ? {
-    id: 'serial_collection',
-    botMessage: botMessages.serialNumberHelp,
-    userOptions: [
-      { text: "I can't find it", nextStep: "" }
-    ]
-  } : null;
-  console.log('[DEBUG] useChat: serialCollectionStep created:', serialCollectionStep);
-
-  // Handle help options state
-  console.log('[DEBUG] useChat: Checking for helpOptionsStep - showHelpOptions:', chatMachine.state.showHelpOptions);
-  const helpOptionsStep = chatMachine.state.showHelpOptions ? {
-    id: 'help_options',
-    botMessage: botMessages.imNotSureResponse,
-    userOptions: [
-      { text: "Help find serial number", nextStep: "" },
-      { text: "Help identify model", nextStep: "" }
-    ]
-  } : null;
-  console.log('[DEBUG] useChat: helpOptionsStep created:', helpOptionsStep);
-
-  // Clear display step logic - prioritize states in order
-  const displayStep = serialCollectionStep || helpOptionsStep || customStep || (conversationFlow.isInFlow && conversationFlow.currentStep ? conversationFlow.currentStep : null);
-  console.log('[DEBUG] useChat: Final displayStep determined:', displayStep);
-
-  // Visual components determine their own button visibility based on context
-  const shouldShowButtons = Boolean(displayStep?.userOptions?.length);
-  console.log('[DEBUG] useChat: shouldShowButtons:', shouldShowButtons);
-
-  const handleFlowChoice = customStep ? actions.handleCustomButtonClick : conversationFlow.handleUserChoice;
-
-  const handleClose = () => {
-    chatMachine.handleClose();
-    conversationFlow.resetFlow();
-    viewManager.closeChat();
-  };
-
-  // 3. Return a single, unified API for the UI to use
-  const chatState = {
-    // State
-    conversationHistory: conversationFlow.conversationHistory,
-    inputValue: chatMachine.state.inputValue,
-    isTyping: isTypingIndicatorVisible,
-    isInputDisabled: chatMachine.state.isInputDisabled,
-    currentStep: displayStep,
-    shouldShowButtons,
+    dispatch({ type: 'ADD_MESSAGE', message: userMessage });
+    setInputValue('');
     
-    // View state and handlers
-    view: viewManager.view,
-    openModal: viewManager.openModal,
-    openSidebar: viewManager.openSidebar,
-    openHorizontal: viewManager.openHorizontal,
-    closeChat: viewManager.closeChat,
+    // Set typing and prepare bot response
+    dispatch({ type: 'SET_TYPING', isTyping: true });
+    
+    setTimeout(() => {
+      const botResponse: Message = {
+        id: `${Date.now() + 1}-${Math.random()}`,
+        text: "Thank you for your message. How can I help you today?",
+        sender: 'agent',
+        timestamp: new Date(),
+      };
+      dispatch({ type: 'ADD_MESSAGE', message: botResponse });
+      dispatch({ type: 'SET_TYPING', isTyping: false });
+    }, 1000);
+  }, [inputValue]);
+
+  const sendSuggestedAction = useCallback((actionText: string) => {
+    const userMessage: Message = {
+      id: `${Date.now()}-${Math.random()}`,
+      text: actionText,
+      sender: 'user',
+      timestamp: new Date(),
+    };
+    
+    const botResponse: Message = {
+      id: `${Date.now() + 1}-${Math.random()}`,
+      text: botMessages.initialOptionsPrompt,
+      sender: 'agent',
+      timestamp: new Date(),
+    };
+
+    dispatch({ type: 'ADD_MESSAGES', messages: [userMessage, botResponse] });
+    dispatch({ type: 'SET_CURRENT_STEP', step: { 
+      id: 'custom_serial_options',
+      userOptions: [
+        { text: "Serial number", nextStep: "" },
+        { text: "Model name", nextStep: "" },
+        { text: "I'm not sure", nextStep: "" }
+      ]
+    }});
+
+    dispatch({ type: 'SET_VIEW', view: 'modal' });
+  }, []);
+
+  const sendSerialNumber = useCallback((serialNumber: string) => {
+    const userMessage: Message = {
+      id: `${Date.now()}-${Math.random()}`,
+      text: serialNumber,
+      sender: 'user',
+      timestamp: new Date(),
+    };
+
+    dispatch({ type: 'ADD_MESSAGE', message: userMessage });
+    dispatch({ type: 'SET_TYPING', isTyping: true });
+
+    setTimeout(() => {
+      const botResponse: Message = {
+        id: `${Date.now() + 1}-${Math.random()}`,
+        text: "Thank you for providing the serial number. Let me look that up for you.",
+        sender: 'agent',
+        timestamp: new Date(),
+      };
+      dispatch({ type: 'ADD_MESSAGE', message: botResponse });
+      dispatch({ type: 'SET_TYPING', isTyping: false });
+    }, 1500);
+  }, []);
+
+  const handleFlowChoice = useCallback((choice: string) => {
+    const userMessage: Message = {
+      id: `${Date.now()}-${Math.random()}`,
+      text: choice,
+      sender: 'user',
+      timestamp: new Date(),
+    };
+
+    dispatch({ type: 'ADD_MESSAGE', message: userMessage });
+    dispatch({ type: 'SET_CURRENT_STEP', step: null });
+    dispatch({ type: 'SET_TYPING', isTyping: true });
+
+    setTimeout(() => {
+      let responseText = "Thank you for your selection.";
+      if (choice.includes("Serial number")) {
+        responseText = botMessages.serialNumberHelp;
+        dispatch({ type: 'SET_CURRENT_STEP', step: {
+          id: 'serial_collection',
+          userOptions: [{ text: "I can't find it", nextStep: "" }]
+        }});
+      }
+
+      const botResponse: Message = {
+        id: `${Date.now() + 1}-${Math.random()}`,
+        text: responseText,
+        sender: 'agent',
+        timestamp: new Date(),
+      };
+      dispatch({ type: 'ADD_MESSAGE', message: botResponse });
+      dispatch({ type: 'SET_TYPING', isTyping: false });
+    }, 1000);
+  }, []);
+
+  const closeChat = useCallback(() => {
+    dispatch({ type: 'SET_VIEW', view: 'closed' });
+  }, []);
+
+  const openSidebar = useCallback(() => {
+    dispatch({ type: 'SET_VIEW', view: 'sidebar' });
+  }, []);
+
+  const openModal = useCallback(() => {
+    dispatch({ type: 'SET_VIEW', view: 'modal' });
+  }, []);
+
+  const openHorizontal = useCallback(() => {
+    dispatch({ type: 'SET_VIEW', view: 'horizontal' });
+  }, []);
+
+  const downloadTranscript = useCallback(() => {
+    const transcript = state.conversationHistory
+      .map(msg => `${msg.sender}: ${msg.text}`)
+      .join('\n');
+    
+    const blob = new Blob([transcript], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'chat-transcript.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [state.conversationHistory]);
+
+  const clearChatHistory = useCallback(() => {
+    dispatch({ type: 'CLEAR_HISTORY' });
+    dispatch({ type: 'SET_CURRENT_STEP', step: null });
+  }, []);
+
+  // Return a clean API for the UI to use
+  return {
+    // State
+    view: state.view,
+    conversationHistory: state.conversationHistory,
+    isTyping: state.isTyping,
+    currentStep: state.currentStep,
+    inputValue,
+    isInputDisabled: state.isTyping,
+    shouldShowButtons: Boolean(state.currentStep?.userOptions?.length),
     
     // Actions
-    setInputValue: chatMachine.setInputValue,
-    sendMessage: actions.sendMessage,
-    sendSuggestedAction: actions.sendSuggestedAction,
-    sendSerialNumber: actions.sendSerialNumber,
-    handleClose,
+    setInputValue,
+    sendMessage,
+    sendSuggestedAction,
+    sendSerialNumber,
     handleFlowChoice,
-    handleModalToSidebar: chatMachine.handleModalToSidebar,
-    handleMinimize: chatMachine.handleMinimize,
-    handleChatButtonClick: () => viewManager.setViewMode('horizontal'),
-    downloadTranscript: conversationFlow.downloadTranscript,
-    clearChatHistory: conversationFlow.clearChatHistory,
-    
-    // Flow state
-    isInFlow: conversationFlow.isInFlow,
-    activeFlow: conversationFlow.activeFlow
+    closeChat,
+    openSidebar,
+    openModal,
+    openHorizontal,
+    downloadTranscript,
+    clearChatHistory,
   };
-
-  console.log('[DEBUG] useChat returning state with view:', chatState.view);
-  console.log('[DEBUG] useChat returning chatState.currentStep:', chatState.currentStep);
-  console.log('[DEBUG] useChat returning chatState.shouldShowButtons:', chatState.shouldShowButtons);
-  return chatState;
 };

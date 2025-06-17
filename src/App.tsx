@@ -21,17 +21,15 @@ function App() {
   
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter> {/* 1. Router is now a high-level provider. */}
+      <BrowserRouter>
         <TooltipProvider>
-          <ChatProvider> {/* 2. Chat state is now safely inside the router. */}
+          <ChatProvider>
             <Toaster />
             <Sonner />
             
-            {/* The Routes component now renders stable component references. */}
             <Routes>
               <Route path="/" element={<IndexPage />} />
               <Route path="/widget" element={<WidgetPage />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
 
