@@ -1,4 +1,3 @@
-
 import { useCallback } from 'react';
 import { botMessages } from '@/data/botMessages';
 import { useChatStateMachine } from './useChatStateMachine';
@@ -61,7 +60,7 @@ export const useChatActions = ({
   }, [addRegularMessage, addRegularMessageWithTyping, chatMachine]);
 
   const sendSuggestedAction = useCallback((action: string) => {
-    console.log('sendSuggestedAction called with:', action);
+    console.log('[DEBUG] Step 1: sendSuggestedAction was called with:', action);
     handleCustomButtonClick(action);
     setView('modal');
   }, [handleCustomButtonClick, setView]);
