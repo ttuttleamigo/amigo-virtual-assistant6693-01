@@ -252,7 +252,49 @@ export const useChatStateMachine = (
       };
       addRegularMessage(newMessage);
 
-      // Transition to modal for all actions
+      // Handle the specific button actions
+      if (action === 'Enter serial number') {
+        addRegularMessageWithTyping([
+          "Please enter your cart's serial number. You can find it on a label, usually on the back or bottom of your cart:"
+        ], 1000);
+        
+        dispatch({ type: 'START_SERIAL_COLLECTION' });
+        return;
+      }
+      
+      if (action === 'Enter model name') {
+        addRegularMessageWithTyping([
+          "Please enter your cart's model name (like SmartShopper, ValueShopper, Vista, or Max CR):"
+        ], 1000);
+        
+        dispatch({ type: 'START_MODEL_COLLECTION' });
+        return;
+      }
+      
+      if (action === "I'm not sure") {
+        addRegularMessageWithTyping([
+          "No problem! I can help you find your cart information. Here's what to look for:",
+          "",
+          "**Serial Number:**",
+          "• Check the back of your cart for a white or silver label",
+          "• Look on the bottom/underside of the cart",
+          "• Sometimes found near the battery compartment",
+          "• Usually starts with letters like 'AMI' followed by numbers",
+          "",
+          "**Model Name:**",
+          "• Often printed on the same label as the serial number",
+          "• Look for names like SmartShopper, ValueShopper, Vista, or Max CR",
+          "• May also be on your paperwork or receipt",
+          "",
+          "Once you find either piece of information, just type it here and I'll help you with troubleshooting!"
+        ], 1500);
+        
+        dispatch({ type: 'SET_MODE', mode: 'idle' });
+        dispatch({ type: 'SET_INPUT_DISABLED', disabled: false });
+        return;
+      }
+
+      // Transition to modal for main action options
       console.log('Transitioning to modal state');
       dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
       dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
