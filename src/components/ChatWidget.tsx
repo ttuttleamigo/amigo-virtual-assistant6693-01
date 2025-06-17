@@ -45,11 +45,11 @@ const ChatWidget = () => {
   };
 
   const handleCustomButtonClick = (action: string) => {
-    if (action === "Enter serial number") {
+    if (action === "Serial number") {
       // Add user message
       const userMessage = {
         id: Date.now().toString(),
-        text: "Enter serial number",
+        text: "Serial number",
         sender: 'user' as const,
         timestamp: new Date()
       };
@@ -65,11 +65,11 @@ const ChatWidget = () => {
         chatMachine.dispatch({ type: 'START_SERIAL_COLLECTION' });
       }, 2000);
       
-    } else if (action === "Enter model name") {
+    } else if (action === "Model name") {
       // Add user message
       const userMessage = {
         id: Date.now().toString(),
-        text: "Enter model name",
+        text: "Model name",
         sender: 'user' as const,
         timestamp: new Date()
       };
