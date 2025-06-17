@@ -1,3 +1,4 @@
+
 import { useReducer, useCallback } from 'react';
 import { FlowType, ConversationMessage } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel } from '@/services/serialNumberService';
@@ -13,6 +14,7 @@ interface ChatState {
   showInitialButtons: boolean;
   showHelpOptions: boolean;
   isInputDisabled: boolean;
+  productInfo?: any;
 }
 
 type ChatAction = 
@@ -25,7 +27,10 @@ type ChatAction =
   | { type: 'START_SERIAL_COLLECTION' }
   | { type: 'START_MODEL_COLLECTION' }
   | { type: 'RESET_STATE' }
-  | { type: 'SET_INPUT_DISABLED'; disabled: boolean };
+  | { type: 'SET_INPUT_DISABLED'; disabled: boolean }
+  | { type: 'START_PROCESSING' }
+  | { type: 'SET_PRODUCT_INFO'; productInfo: any }
+  | { type: 'ENTER_DIAGNOSTIC_FLOW' };
 
 const initialState: ChatState = {
   uiState: 'horizontal',
@@ -87,6 +92,12 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
       };
     case 'SET_INPUT_DISABLED':
       return { ...state, isInputDisabled: action.disabled };
+    case 'START_PROCESSING':
+      return { ...state, isTyping: true };
+    case 'SET_PRODUCT_INFO':
+      return { ...state, productInfo: action.productInfo };
+    case 'ENTER_DIAGNOSTIC_FLOW':
+      return { ...state, mode: 'idle', isTyping: false };
     default:
       return state;
   }
@@ -115,6 +126,23 @@ export const useChatStateMachine = (
            cleanText.includes('max cr') ||
            cleanText.includes('maxcr') ||
            /^(ss|vs|v|mc)\d*$/.test(cleanText);
+  }, []);
+
+  // UI State handlers
+  const handleChatButtonClick = useCallback(() => {
+    dispatch({ type: 'SET_UI_STATE', state: 'horizontal' });
+  }, []);
+
+  const handleClose = useCallback(() => {
+    dispatch({ type: 'SET_UI_STATE', state: 'hidden' });
+  }, []);
+
+  const handleModalToSidebar = useCallback(() => {
+    dispatch({ type: 'SET_UI_STATE', state: 'sidebar' });
+  }, []);
+
+  const handleMinimize = useCallback(() => {
+    dispatch({ type: 'SET_UI_STATE', state: 'horizontal' });
   }, []);
 
   // Fixed action handler to properly route to correct flows
@@ -230,7 +258,7 @@ export const useChatStateMachine = (
 
     if (action === "Help find serial number" || action === "I can't find it") {
       addRegularMessageWithTyping([
-        "I can help you find your serial number! Here's where to look:\n\nMost Common Locations:\n• Back of the cart - Look for a white or silver label\n• Bottom/underside - May be on the base or frame\n• Near the battery compartment - Sometimes inside or nearby\n• On the controller - Some models have it there\n\nWhat to look for:\n• A label with \"S/N\" or \"Serial Number\"\n• Usually starts with letters like \"AMI\" followed by numbers\n• Typically 8-12 characters long\n\nOnce you find it, just type it here and I'll look up your cart information!"
+        "I can help you find your serial number! Here's where to look:\n\n**Most Common Locations:**\n• **Back of the cart** - Look for a white or silver label\n• **Bottom/underside** - May be on the base or frame\n• **Near the battery compartment** - Sometimes inside or nearby\n• **On the controller** - Some models have it there\n\n**What to look for:**\n• A label with \"S/N\" or \"Serial Number\"\n• Usually starts with letters like \"AMI\" followed by numbers\n• Typically 8-12 characters long\n\n**Still can't find it?**\n• Check your purchase receipt or documentation\n• Look for any stickers or labels with numbers and letters\n• Try different angles and lighting\n\nOnce you find it, please enter it below and I'll look up your cart information!"
       ], 1500);
       
       setTimeout(() => {
@@ -261,6 +289,10 @@ export const useChatStateMachine = (
     handleSerialNumberSubmit,
     handleModelSubmit,
     handleHelpButtonClick,
+    handleChatButtonClick,
+    handleClose,
+    handleModalToSidebar,
+    handleMinimize,
     setInputValue
   };
 };

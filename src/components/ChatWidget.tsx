@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { useChatStateMachine } from '@/hooks/useChatStateMachine';
@@ -56,7 +57,7 @@ const ChatWidget = () => {
 
       // Show serial number entry guidance
       addRegularMessageWithTyping([
-        "Please enter your cart's serial number. You can find it on a label, usually on the back or bottom of your cart:"
+        "Please enter your cart's serial number below. You can find it on a label, usually on the back or bottom of your cart.\n\n**Where to look:**\n• Back of the cart (white or silver label)\n• Bottom/underside of the frame\n• Near the battery compartment\n• On the controller\n\n**What to look for:**\n• Label with \"S/N\" or \"Serial Number\"\n• Usually starts with \"AMI\" + numbers\n• Typically 8-12 characters long"
       ], 1500);
 
       // Start serial number collection mode
@@ -76,7 +77,7 @@ const ChatWidget = () => {
 
       // Show model entry guidance
       addRegularMessageWithTyping([
-        "I can help you identify your Amigo model! Here are our main models:\n\nSmartShopper - Compact shopping cart, great for stores\nValueShopper - Affordable option with essential features\nVista - Mid-range model with enhanced comfort\nMax CR - Heavy-duty model for outdoor use\n\nWhere to find your model:\nLook for a label on your cart (same place as serial number)\nCheck your paperwork or receipt\nThe model name is usually clearly marked\n\nJust tell me which model you have, or describe your cart and I can help identify it!"
+        "I can help you identify your Amigo model! Here are our main models:\n\n**SmartShopper** - Compact shopping cart, great for stores\n**ValueShopper** - Affordable option with essential features\n**Vista** - Mid-range model with enhanced comfort\n**Max CR** - Heavy-duty model for outdoor use\n\n**Where to find your model:**\n• Look for a label on your cart (same place as serial number)\n• Check your paperwork or receipt\n• The model name is usually clearly marked\n\nJust tell me which model you have, or describe your cart and I can help identify it!"
       ], 1500);
 
       // Start model collection mode
@@ -96,7 +97,7 @@ const ChatWidget = () => {
 
       // Show guidance for finding both serial number and model
       addRegularMessageWithTyping([
-        "If you're not sure where to find either, just let me know and I can help guide you!"
+        "No problem! I can help you find either your serial number or model name."
       ], 1500);
 
       // Show options to help find either
@@ -141,7 +142,7 @@ const ChatWidget = () => {
     // Handle help requests for finding serial number or model
     if (userInput.includes('help') && (userInput.includes('find') || userInput.includes('locate')) && userInput.includes('serial')) {
       addRegularMessageWithTyping([
-        "I can help you find your serial number! Here's where to look:\n\nMost Common Locations:\nBack of the cart - Look for a white or silver label\nBottom/underside - May be on the base or frame\nNear the battery compartment - Sometimes inside or nearby\nOn the controller - Some models have it there\n\nWhat to look for:\nA label with \"S/N\" or \"Serial Number\"\nUsually starts with letters like \"AMI\" followed by numbers\nTypically 8-12 characters long\n\nOnce you find it, just type it here and I'll look up your cart information!"
+        "I can help you find your serial number! Here's where to look:\n\n**Most Common Locations:**\n• **Back of the cart** - Look for a white or silver label\n• **Bottom/underside** - May be on the base or frame\n• **Near the battery compartment** - Sometimes inside or nearby\n• **On the controller** - Some models have it there\n\n**What to look for:**\n• A label with \"S/N\" or \"Serial Number\"\n• Usually starts with letters like \"AMI\" followed by numbers\n• Typically 8-12 characters long\n\nOnce you find it, just type it here and I'll look up your cart information!"
       ], 1500);
       chatMachine.dispatch({ type: 'START_SERIAL_COLLECTION' });
       return;
@@ -188,8 +189,8 @@ const ChatWidget = () => {
     id: 'custom_serial_options',
     botMessage: "For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\n• Serial number (found on a label, usually on the back or bottom of your cart)\n• Model name (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!",
     userOptions: [
-      { text: "Enter serial number", nextStep: "" },
-      { text: "Enter model name", nextStep: "" },
+      { text: "Serial number", nextStep: "" },
+      { text: "Model name", nextStep: "" },
       { text: "I'm not sure", nextStep: "" }
     ]
   } : null;
@@ -197,7 +198,7 @@ const ChatWidget = () => {
   // Handle serial number collection state with custom buttons
   const serialCollectionStep = chatMachine.state.mode === 'collecting_serial' ? {
     id: 'serial_collection',
-    botMessage: "Please enter your cart's serial number. You can find it on a label, usually on the back or bottom of your cart:",
+    botMessage: "Please enter your cart's serial number below. You can find it on a label, usually on the back or bottom of your cart.\n\n**Where to look:**\n• Back of the cart (white or silver label)\n• Bottom/underside of the frame\n• Near the battery compartment\n• On the controller\n\n**What to look for:**\n• Label with \"S/N\" or \"Serial Number\"\n• Usually starts with \"AMI\" + numbers\n• Typically 8-12 characters long",
     userOptions: [
       { text: "I can't find it", nextStep: "" }
     ]
@@ -206,10 +207,10 @@ const ChatWidget = () => {
   // Handle help options state
   const helpOptionsStep = chatMachine.state.showHelpOptions ? {
     id: 'help_options',
-    botMessage: "If you're not sure where to find either, just let me know and I can help guide you!",
+    botMessage: "No problem! I can help you find either your serial number or model name.",
     userOptions: [
-      { text: "Help find serial number", nextStep: "" },
-      { text: "Help identify model", nextStep: "" }
+      { text: "Find serial number", nextStep: "" },
+      { text: "Identify model", nextStep: "" }
     ]
   } : null;
 
