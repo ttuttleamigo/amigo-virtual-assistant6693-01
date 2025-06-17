@@ -237,7 +237,7 @@ export const useChatStateMachine = (
            /^(ss|vs|v|mc)\d*$/.test(cleanText);
   }, []);
 
-  // Simplified action handler
+  // Fixed action handler to follow proper flow specifications
   const handleSuggestedAction = useCallback(async (action: string) => {
     console.log('handleSuggestedAction called with:', action);
     
@@ -256,17 +256,43 @@ export const useChatStateMachine = (
       dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
       dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
       
-      // Start the contact agent flow for all actions
-      console.log('Starting contactAgent flow');
-      setTimeout(() => {
-        startFlow('contactAgent');
-        dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
-      }, 500);
+      if (action === 'I need help with an Amigo cart repair') {
+        // Follow the proper flow - ask for serial number first
+        addRegularMessageWithTyping([
+          "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I'll need your cart's serial number.",
+          "You can find it on a label, usually on the back or bottom of your cart. Please enter your serial number:"
+        ], 1000);
+        
+        setTimeout(() => {
+          dispatch({ type: 'START_SERIAL_COLLECTION' });
+        }, 2500);
+        
+      } else if (action === 'I need to buy a part for an Amigo cart') {
+        addRegularMessageWithTyping([
+          "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:",
+          "• Call our parts department at 1-800-692-6446",
+          "• Email parts@amigomobility.com", 
+          "• Visit our website at amigomobility.com/parts",
+          "",
+          "Please have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
+        ], 1500);
+        
+        dispatch({ type: 'SET_MODE', mode: 'idle' });
+        dispatch({ type: 'SET_INPUT_DISABLED', disabled: false });
+        
+      } else if (action === 'I have a different customer service need') {
+        // This one goes to contact agent flow
+        console.log('Starting contactAgent flow for general customer service');
+        setTimeout(() => {
+          startFlow('contactAgent');
+          dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
+        }, 500);
+      }
       
     } catch (error) {
       console.error('Error in handleSuggestedAction:', error);
     }
-  }, [addRegularMessage, startFlow]);
+  }, [addRegularMessage, addRegularMessageWithTyping, startFlow]);
 
   const handleSerialNumberSubmit = useCallback(async (serialNumber: string) => {
     const userMessage = {
