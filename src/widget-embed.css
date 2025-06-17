@@ -99,7 +99,9 @@
   object-position: center !important;
 }
 
-/* Animations for widget */
+/* RESTORED ANIMATIONS FOR WIDGET */
+
+/* Keyframes for slide animations */
 @keyframes amigo-slide-in-right {
   from {
     transform: translateX(100%) !important;
@@ -111,21 +113,161 @@
   }
 }
 
-@keyframes amigo-fade-in {
+@keyframes amigo-slide-out-right {
   from {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+  }
+  to {
+    transform: translateX(100%) !important;
+    opacity: 0 !important;
+  }
+}
+
+@keyframes amigo-slide-in-left {
+  from {
+    transform: translateX(-100%) !important;
     opacity: 0 !important;
   }
   to {
+    transform: translateX(0) !important;
     opacity: 1 !important;
   }
 }
 
+@keyframes amigo-slide-out-left {
+  from {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+  }
+  to {
+    transform: translateX(-100%) !important;
+    opacity: 0 !important;
+  }
+}
+
+/* Keyframes for fade animations */
+@keyframes amigo-fade-in {
+  from {
+    opacity: 0 !important;
+    transform: translateY(10px) !important;
+  }
+  to {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+}
+
+@keyframes amigo-fade-out {
+  from {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+  to {
+    opacity: 0 !important;
+    transform: translateY(10px) !important;
+  }
+}
+
+/* Keyframes for scale animations */
+@keyframes amigo-scale-in {
+  from {
+    transform: scale(0.95) !important;
+    opacity: 0 !important;
+  }
+  to {
+    transform: scale(1) !important;
+    opacity: 1 !important;
+  }
+}
+
+@keyframes amigo-scale-out {
+  from {
+    transform: scale(1) !important;
+    opacity: 1 !important;
+  }
+  to {
+    transform: scale(0.95) !important;
+    opacity: 0 !important;
+  }
+}
+
+/* Keyframes for bounce animation */
+@keyframes amigo-bounce-in {
+  0% {
+    transform: scale(0.3) !important;
+    opacity: 0 !important;
+  }
+  50% {
+    transform: scale(1.05) !important;
+    opacity: 0.8 !important;
+  }
+  70% {
+    transform: scale(0.95) !important;
+    opacity: 1 !important;
+  }
+  100% {
+    transform: scale(1) !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Animation classes for widget components */
 #amigo-widget-container .animate-slide-in-right {
   animation: amigo-slide-in-right 0.3s ease-out !important;
 }
 
+#amigo-widget-container .animate-slide-out-right {
+  animation: amigo-slide-out-right 0.3s ease-out !important;
+}
+
+#amigo-widget-container .animate-slide-in-left {
+  animation: amigo-slide-in-left 0.3s ease-out !important;
+}
+
+#amigo-widget-container .animate-slide-out-left {
+  animation: amigo-slide-out-left 0.3s ease-out !important;
+}
+
 #amigo-widget-container .animate-fade-in {
   animation: amigo-fade-in 0.3s ease-out !important;
+}
+
+#amigo-widget-container .animate-fade-out {
+  animation: amigo-fade-out 0.3s ease-out !important;
+}
+
+#amigo-widget-container .animate-scale-in {
+  animation: amigo-scale-in 0.2s ease-out !important;
+}
+
+#amigo-widget-container .animate-scale-out {
+  animation: amigo-scale-out 0.2s ease-out !important;
+}
+
+#amigo-widget-container .animate-bounce-in {
+  animation: amigo-bounce-in 0.5s ease-out !important;
+}
+
+/* Transition classes for hover effects */
+#amigo-widget-container .transition-all {
+  transition: all 0.2s ease-in-out !important;
+}
+
+#amigo-widget-container .transition-transform {
+  transition: transform 0.2s ease-in-out !important;
+}
+
+#amigo-widget-container .transition-opacity {
+  transition: opacity 0.2s ease-in-out !important;
+}
+
+#amigo-widget-container .hover\:scale-105:hover {
+  transform: scale(1.05) !important;
+}
+
+#amigo-widget-container .hover\:scale-110:hover {
+  transform: scale(1.1) !important;
 }
 
 /* Force proper background colors */
