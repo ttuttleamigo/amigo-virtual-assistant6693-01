@@ -195,13 +195,17 @@ export const useChatStateMachine = (
   }, []);
 
   const handleModalToSidebar = useCallback(() => {
-    dispatch({ type: 'SET_UI_STATE', uiState: 'sidebar' });
-    dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'sidebar' });
+    setTimeout(() => {
+      dispatch({ type: 'SET_UI_STATE', uiState: 'sidebar' });
+      dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'sidebar' });
+    }, 250);
   }, []);
 
   const handleMinimize = useCallback(() => {
-    dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
-    dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
+    setTimeout(() => {
+      dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
+      dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
+    }, 250);
   }, []);
 
   const handleClose = useCallback(() => {
@@ -248,14 +252,18 @@ export const useChatStateMachine = (
           "Great! Please enter your serial number. You can find it on a label, usually on the back or bottom of your cart."
         ], 1000);
         
-        dispatch({ type: 'START_SERIAL_COLLECTION' });
+        setTimeout(() => {
+          dispatch({ type: 'START_SERIAL_COLLECTION' });
+        }, 250);
         
       } else if (action === 'Enter model name') {
         addRegularMessageWithTyping([
           "Perfect! Please enter your model name. Common models include SmartShopper, ValueShopper, Vista, or Max CR."
         ], 1000);
         
-        dispatch({ type: 'START_MODEL_COLLECTION' });
+        setTimeout(() => {
+          dispatch({ type: 'START_MODEL_COLLECTION' });
+        }, 250);
         
       } else if (action === "I'm not sure") {
         addRegularMessageWithTyping([
@@ -272,7 +280,7 @@ export const useChatStateMachine = (
         
         setTimeout(() => {
           dispatch({ type: 'SHOW_OPTIONS' });
-        }, 2000);
+        }, 2250);
         
       } else if (action === 'I need to buy a part for an Amigo cart') {
         addRegularMessageWithTyping([
@@ -285,7 +293,7 @@ export const useChatStateMachine = (
         setTimeout(() => {
           startFlow('contactAgent');
           dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
-        }, 1500);
+        }, 1750);
       }
     } catch (error) {
       console.error('Error in handleSuggestedAction:', error);
