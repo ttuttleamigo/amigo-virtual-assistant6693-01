@@ -1,12 +1,11 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { MessageCircle, Send } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { MessageCircle } from 'lucide-react';
 import { ConversationMessage } from '@/hooks/useConversationFlow';
 import { ConversationStep } from '@/data/conversationFlow';
 import TypingIndicator from './TypingIndicator';
 import ModalHeader from './ModalHeader';
+import ChatInput from './ChatInput';
 import ButtonGroup from '@/components/visual/ButtonGroup';
 import { ButtonConfig } from '@/config/buttonConfig';
 import { visualConfig } from '@/config/visualConfig';
@@ -47,29 +46,10 @@ const ModalChat = ({
 }: ModalChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasOnlyButtonOptions = currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
-  const [streamingPlaceholder, setStreamingPlaceholder] = useState('');
   const [buttonsVisible, setButtonsVisible] = useState(false);
 
   // Check if we're in serial collection mode
   const isSerialCollectionMode = currentStep?.id === 'serial_collection';
-
-  // Update streaming placeholder when typing
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isTyping) {
-      let dots = '';
-      interval = setInterval(() => {
-        dots = dots === '...' ? '' : dots + '.';
-        setStreamingPlaceholder(`Hang on while I check${dots}`);
-      }, 500);
-    } else {
-      setStreamingPlaceholder('');
-    }
-    
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isTyping]);
 
   // Handle button visibility with proper timing
   useEffect(() => {
@@ -91,13 +71,6 @@ const ModalChat = ({
   useEffect(() => {
     scrollToBottom();
   }, [conversationHistory, isTyping, currentStep]);
-
-  const getPlaceholderText = () => {
-    if (isTyping) return streamingPlaceholder;
-    if (isSerialCollectionMode) return visualConfig.input.serialPlaceholder;
-    if (isInputDisabled) return visualConfig.input.disabledPlaceholder;
-    return visualConfig.input.defaultPlaceholder;
-  };
 
   const handleButtonClick = (button: ButtonConfig) => {
     if (onFlowChoice) {
@@ -178,30 +151,15 @@ const ModalChat = ({
         </div>
 
         {/* Input Section */}
-        {shouldShowInput && (
-          <div className="px-8 py-6 border-t border-blue-100 bg-gradient-to-r from-blue-50 via-blue-25 to-white flex-shrink-0 rounded-b-2xl">
-            <div className="flex items-center space-x-3">
-              <div className="flex-1">
-                <Input
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder={getPlaceholderText()}
-                  className="w-full py-4 text-base bg-white border-2 border-blue-100 focus:border-blue-300 focus:ring-2 focus:ring-blue-100 text-gray-700 placeholder-gray-500 rounded-xl"
-                  onKeyPress={(e) => e.key === 'Enter' && !isInputDisabled && sendMessage()}
-                  disabled={isInputDisabled || isTyping}
-                />
-              </div>
-              <Button
-                onClick={sendMessage}
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white h-12 w-12 p-0 border-0 rounded-lg flex-shrink-0"
-                disabled={!inputValue.trim() || isInputDisabled || isTyping}
-              >
-                <Send className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        )}
+        <ChatInput
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          sendMessage={sendMessage}
+          currentStep={currentStep}
+          isTyping={isTyping}
+          isInputDisabled={isInputDisabled}
+          shouldShowInput={shouldShowInput}
+        />
       </div>
     </div>
   );
