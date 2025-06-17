@@ -237,8 +237,10 @@ export const useChatStateMachine = (
            /^(ss|vs|v|mc)\d*$/.test(cleanText);
   }, []);
 
-  // Core Action Handlers - Updated to follow contactAgentFlow specification
+  // Simplified action handler
   const handleSuggestedAction = useCallback(async (action: string) => {
+    console.log('handleSuggestedAction called with:', action);
+    
     try {
       // Add user message
       const newMessage = {
@@ -249,56 +251,22 @@ export const useChatStateMachine = (
       };
       addRegularMessage(newMessage);
 
-      if (action === 'I need help with an Amigo cart repair') {
-        // Following contactAgentFlow.md - should start contactAgent flow directly
-        setTimeout(() => {
-          startFlow('contactAgent');
-          dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
-        }, 1000);
-        
-      } else if (action === 'I need to buy a part for an Amigo cart') {
-        addRegularMessageWithTyping([
-          "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n\nCall our parts department at 1-800-692-6446\nEmail parts@amigomobility.com\nVisit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
-        ], 1500);
-        
-        dispatch({ type: 'SET_INPUT_DISABLED', disabled: true });
-        
-      } else if (action === 'I have a different customer service need') {
-        setTimeout(() => {
-          startFlow('contactAgent');
-          dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
-        }, 1000);
-        
-      } else if (action === 'Enter serial number') {
-        addRegularMessageWithTyping([
-          "Great! Please enter your serial number. You can find it on a label, usually on the back or bottom of your cart."
-        ], 1000);
-        
-        setTimeout(() => {
-          dispatch({ type: 'START_SERIAL_COLLECTION' });
-        }, 250);
-        
-      } else if (action === 'Enter model name') {
-        addRegularMessageWithTyping([
-          "Perfect! Please enter your model name. Common models include SmartShopper, ValueShopper, Vista, or Max CR."
-        ], 1000);
-        
-        setTimeout(() => {
-          dispatch({ type: 'START_MODEL_COLLECTION' });
-        }, 250);
-        
-      } else if (action === "I'm not sure") {
-        addRegularMessageWithTyping([
-          "No problem! I can help you find the information we need. Here are some options:\n\nI can guide you on where to find your serial number\nI can help you identify your model\nYou can contact our support team at 1-800-692-6446\n\nWhat would you prefer?"
-        ], 1500);
-        
-        dispatch({ type: 'SET_MODE', mode: 'idle' });
-        dispatch({ type: 'SET_SHOW_INITIAL_BUTTONS', show: false });
-      }
+      // Transition to modal for all actions
+      console.log('Transitioning to modal state');
+      dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
+      dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
+      
+      // Start the contact agent flow for all actions
+      console.log('Starting contactAgent flow');
+      setTimeout(() => {
+        startFlow('contactAgent');
+        dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
+      }, 500);
+      
     } catch (error) {
       console.error('Error in handleSuggestedAction:', error);
     }
-  }, [addRegularMessage, addRegularMessageWithTyping, startFlow, state]);
+  }, [addRegularMessage, startFlow]);
 
   const handleSerialNumberSubmit = useCallback(async (serialNumber: string) => {
     const userMessage = {
