@@ -110,7 +110,7 @@ export const useChatStateMachine = (
 ) => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
 
-  // Utility Functions
+  // ALL useCallback hooks must be declared unconditionally
   const isSerialNumberFormat = useCallback((text: string): boolean => {
     const cleanText = text.replace(/\s+/g, '').toUpperCase();
     return /^[A-Z0-9]{6,}$/.test(cleanText) || /^\d{6,}$/.test(cleanText);
@@ -128,7 +128,6 @@ export const useChatStateMachine = (
            /^(ss|vs|v|mc)\d*$/.test(cleanText);
   }, []);
 
-  // UI State handlers
   const handleChatButtonClick = useCallback(() => {
     dispatch({ type: 'SET_UI_STATE', state: 'horizontal' });
   }, []);
@@ -145,7 +144,6 @@ export const useChatStateMachine = (
     dispatch({ type: 'SET_UI_STATE', state: 'horizontal' });
   }, []);
 
-  // Fixed action handler to properly route to correct flows
   const handleSuggestedAction = useCallback((action: string) => {
     console.log('handleSuggestedAction called with:', action);
     
@@ -224,7 +222,7 @@ export const useChatStateMachine = (
         dispatch({ type: 'SET_INPUT_DISABLED', disabled: false });
       }, 1500);
     }
-  }, [addRegularMessage, addRegularMessageWithTyping, startFlow, dispatch]);
+  }, [addRegularMessage, addRegularMessageWithTyping, startFlow]);
 
   const handleModelSubmit = useCallback((model: string) => {
     const userMessage = {
@@ -245,7 +243,7 @@ export const useChatStateMachine = (
       startFlow(flowType);
       dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
     }, 2500);
-  }, [addRegularMessage, addRegularMessageWithTyping, startFlow, dispatch]);
+  }, [addRegularMessage, addRegularMessageWithTyping, startFlow]);
 
   const handleHelpButtonClick = useCallback((action: string) => {
     const userMessage: ConversationMessage = {
@@ -274,7 +272,7 @@ export const useChatStateMachine = (
         dispatch({ type: 'START_MODEL_COLLECTION' });
       }, 2000);
     }
-  }, [addRegularMessage, addRegularMessageWithTyping, dispatch]);
+  }, [addRegularMessage, addRegularMessageWithTyping]);
 
   const setInputValue = useCallback((value: string) => {
     dispatch({ type: 'SET_INPUT_VALUE', value });
