@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { useChatStateMachine } from '@/hooks/useChatStateMachine';
@@ -112,10 +113,10 @@ const ChatWidget = () => {
   // Simplified input disabled state - state machine is single source of truth
   const isInputDisabled = chatMachine.state.isInputDisabled;
 
-  // Updated step display logic to show proper serial number collection options
+  // Create proper custom step with matching bot message when showing initial buttons
   const customStep = chatMachine.state.showInitialButtons ? {
     id: 'custom_serial_options',
-    botMessage: "",
+    botMessage: "For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\n• Serial number (found on a label, usually on the back or bottom of your cart)\n• Model name (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!",
     userOptions: [
       { text: "Enter serial number", nextStep: "" },
       { text: "Enter model name", nextStep: "" },
