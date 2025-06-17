@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { useChatStateMachine } from '@/hooks/useChatStateMachine';
@@ -15,7 +14,6 @@ const ChatWidget = () => {
     activeFlow,
     isTyping,
     allowTextInput,
-    showButtons,
     startFlow, 
     handleUserChoice, 
     resetFlow,
@@ -23,8 +21,7 @@ const ChatWidget = () => {
     addRegularMessageWithTyping,
     setTextInputAllowed,
     downloadTranscript,
-    clearChatHistory,
-    setShowButtons
+    clearChatHistory
   } = useConversationFlow();
 
   const chatMachine = useChatStateMachine(
@@ -47,9 +44,6 @@ const ChatWidget = () => {
   };
 
   const handleCustomButtonClick = (action: string) => {
-    // Immediately hide buttons to prevent double-clicking
-    setShowButtons(false);
-    
     if (action === "Serial number") {
       // Add user message
       const userMessage = {
@@ -68,7 +62,6 @@ const ChatWidget = () => {
       // Start serial number collection mode
       setTimeout(() => {
         chatMachine.dispatch({ type: 'START_SERIAL_COLLECTION' });
-        setShowButtons(true); // Show the "I can't find it" button
       }, 3000);
       
     } else if (action === "Model name") {
@@ -109,7 +102,6 @@ const ChatWidget = () => {
       // Show options to help find either
       setTimeout(() => {
         chatMachine.dispatch({ type: 'SHOW_HELP_OPTIONS' });
-        setShowButtons(true);
       }, 2500);
       
     } else if (action === "I can't find it" || action === "Help find serial number" || action === "Help identify model") {
@@ -224,8 +216,8 @@ const ChatWidget = () => {
   // Clear display step logic - prioritize states in order
   const displayStep = serialCollectionStep || helpOptionsStep || customStep || (isInFlow && currentStep ? currentStep : null);
 
-  // Determine if we should show buttons based on context
-  const shouldShowButtons = isInFlow ? showButtons : chatMachine.state.showInitialButtons || chatMachine.state.showHelpOptions || (chatMachine.state.mode === 'collecting_serial');
+  // Visual components determine their own button visibility based on context
+  const shouldShowButtons = Boolean(displayStep?.userOptions?.length);
 
   // If the state is hidden, show just the button (even though we start in horizontal now)
   if (chatMachine.state.uiState === 'hidden') {

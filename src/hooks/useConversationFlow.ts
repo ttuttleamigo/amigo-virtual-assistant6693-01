@@ -61,7 +61,6 @@ export const useConversationFlow = () => {
   const [activeFlow, setActiveFlow] = useState<FlowType>('general');
   const [isTyping, setIsTyping] = useState(false);
   const [allowTextInput, setAllowTextInput] = useState(true);
-  const [showButtons, setShowButtons] = useState(true);
 
   // Load chat history from localStorage on component mount
   useEffect(() => {
@@ -235,14 +234,12 @@ export const useConversationFlow = () => {
     activeFlow,
     isTyping,
     allowTextInput,
-    showButtons,
     startFlow,
     handleUserChoice,
     resetFlow,
     addRegularMessage,
     addRegularMessageWithTyping,
     setTextInputAllowed,
-    setShowButtons,
     downloadTranscript,
     clearChatHistory
   };
