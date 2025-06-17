@@ -125,7 +125,17 @@ export default {
 					'100%': {
 						transform: 'scale(1)'
 					}
-				}
+				},
+				shine: {
+					'0%': { backgroundPosition: '200% 0' },
+					'25%': { backgroundPosition: '-200% 0' },
+					'100%': { backgroundPosition: '-200% 0' },
+				},
+				gradientFlow: {
+					'0%': { 'background-position':'0% 50%' },
+					'50%': { 'background-position': '100% 50%' },
+					'100%': { 'background-position': '0% 50%' },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -133,7 +143,9 @@ export default {
 				'fade-in': 'fade-in 0.3s ease-out',
 				'scale-in': 'scale-in 0.2s ease-out',
 				'slide-in-right': 'slide-in-right 0.3s ease-out',
-				'bounce-in': 'bounce-in 0.6s ease-out'
+				'bounce-in': 'bounce-in 0.6s ease-out',
+				shine: 'shine 3s ease-out infinite',
+				'gradient-flow': 'gradientFlow 10s ease 0s infinite normal none running',
 			}
 		}
 	},
