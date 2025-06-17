@@ -12,14 +12,11 @@ const ChatWidget = () => {
     inputValue,
     setInputValue,
     sendMessage,
+    sendSuggestedAction,
+    sendSerialNumber,
     handleClose,
     handleChatButtonClick
   } = useChat();
-
-  const sendHorizontalMessage = () => {
-    if (!inputValue.trim()) return;
-    setInputValue('');
-  };
 
   // If the state is hidden, show just the button
   if (uiState === 'hidden') {
@@ -34,14 +31,8 @@ const ChatWidget = () => {
         setInputValue={setInputValue}
         sendMessage={sendMessage}
         onClose={handleClose}
-        onSuggestedAction={(action) => {
-          // Handle suggested actions - simplified since logic is in useChat
-          sendMessage();
-        }}
-        onSerialNumberSubmit={(serialNumber) => {
-          // Handle serial number submission - simplified since logic is in useChat
-          sendMessage();
-        }}
+        onSuggestedAction={sendSuggestedAction}
+        onSerialNumberSubmit={sendSerialNumber}
       />
     );
   }

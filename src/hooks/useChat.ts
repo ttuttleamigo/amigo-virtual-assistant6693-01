@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useConversationFlow, FlowType } from './useConversationFlow';
 import { useChatStateMachine } from './useChatStateMachine';
@@ -41,6 +40,8 @@ export const useChat = () => {
   };
 
   const handleCustomButtonClick = (action: string) => {
+    console.log('handleCustomButtonClick called with:', action);
+    
     if (action === "Serial number") {
       // Add user message
       const userMessage = {
@@ -105,6 +106,19 @@ export const useChat = () => {
       chatMachine.handleHelpButtonClick(action);
     } else {
       chatMachine.handleSuggestedAction(action);
+    }
+  };
+
+  // New dedicated functions for external components
+  const sendSuggestedAction = (action: string) => {
+    console.log('sendSuggestedAction called with:', action);
+    handleCustomButtonClick(action);
+  };
+
+  const sendSerialNumber = (serialNumber: string) => {
+    console.log('sendSerialNumber called with:', serialNumber);
+    if (chatMachine.isSerialNumberFormat(serialNumber)) {
+      chatMachine.handleSerialNumberSubmit(serialNumber);
     }
   };
 
@@ -224,6 +238,8 @@ export const useChat = () => {
     // Actions
     setInputValue: chatMachine.setInputValue,
     sendMessage,
+    sendSuggestedAction,
+    sendSerialNumber,
     handleClose,
     handleFlowChoice: customStep ? handleCustomButtonClick : handleFlowChoice,
     handleModalToSidebar: chatMachine.handleModalToSidebar,
