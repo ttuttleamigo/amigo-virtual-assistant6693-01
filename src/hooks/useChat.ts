@@ -6,10 +6,14 @@ import { FlowType } from './useConversationFlow';
 import { botMessages } from '@/data/botMessages';
 
 export const useChat = () => {
+  console.log('[DEBUG] useChat hook called');
+  
   // 1. Call all our specialized hooks
   const conversationFlow = useConversationFlow();
+  console.log('[DEBUG] conversationFlow initialized');
   
   const viewManager = useChatViewManager('horizontal'); // Start with horizontal view
+  console.log('[DEBUG] viewManager initialized with view:', viewManager.view);
 
   const chatMachine = useChatStateMachine(
     conversationFlow.addRegularMessage,
@@ -19,6 +23,7 @@ export const useChat = () => {
       conversationFlow.startFlow(flowType);
     }
   );
+  console.log('[DEBUG] chatMachine initialized');
 
   const actions = useChatActions({
     chatMachine,
@@ -28,6 +33,7 @@ export const useChat = () => {
     setView: viewManager.setViewMode,
     isInFlow: conversationFlow.isInFlow,
   });
+  console.log('[DEBUG] actions initialized');
 
   // 2. Handle any logic that combines state from multiple hooks
   const isTypingIndicatorVisible = conversationFlow.isInFlow 
@@ -79,7 +85,7 @@ export const useChat = () => {
   };
 
   // 3. Return a single, unified API for the UI to use
-  return {
+  const chatState = {
     // State
     conversationHistory: conversationFlow.conversationHistory,
     inputValue: chatMachine.state.inputValue,
@@ -112,4 +118,7 @@ export const useChat = () => {
     isInFlow: conversationFlow.isInFlow,
     activeFlow: conversationFlow.activeFlow
   };
+
+  console.log('[DEBUG] useChat returning state with view:', chatState.view);
+  return chatState;
 };

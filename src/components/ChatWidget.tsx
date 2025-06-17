@@ -7,6 +7,8 @@ import ModalChat from './chat/ModalChat';
 import SidebarChat from './chat/SidebarChat';
 
 const ChatWidget = () => {
+  console.log('[DEBUG] ChatWidget component rendering');
+  
   const {
     view,
     inputValue,
@@ -17,6 +19,8 @@ const ChatWidget = () => {
     handleClose,
     handleChatButtonClick
   } = useChatContext();
+
+  console.log('[DEBUG] ChatWidget context values - view:', view, 'inputValue:', inputValue);
 
   // If the view is closed, show just the button
   if (view === 'closed') {
