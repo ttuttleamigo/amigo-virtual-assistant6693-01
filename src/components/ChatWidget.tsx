@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { useChatStateMachine } from '@/hooks/useChatStateMachine';
@@ -119,12 +118,12 @@ const ChatWidget = () => {
 
   // Create custom step with buttons when we should show initial buttons
   const customStep = chatMachine.state.showInitialButtons ? {
-    id: 'custom_help_options',
+    id: 'custom_main_options',
     botMessage: "",
     userOptions: [
-      { text: "Enter serial number", nextStep: "" },
-      { text: "Enter model name", nextStep: "" },
-      { text: "I'm not sure", nextStep: "" }
+      { text: "I need help with an Amigo cart repair", nextStep: "" },
+      { text: "I need to buy a part for an Amigo cart", nextStep: "" },
+      { text: "I have a different customer service need", nextStep: "" }
     ]
   } : null;
 
@@ -137,8 +136,8 @@ const ChatWidget = () => {
   const displayStep = customStep || (shouldShowFlowStep ? currentStep : null);
   
   console.log('🔥 ChatWidget - State machine mode:', chatMachine.state.mode);
-  console.log('🔥 ChatWidget - isExpectingManualInput:', isExpectingManualInput);
-  console.log('🔥 ChatWidget - shouldShowFlowStep:', shouldShowFlowStep);
+  console.log('🔥 ChatWidget - showInitialButtons:', chatMachine.state.showInitialButtons);
+  console.log('🔥 ChatWidget - customStep:', customStep);
   console.log('🔥 ChatWidget - displayStep:', displayStep);
 
   if (chatMachine.state.uiState === 'hidden') {

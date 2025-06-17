@@ -1,5 +1,4 @@
-
-import { useState, useReducer, useCallback } from 'react';
+import { useState, useReducer, useCallback, useEffect } from 'react';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
 import { FlowType } from '@/hooks/useConversationFlow';
 
@@ -48,6 +47,7 @@ export type ChatAction =
   | { type: 'START_MODEL_COLLECTION' }
   | { type: 'START_PROCESSING' }
   | { type: 'SHOW_OPTIONS' }
+  | { type: 'AUTO_SHOW_MAIN_OPTIONS' }
   | { type: 'ENTER_DIAGNOSTIC_FLOW' };
 
 const initialState: ChatState = {
@@ -136,6 +136,15 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
         isInputDisabled: true
       };
     
+    case 'AUTO_SHOW_MAIN_OPTIONS':
+      console.log('🔥 ChatStateMachine - Auto showing main options');
+      return {
+        ...state,
+        mode: 'showing_options',
+        showInitialButtons: true,
+        isInputDisabled: true
+      };
+    
     case 'ENTER_DIAGNOSTIC_FLOW':
       return {
         ...state,
@@ -178,6 +187,16 @@ export const useChatStateMachine = (
   startFlow: (flowType: FlowType) => void
 ): ChatStateMachine => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
+
+  // Auto-show main options when transitioning from horizontal to modal/sidebar
+  useEffect(() => {
+    if ((state.uiState === 'modal' || state.uiState === 'sidebar') && 
+        state.mode === 'idle' && 
+        !state.showInitialButtons) {
+      console.log('🔥 ChatStateMachine - Auto-triggering main options');
+      dispatch({ type: 'AUTO_SHOW_MAIN_OPTIONS' });
+    }
+  }, [state.uiState, state.mode, state.showInitialButtons]);
 
   // UI Action Handlers
   const handleChatButtonClick = useCallback(() => {
