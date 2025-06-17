@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { useChatStateMachine } from '@/hooks/useChatStateMachine';
@@ -127,16 +126,18 @@ const ChatWidget = () => {
   // Clear display step logic - either custom step or flow step, not both
   const displayStep = customStep || (isInFlow && currentStep ? currentStep : null);
 
+  // If the state is hidden, show just the button (even though we start in horizontal now)
   if (chatMachine.state.uiState === 'hidden') {
     return <ChatButton onClick={chatMachine.handleChatButtonClick} />;
   }
 
+  // If the state is horizontal, show the horizontal chat
   if (chatMachine.state.uiState === 'horizontal') {
     return (
       <HorizontalChat
         inputValue={chatMachine.state.inputValue}
         setInputValue={chatMachine.setInputValue}
-        sendMessage={sendHorizontalMessage}
+        sendMessage={sendMessage}
         onClose={handleClose}
         onSuggestedAction={chatMachine.handleSuggestedAction}
         onSerialNumberSubmit={chatMachine.handleSerialNumberSubmit}
@@ -144,6 +145,7 @@ const ChatWidget = () => {
     );
   }
 
+  // If the state is modal, show the modal chat
   if (chatMachine.state.uiState === 'modal') {
     return (
       <ModalChat
@@ -164,6 +166,7 @@ const ChatWidget = () => {
     );
   }
 
+  // If the state is sidebar, show the sidebar chat
   if (chatMachine.state.uiState === 'sidebar') {
     return (
       <SidebarChat

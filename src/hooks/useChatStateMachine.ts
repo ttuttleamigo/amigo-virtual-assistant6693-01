@@ -1,3 +1,4 @@
+
 import { useState, useReducer, useCallback } from 'react';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
 import { FlowType } from '@/hooks/useConversationFlow';
@@ -51,8 +52,8 @@ export type ChatAction =
   | { type: 'ENTER_DIAGNOSTIC_FLOW' };
 
 const initialState: ChatState = {
-  uiState: 'hidden',
-  previousUIState: 'hidden',
+  uiState: 'horizontal',
+  previousUIState: 'horizontal',
   mode: 'idle',
   inputValue: '',
   isInputDisabled: false,
