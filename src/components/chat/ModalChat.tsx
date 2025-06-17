@@ -1,44 +1,27 @@
 
 import React from 'react';
-import { ConversationMessage } from '@/hooks/useConversationFlow';
-import { ConversationStep } from '@/data/conversationFlow';
 import ModalHeader from './ModalHeader';
 import ChatInput from './ChatInput';
 import MessageList from './MessageList';
+import { useChat } from '@/hooks/useChat';
 
-interface ModalChatProps {
-  conversationHistory: ConversationMessage[];
-  inputValue: string;
-  setInputValue: (value: string) => void;
-  sendMessage: () => void;
-  onClose: () => void;
-  onModalToSidebar: () => void;
-  isInFlow?: boolean;
-  currentStep?: ConversationStep | null;
-  onFlowChoice?: (choice: string, nextStep: string) => void;
-  isTyping?: boolean;
-  isInputDisabled?: boolean;
-  onDownloadTranscript?: () => void;
-  onClearHistory?: () => void;
-  showButtons?: boolean;
-}
+const ModalChat = () => {
+  const {
+    conversationHistory,
+    inputValue,
+    setInputValue,
+    sendMessage,
+    handleClose,
+    handleModalToSidebar,
+    isTyping,
+    isInputDisabled,
+    currentStep,
+    handleFlowChoice,
+    shouldShowButtons,
+    downloadTranscript,
+    clearChatHistory
+  } = useChat();
 
-const ModalChat = ({
-  conversationHistory,
-  inputValue,
-  setInputValue,
-  sendMessage,
-  onClose,
-  onModalToSidebar,
-  isInFlow = false,
-  currentStep = null,
-  onFlowChoice,
-  isTyping = false,
-  isInputDisabled = false,
-  onDownloadTranscript,
-  onClearHistory,
-  showButtons = true
-}: ModalChatProps) => {
   const hasOnlyButtonOptions = currentStep && currentStep.userOptions && currentStep.userOptions.length > 0;
 
   // Check if we're in serial collection mode
@@ -52,10 +35,10 @@ const ModalChat = ({
       <div className="bg-transparent rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden">
         {/* Header */}
         <ModalHeader
-          onClose={onClose}
-          onModalToSidebar={onModalToSidebar}
-          onDownloadTranscript={onDownloadTranscript}
-          onClearHistory={onClearHistory}
+          onClose={handleClose}
+          onModalToSidebar={handleModalToSidebar}
+          onDownloadTranscript={downloadTranscript}
+          onClearHistory={clearChatHistory}
           conversationHistory={conversationHistory}
         />
 
@@ -63,9 +46,9 @@ const ModalChat = ({
         <MessageList
           conversationHistory={conversationHistory}
           currentStep={currentStep}
-          onFlowChoice={onFlowChoice}
+          onFlowChoice={handleFlowChoice}
           isTyping={isTyping}
-          showButtons={showButtons}
+          showButtons={shouldShowButtons}
         />
 
         {/* Input Section */}
