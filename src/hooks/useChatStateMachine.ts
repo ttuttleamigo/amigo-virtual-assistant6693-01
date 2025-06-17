@@ -43,23 +43,32 @@ const initialState: ChatState = {
 };
 
 const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
+  console.log('[DEBUG] State Machine Reducer: Action dispatched:', action.type, 'Current state:', state);
+  
   switch (action.type) {
     case 'SET_UI_STATE':
+      console.log('[DEBUG] State Machine Reducer: Setting UI state to:', action.state);
       return { ...state, uiState: action.state };
     case 'SET_INPUT_VALUE':
       return { ...state, inputValue: action.value };
     case 'SET_TYPING':
+      console.log('[DEBUG] State Machine Reducer: Setting typing to:', action.isTyping);
       return { ...state, isTyping: action.isTyping };
     case 'SET_MODE':
+      console.log('[DEBUG] State Machine Reducer: Setting mode to:', action.mode);
       return { ...state, mode: action.mode };
     case 'SHOW_OPTIONS':
-      return { 
+      console.log('[DEBUG] State Machine Reducer: SHOW_OPTIONS - setting showInitialButtons to true');
+      const newState = { 
         ...state, 
         showInitialButtons: true, 
         showHelpOptions: false,
         isInputDisabled: true 
       };
+      console.log('[DEBUG] State Machine Reducer: SHOW_OPTIONS - new state:', newState);
+      return newState;
     case 'SHOW_HELP_OPTIONS':
+      console.log('[DEBUG] State Machine Reducer: SHOW_HELP_OPTIONS - setting showHelpOptions to true');
       return { 
         ...state, 
         showInitialButtons: false, 
@@ -67,6 +76,7 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
         isInputDisabled: true 
       };
     case 'START_SERIAL_COLLECTION':
+      console.log('[DEBUG] State Machine Reducer: START_SERIAL_COLLECTION');
       return { 
         ...state, 
         mode: 'collecting_serial', 
@@ -75,6 +85,7 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
         isInputDisabled: false 
       };
     case 'START_MODEL_COLLECTION':
+      console.log('[DEBUG] State Machine Reducer: START_MODEL_COLLECTION');
       return { 
         ...state, 
         mode: 'collecting_model', 
@@ -83,6 +94,7 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
         isInputDisabled: false 
       };
     case 'RESET_STATE':
+      console.log('[DEBUG] State Machine Reducer: RESET_STATE');
       return { 
         ...state, 
         mode: 'idle', 
@@ -99,6 +111,7 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
     case 'ENTER_DIAGNOSTIC_FLOW':
       return { ...state, mode: 'idle', isTyping: false };
     default:
+      console.log('[DEBUG] State Machine Reducer: Unknown action type:', action);
       return state;
   }
 };
@@ -145,10 +158,14 @@ export const useChatStateMachine = (
   }, []);
 
   const handleSuggestedAction = useCallback((action: string) => {
-    console.log('handleSuggestedAction called with:', action);
+    console.log('[DEBUG] State Machine: handleSuggestedAction started for action:', action);
+    console.log('[DEBUG] State Machine: Current state before action:', state);
     
     if (action === "I need help with an Amigo cart repair") {
+      console.log('[DEBUG] State Machine: Processing repair help request');
+      
       dispatch({ type: 'SET_UI_STATE', state: 'modal' });
+      console.log('[DEBUG] State Machine: Set UI state to modal');
       
       const userMessage: ConversationMessage = {
         id: Date.now().toString(),
@@ -156,15 +173,27 @@ export const useChatStateMachine = (
         sender: 'user',
         timestamp: new Date()
       };
+      console.log('[DEBUG] State Machine: About to add user message:', userMessage);
       addRegularMessage(userMessage);
+      console.log('[DEBUG] State Machine: User message added');
 
+      console.log('[DEBUG] State Machine: About to generate bot response with typing');
       addRegularMessageWithTyping([botMessages.repairHelpResponse], 1500);
+      console.log('[DEBUG] State Machine: Bot response initiated');
       
+      console.log('[DEBUG] State Machine: Setting timeout to show options in 2 seconds');
       setTimeout(() => {
+        console.log('[DEBUG] State Machine: Timeout triggered - about to dispatch SHOW_OPTIONS');
+        console.log('[DEBUG] State Machine: Current state before SHOW_OPTIONS:', state);
         dispatch({ type: 'SHOW_OPTIONS' });
+        console.log('[DEBUG] State Machine: SHOW_OPTIONS dispatched');
       }, 2000);
+      
+      console.log('[DEBUG] State Machine: handleSuggestedAction completed for repair help');
+    } else {
+      console.log('[DEBUG] State Machine: Unhandled action:', action);
     }
-  }, [addRegularMessage, addRegularMessageWithTyping]);
+  }, [addRegularMessage, addRegularMessageWithTyping, state]);
 
   const handleSerialNumberSubmit = useCallback(async (serialNumber: string) => {
     const userMessage = {
@@ -268,6 +297,8 @@ export const useChatStateMachine = (
   const setInputValue = useCallback((value: string) => {
     dispatch({ type: 'SET_INPUT_VALUE', value });
   }, []);
+
+  console.log('[DEBUG] State Machine: Current state returned to useChat:', state);
 
   return {
     state,

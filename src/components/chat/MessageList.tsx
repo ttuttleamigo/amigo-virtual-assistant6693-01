@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { MessageCircle } from 'lucide-react';
 import { ConversationMessage } from '@/hooks/useConversationFlow';
@@ -27,18 +26,35 @@ const MessageList = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [buttonsVisible, setButtonsVisible] = React.useState(false);
 
+  console.log('[DEBUG] MessageList: Rendered with props');
+  console.log('[DEBUG] MessageList: currentStep:', currentStep);
+  console.log('[DEBUG] MessageList: showButtons:', showButtons);
+  console.log('[DEBUG] MessageList: conversationHistory length:', conversationHistory.length);
+  console.log('[DEBUG] MessageList: isTyping:', isTyping);
+
   // Handle button visibility with proper timing
   useEffect(() => {
+    console.log('[DEBUG] MessageList: useEffect for button visibility triggered');
+    console.log('[DEBUG] MessageList: currentStep?.userOptions?.length:', currentStep?.userOptions?.length);
+    
     if (currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && showButtons) {
+      console.log('[DEBUG] MessageList: Setting up timer for button visibility');
       setButtonsVisible(false);
       const timer = setTimeout(() => {
+        console.log('[DEBUG] MessageList: Timer triggered - setting buttonsVisible to true');
         setButtonsVisible(true);
       }, visualConfig.timing.buttonDelay);
-      return () => clearTimeout(timer);
+      return () => {
+        console.log('[DEBUG] MessageList: Cleaning up timer');
+        clearTimeout(timer);
+      };
     } else {
+      console.log('[DEBUG] MessageList: No buttons to show, setting buttonsVisible to false');
       setButtonsVisible(false);
     }
   }, [currentStep, showButtons]);
+
+  console.log('[DEBUG] MessageList: buttonsVisible state:', buttonsVisible);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -49,8 +65,12 @@ const MessageList = ({
   }, [conversationHistory, isTyping, currentStep]);
 
   const handleButtonClick = (button: ButtonConfig) => {
+    console.log('[DEBUG] MessageList: Button clicked:', button);
     if (onFlowChoice) {
+      console.log('[DEBUG] MessageList: Calling onFlowChoice with:', button.action);
       onFlowChoice(button.action, "");
+    } else {
+      console.log('[DEBUG] MessageList: onFlowChoice is not defined');
     }
   };
 
@@ -99,6 +119,7 @@ const MessageList = ({
         <div className={`transition-all duration-${visualConfig.animations.fadeInDuration} ${
           buttonsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
         }`}>
+          {console.log('[DEBUG] MessageList: About to render ButtonGroup with buttons:', convertToButtonConfig(currentStep.userOptions))}
           <ButtonGroup
             buttons={convertToButtonConfig(currentStep.userOptions)}
             onButtonClick={handleButtonClick}

@@ -1,3 +1,4 @@
+
 import { useConversationFlow } from './useConversationFlow';
 import { useChatStateMachine } from './useChatStateMachine';
 import { useChatViewManager } from './useChatViewManager';
@@ -41,6 +42,7 @@ export const useChat = () => {
     : (conversationFlow.isTyping || chatMachine.state.isTyping);
 
   // Create proper custom step with matching bot message when showing initial buttons
+  console.log('[DEBUG] useChat: Checking for customStep - showInitialButtons:', chatMachine.state.showInitialButtons);
   const customStep = chatMachine.state.showInitialButtons ? {
     id: 'custom_serial_options',
     botMessage: botMessages.initialOptionsPrompt,
@@ -50,8 +52,10 @@ export const useChat = () => {
       { text: "I'm not sure", nextStep: "" }
     ]
   } : null;
+  console.log('[DEBUG] useChat: customStep created:', customStep);
 
   // Handle serial number collection state with custom buttons
+  console.log('[DEBUG] useChat: Checking for serialCollectionStep - mode:', chatMachine.state.mode);
   const serialCollectionStep = chatMachine.state.mode === 'collecting_serial' ? {
     id: 'serial_collection',
     botMessage: botMessages.serialNumberHelp,
@@ -59,8 +63,10 @@ export const useChat = () => {
       { text: "I can't find it", nextStep: "" }
     ]
   } : null;
+  console.log('[DEBUG] useChat: serialCollectionStep created:', serialCollectionStep);
 
   // Handle help options state
+  console.log('[DEBUG] useChat: Checking for helpOptionsStep - showHelpOptions:', chatMachine.state.showHelpOptions);
   const helpOptionsStep = chatMachine.state.showHelpOptions ? {
     id: 'help_options',
     botMessage: botMessages.imNotSureResponse,
@@ -69,12 +75,15 @@ export const useChat = () => {
       { text: "Help identify model", nextStep: "" }
     ]
   } : null;
+  console.log('[DEBUG] useChat: helpOptionsStep created:', helpOptionsStep);
 
   // Clear display step logic - prioritize states in order
   const displayStep = serialCollectionStep || helpOptionsStep || customStep || (conversationFlow.isInFlow && conversationFlow.currentStep ? conversationFlow.currentStep : null);
+  console.log('[DEBUG] useChat: Final displayStep determined:', displayStep);
 
   // Visual components determine their own button visibility based on context
   const shouldShowButtons = Boolean(displayStep?.userOptions?.length);
+  console.log('[DEBUG] useChat: shouldShowButtons:', shouldShowButtons);
 
   const handleFlowChoice = customStep ? actions.handleCustomButtonClick : conversationFlow.handleUserChoice;
 
@@ -120,5 +129,7 @@ export const useChat = () => {
   };
 
   console.log('[DEBUG] useChat returning state with view:', chatState.view);
+  console.log('[DEBUG] useChat returning chatState.currentStep:', chatState.currentStep);
+  console.log('[DEBUG] useChat returning chatState.shouldShowButtons:', chatState.shouldShowButtons);
   return chatState;
 };
