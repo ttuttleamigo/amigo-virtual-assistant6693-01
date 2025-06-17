@@ -28,9 +28,9 @@ const HorizontalChat = ({
   
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
-      <div className="bg-blue-600 rounded-lg shadow-xl min-w-[800px] max-w-6xl">
+      <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 rounded-lg shadow-xl min-w-[800px] max-w-6xl">
         {/* Header with close button */}
-        <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600 rounded-t-lg">
+        <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 rounded-t-lg">
           <div className="flex items-center space-x-2">
             <img 
               src="/lovable-uploads/b12f4efb-0fa0-4019-ba3b-e5cffcf2ef22.png" 
@@ -49,7 +49,7 @@ const HorizontalChat = ({
         </div>
         
         {/* Content */}
-        <div className="px-6 pb-6 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600">
+        <div className="px-6 pb-6 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600">
           {/* Input Section */}
           <div className="space-y-3">
             <div className="relative">
@@ -63,14 +63,14 @@ const HorizontalChat = ({
                 disabled={isProcessing}
               />
               <div className="absolute left-4 top-5">
-                <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
+                <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-lg">
                   <MessageCircle className="w-4 h-4 text-white" />
                 </div>
               </div>
               <Button
                 onClick={sendMessage}
                 size="sm"
-                className="absolute right-2 top-5 bg-transparent hover:bg-blue-500 text-blue-600 hover:text-white border-0 h-8 w-8 p-0"
+                className="absolute right-2 top-5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0 h-8 w-8 p-0 shadow-lg"
                 disabled={!inputValue.trim() || isProcessing}
               >
                 <Send className="w-4 h-4" />
@@ -81,21 +81,21 @@ const HorizontalChat = ({
             <div className="flex gap-2 items-center">
               <Button
                 onClick={() => onSuggestedAction('I need help with an Amigo cart repair')}
-                className="bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
+                className="bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 text-white border-0 rounded-md px-4 py-2 text-sm font-medium shadow-lg hover:shadow-xl hover:shadow-blue-700/30 transition-all duration-300"
                 disabled={isProcessing}
               >
                 I need help with an Amigo cart repair
               </Button>
               <Button
                 onClick={() => onSuggestedAction('I need to buy a part for an Amigo cart')}
-                className="bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
+                className="bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 text-white border-0 rounded-md px-4 py-2 text-sm font-medium shadow-lg hover:shadow-xl hover:shadow-blue-700/30 transition-all duration-300"
                 disabled={isProcessing}
               >
                 I need to buy a part for an Amigo cart
               </Button>
               <Button
                 onClick={() => onSuggestedAction('I have a different customer service need')}
-                className="bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-md px-4 py-2 text-sm font-medium"
+                className="bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 text-white border-0 rounded-md px-4 py-2 text-sm font-medium shadow-lg hover:shadow-xl hover:shadow-blue-700/30 transition-all duration-300"
                 disabled={isProcessing}
               >
                 I have a different customer service need

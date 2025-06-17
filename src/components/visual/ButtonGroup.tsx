@@ -2,7 +2,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ButtonConfig } from '@/config/buttonConfig';
-import { visualConfig } from '@/config/visualConfig';
 
 interface ButtonGroupProps {
   buttons: ButtonConfig[];
@@ -20,15 +19,15 @@ const ButtonGroup = ({
   className = '' 
 }: ButtonGroupProps) => {
   const getButtonStyle = (buttonVariant?: string) => {
-    const baseClasses = "w-full justify-start text-left h-auto p-4 whitespace-normal break-words shadow-md rounded-xl font-medium text-sm leading-tight";
+    const baseClasses = "w-full justify-start text-left h-auto p-4 whitespace-normal break-words rounded-xl font-medium text-sm leading-tight transition-all duration-300 transform hover:scale-[1.02] shadow-lg";
     
     switch (buttonVariant) {
       case 'help':
-        return `${baseClasses} bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300`;
+        return `${baseClasses} bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0 hover:shadow-xl hover:shadow-blue-500/30`;
       case 'secondary':
-        return `${baseClasses} bg-white hover:bg-gray-50 text-blue-600 border border-blue-200`;
+        return `${baseClasses} bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white border-0 hover:shadow-xl hover:shadow-blue-400/30`;
       default:
-        return `${baseClasses} bg-blue-600 hover:bg-blue-700 text-white border-0`;
+        return `${baseClasses} bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white border-0 hover:shadow-xl hover:shadow-blue-600/40`;
     }
   };
 

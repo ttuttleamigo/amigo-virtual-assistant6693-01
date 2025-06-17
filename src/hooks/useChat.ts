@@ -1,6 +1,7 @@
 
 import { useState, useCallback, useReducer } from 'react';
 import { botMessages } from '@/data/botMessages';
+import { lookupSerialNumber, determineFlowFromModel } from '@/services/serialNumberService';
 
 // Define the possible views our chat can be in
 type ChatView = 'closed' | 'horizontal' | 'modal' | 'sidebar';
@@ -44,7 +45,7 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
     case 'SET_CURRENT_STEP':
       return { ...state, isTyping: false, currentStep: action.step };
     case 'CLEAR_HISTORY':
-      return { ...state, conversationHistory: [] };
+      return { ...state, conversationHistory: [], currentStep: null };
     default:
       return state;
   }
@@ -62,7 +63,7 @@ export const useChat = () => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
   const [inputValue, setInputValue] = useState('');
 
-  const sendMessage = useCallback(() => {
+  const sendMessage = useCallback(async () => {
     if (!inputValue.trim()) return;
 
     const userMessage: Message = {
@@ -73,9 +74,51 @@ export const useChat = () => {
     };
 
     dispatch({ type: 'ADD_MESSAGE', message: userMessage });
-    setInputValue('');
     
-    // Set typing and prepare bot response
+    // Check if we're in serial collection mode and the input looks like a serial number
+    if (state.currentStep?.id === 'serial_collection') {
+      setInputValue('');
+      dispatch({ type: 'SET_TYPING', isTyping: true });
+      
+      try {
+        console.log('Looking up serial number:', inputValue);
+        const productInfo = await lookupSerialNumber(inputValue);
+        
+        if (productInfo) {
+          const flow = determineFlowFromModel(productInfo.model);
+          const botResponse: Message = {
+            id: `${Date.now() + 1}-${Math.random()}`,
+            text: `Great! I found your ${productInfo.model}. Let me help you with that.`,
+            sender: 'agent',
+            timestamp: new Date(),
+          };
+          dispatch({ type: 'ADD_MESSAGE', message: botResponse });
+          dispatch({ type: 'SET_TYPING', isTyping: false });
+        } else {
+          const botResponse: Message = {
+            id: `${Date.now() + 1}-${Math.random()}`,
+            text: "I couldn't find that serial number in our system. Could you please double-check it?",
+            sender: 'agent',
+            timestamp: new Date(),
+          };
+          dispatch({ type: 'ADD_MESSAGE', message: botResponse });
+          dispatch({ type: 'SET_TYPING', isTyping: false });
+        }
+      } catch (error) {
+        console.error('Error looking up serial number:', error);
+        const botResponse: Message = {
+          id: `${Date.now() + 1}-${Math.random()}`,
+          text: "I'm having trouble looking up that serial number right now. Please try again later.",
+          sender: 'agent',
+          timestamp: new Date(),
+        };
+        dispatch({ type: 'ADD_MESSAGE', message: botResponse });
+        dispatch({ type: 'SET_TYPING', isTyping: false });
+      }
+      return;
+    }
+    
+    setInputValue('');
     dispatch({ type: 'SET_TYPING', isTyping: true });
     
     setTimeout(() => {
@@ -88,7 +131,7 @@ export const useChat = () => {
       dispatch({ type: 'ADD_MESSAGE', message: botResponse });
       dispatch({ type: 'SET_TYPING', isTyping: false });
     }, 1000);
-  }, [inputValue]);
+  }, [inputValue, state.currentStep]);
 
   const sendSuggestedAction = useCallback((actionText: string) => {
     const userMessage: Message = {
@@ -118,7 +161,7 @@ export const useChat = () => {
     dispatch({ type: 'SET_VIEW', view: 'modal' });
   }, []);
 
-  const sendSerialNumber = useCallback((serialNumber: string) => {
+  const sendSerialNumber = useCallback(async (serialNumber: string) => {
     const userMessage: Message = {
       id: `${Date.now()}-${Math.random()}`,
       text: serialNumber,
@@ -129,16 +172,41 @@ export const useChat = () => {
     dispatch({ type: 'ADD_MESSAGE', message: userMessage });
     dispatch({ type: 'SET_TYPING', isTyping: true });
 
-    setTimeout(() => {
+    try {
+      console.log('Looking up serial number via sendSerialNumber:', serialNumber);
+      const productInfo = await lookupSerialNumber(serialNumber);
+      
+      if (productInfo) {
+        const flow = determineFlowFromModel(productInfo.model);
+        const botResponse: Message = {
+          id: `${Date.now() + 1}-${Math.random()}`,
+          text: `Perfect! I found your ${productInfo.model}. How can I help you with it today?`,
+          sender: 'agent',
+          timestamp: new Date(),
+        };
+        dispatch({ type: 'ADD_MESSAGE', message: botResponse });
+        dispatch({ type: 'SET_TYPING', isTyping: false });
+      } else {
+        const botResponse: Message = {
+          id: `${Date.now() + 1}-${Math.random()}`,
+          text: "I couldn't locate that serial number. Could you verify it's correct?",
+          sender: 'agent',
+          timestamp: new Date(),
+        };
+        dispatch({ type: 'ADD_MESSAGE', message: botResponse });
+        dispatch({ type: 'SET_TYPING', isTyping: false });
+      }
+    } catch (error) {
+      console.error('Error in sendSerialNumber:', error);
       const botResponse: Message = {
         id: `${Date.now() + 1}-${Math.random()}`,
-        text: "Thank you for providing the serial number. Let me look that up for you.",
+        text: "I'm experiencing technical difficulties. Please try again.",
         sender: 'agent',
         timestamp: new Date(),
       };
       dispatch({ type: 'ADD_MESSAGE', message: botResponse });
       dispatch({ type: 'SET_TYPING', isTyping: false });
-    }, 1500);
+    }
   }, []);
 
   const handleFlowChoice = useCallback((choice: string) => {
@@ -206,7 +274,6 @@ export const useChat = () => {
 
   const clearChatHistory = useCallback(() => {
     dispatch({ type: 'CLEAR_HISTORY' });
-    dispatch({ type: 'SET_CURRENT_STEP', step: null });
   }, []);
 
   // Return a clean API for the UI to use
