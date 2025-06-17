@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useConversationFlow, FlowType } from './useConversationFlow';
 import { useChatStateMachine } from './useChatStateMachine';
+
+// Define the possible views our chat can be in
+type ChatView = 'closed' | 'horizontal' | 'modal' | 'sidebar';
 
 export const useChat = () => {
   const { 
@@ -30,6 +33,9 @@ export const useChat = () => {
     }
   );
 
+  // ADD VIEW STATE MANAGEMENT
+  const [view, setView] = useState<ChatView>('closed');
+
   const handleFlowChoice = (choice: string, nextStep: string) => {
     handleUserChoice(choice, nextStep);
   };
@@ -37,7 +43,14 @@ export const useChat = () => {
   const handleClose = () => {
     chatMachine.handleClose();
     resetFlow();
+    setView('closed'); // Close the chat view
   };
+
+  // ADD HANDLERS TO CHANGE THE VIEW
+  const openModal = useCallback(() => setView('modal'), []);
+  const openSidebar = useCallback(() => setView('sidebar'), []);
+  const openHorizontal = useCallback(() => setView('horizontal'), []);
+  const closeChat = useCallback(() => setView('closed'), []);
 
   const handleCustomButtonClick = (action: string) => {
     console.log('handleCustomButtonClick called with:', action);
@@ -109,11 +122,13 @@ export const useChat = () => {
     }
   };
 
-  // New dedicated functions for external components
-  const sendSuggestedAction = (action: string) => {
+  // NEW FUNCTION FOR SUGGESTED ACTIONS
+  const sendSuggestedAction = useCallback((action: string) => {
     console.log('sendSuggestedAction called with:', action);
     handleCustomButtonClick(action);
-  };
+    // Automatically open modal after sending a suggested action
+    setView('modal');
+  }, []);
 
   const sendSerialNumber = (serialNumber: string) => {
     console.log('sendSerialNumber called with:', serialNumber);
@@ -233,18 +248,24 @@ export const useChat = () => {
     isInputDisabled,
     currentStep: displayStep,
     shouldShowButtons,
-    uiState: chatMachine.state.uiState,
+    
+    // NEW VIEW STATE AND HANDLERS
+    view,
+    openModal,
+    openSidebar,
+    openHorizontal,
+    closeChat,
     
     // Actions
     setInputValue: chatMachine.setInputValue,
     sendMessage,
-    sendSuggestedAction,
+    sendSuggestedAction, // NEW EXPOSED FUNCTION
     sendSerialNumber,
     handleClose,
     handleFlowChoice: customStep ? handleCustomButtonClick : handleFlowChoice,
     handleModalToSidebar: chatMachine.handleModalToSidebar,
     handleMinimize: chatMachine.handleMinimize,
-    handleChatButtonClick: chatMachine.handleChatButtonClick,
+    handleChatButtonClick: () => setView('horizontal'), // UPDATED TO USE VIEW STATE
     downloadTranscript,
     clearChatHistory,
     
