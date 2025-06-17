@@ -1,4 +1,3 @@
-
 import { useState, useReducer, useCallback } from 'react';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
 import { FlowType } from '@/hooks/useConversationFlow';
@@ -238,7 +237,7 @@ export const useChatStateMachine = (
            /^(ss|vs|v|mc)\d*$/.test(cleanText);
   }, []);
 
-  // Core Action Handlers
+  // Core Action Handlers - Updated to follow contactAgentFlow specification
   const handleSuggestedAction = useCallback(async (action: string) => {
     try {
       // Add user message
@@ -250,7 +249,27 @@ export const useChatStateMachine = (
       };
       addRegularMessage(newMessage);
 
-      if (action === 'Enter serial number') {
+      if (action === 'I need help with an Amigo cart repair') {
+        // Following contactAgentFlow.md - should start contactAgent flow directly
+        setTimeout(() => {
+          startFlow('contactAgent');
+          dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
+        }, 1000);
+        
+      } else if (action === 'I need to buy a part for an Amigo cart') {
+        addRegularMessageWithTyping([
+          "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n\nCall our parts department at 1-800-692-6446\nEmail parts@amigomobility.com\nVisit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
+        ], 1500);
+        
+        dispatch({ type: 'SET_INPUT_DISABLED', disabled: true });
+        
+      } else if (action === 'I have a different customer service need') {
+        setTimeout(() => {
+          startFlow('contactAgent');
+          dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
+        }, 1000);
+        
+      } else if (action === 'Enter serial number') {
         addRegularMessageWithTyping([
           "Great! Please enter your serial number. You can find it on a label, usually on the back or bottom of your cart."
         ], 1000);
@@ -275,28 +294,6 @@ export const useChatStateMachine = (
         
         dispatch({ type: 'SET_MODE', mode: 'idle' });
         dispatch({ type: 'SET_SHOW_INITIAL_BUTTONS', show: false });
-        
-      } else if (action === 'I need help with an Amigo cart repair') {
-        addRegularMessageWithTyping([
-          "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\nSerial number (found on a label, usually on the back or bottom of your cart)\nModel name (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!"
-        ], 1500);
-        
-        setTimeout(() => {
-          dispatch({ type: 'SHOW_OPTIONS' });
-        }, 2250);
-        
-      } else if (action === 'I need to buy a part for an Amigo cart') {
-        addRegularMessageWithTyping([
-          "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n\nCall our parts department at 1-800-692-6446\nEmail parts@amigomobility.com\nVisit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
-        ], 1500);
-        
-        dispatch({ type: 'SET_INPUT_DISABLED', disabled: true });
-        
-      } else if (action === 'I have a different customer service need') {
-        setTimeout(() => {
-          startFlow('contactAgent');
-          dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
-        }, 1750);
       }
     } catch (error) {
       console.error('Error in handleSuggestedAction:', error);
