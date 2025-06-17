@@ -1,5 +1,4 @@
-
-import { useState, useReducer, useCallback, useEffect } from 'react';
+import { useState, useReducer, useCallback } from 'react';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
 import { FlowType } from '@/hooks/useConversationFlow';
 
@@ -52,8 +51,8 @@ export type ChatAction =
   | { type: 'ENTER_DIAGNOSTIC_FLOW' };
 
 const initialState: ChatState = {
-  uiState: 'horizontal',
-  previousUIState: 'horizontal',
+  uiState: 'hidden',
+  previousUIState: 'hidden',
   mode: 'idle',
   inputValue: '',
   isInputDisabled: false,
@@ -189,24 +188,11 @@ export const useChatStateMachine = (
 ): ChatStateMachine => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
 
-  // Auto-transition logic - only transition when buttons are actually needed
-  useEffect(() => {
-    // Only handle case where we're showing options but still in horizontal mode
-    if (state.uiState === 'horizontal' && state.showInitialButtons) {
-      dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
-      dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
-    }
-  }, [state.uiState, state.mode, state.showInitialButtons]);
-
   // UI Action Handlers
   const handleChatButtonClick = useCallback(() => {
-    if (state.previousUIState !== 'horizontal') {
-      dispatch({ type: 'SET_UI_STATE', uiState: state.previousUIState });
-    } else {
-      dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
-      dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
-    }
-  }, [state.previousUIState]);
+    dispatch({ type: 'SET_UI_STATE', uiState: 'horizontal' });
+    dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'horizontal' });
+  }, []);
 
   const handleModalToSidebar = useCallback(() => {
     dispatch({ type: 'SET_UI_STATE', uiState: 'sidebar' });
@@ -219,11 +205,8 @@ export const useChatStateMachine = (
   }, []);
 
   const handleClose = useCallback(() => {
-    if (state.uiState !== 'hidden' && state.uiState !== 'horizontal') {
-      dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: state.uiState });
-    }
     dispatch({ type: 'RESET_CHAT' });
-  }, [state.uiState]);
+  }, []);
 
   // Input Actions
   const setInputValue = useCallback((value: string) => {
