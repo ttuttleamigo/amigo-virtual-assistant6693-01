@@ -44,7 +44,71 @@ const ChatWidget = () => {
   };
 
   const handleCustomButtonClick = (action: string) => {
-    chatMachine.handleSuggestedAction(action);
+    if (action === "Enter serial number") {
+      // Add user message
+      const userMessage = {
+        id: Date.now().toString(),
+        text: "Enter serial number",
+        sender: 'user' as const,
+        timestamp: new Date()
+      };
+      addRegularMessage(userMessage);
+
+      // Show serial number entry guidance
+      addRegularMessageWithTyping([
+        "Please enter your cart's serial number. You can find it on a label, usually on the back or bottom of your cart:"
+      ], 1500);
+
+      // Start serial number collection mode
+      setTimeout(() => {
+        chatMachine.dispatch({ type: 'START_SERIAL_COLLECTION' });
+      }, 2000);
+      
+    } else if (action === "Enter model name") {
+      // Add user message
+      const userMessage = {
+        id: Date.now().toString(),
+        text: "Enter model name",
+        sender: 'user' as const,
+        timestamp: new Date()
+      };
+      addRegularMessage(userMessage);
+
+      // Show model entry guidance
+      addRegularMessageWithTyping([
+        "I can help you identify your Amigo model! Here are our main models:\n\nSmartShopper - Compact shopping cart, great for stores\nValueShopper - Affordable option with essential features\nVista - Mid-range model with enhanced comfort\nMax CR - Heavy-duty model for outdoor use\n\nWhere to find your model:\nLook for a label on your cart (same place as serial number)\nCheck your paperwork or receipt\nThe model name is usually clearly marked\n\nJust tell me which model you have, or describe your cart and I can help identify it!"
+      ], 1500);
+
+      // Start model collection mode
+      setTimeout(() => {
+        chatMachine.dispatch({ type: 'START_MODEL_COLLECTION' });
+      }, 2500);
+      
+    } else if (action === "I'm not sure") {
+      // Add user message
+      const userMessage = {
+        id: Date.now().toString(),
+        text: "I'm not sure",
+        sender: 'user' as const,
+        timestamp: new Date()
+      };
+      addRegularMessage(userMessage);
+
+      // Show guidance for finding both serial number and model
+      addRegularMessageWithTyping([
+        "If you're not sure where to find either, just let me know and I can help guide you!"
+      ], 1500);
+
+      // Show options to help find either
+      setTimeout(() => {
+        chatMachine.dispatch({ type: 'SHOW_HELP_OPTIONS' });
+      }, 2000);
+      
+    } else if (action === "I can't find it" || action === "Help find serial number" || action === "Help identify model") {
+      chatMachine.handleHelpButtonClick(action);
+    } else {
+      chatMachine.handleSuggestedAction(action);
+    }
   };
 
   const sendMessage = () => {
@@ -130,8 +194,27 @@ const ChatWidget = () => {
     ]
   } : null;
 
-  // Clear display step logic - either custom step or flow step, not both
-  const displayStep = customStep || (isInFlow && currentStep ? currentStep : null);
+  // Handle serial number collection state with custom buttons
+  const serialCollectionStep = chatMachine.state.mode === 'collecting_serial' ? {
+    id: 'serial_collection',
+    botMessage: "Please enter your cart's serial number. You can find it on a label, usually on the back or bottom of your cart:",
+    userOptions: [
+      { text: "I can't find it", nextStep: "" }
+    ]
+  } : null;
+
+  // Handle help options state
+  const helpOptionsStep = chatMachine.state.showHelpOptions ? {
+    id: 'help_options',
+    botMessage: "If you're not sure where to find either, just let me know and I can help guide you!",
+    userOptions: [
+      { text: "Help find serial number", nextStep: "" },
+      { text: "Help identify model", nextStep: "" }
+    ]
+  } : null;
+
+  // Clear display step logic - prioritize states in order
+  const displayStep = serialCollectionStep || helpOptionsStep || customStep || (isInFlow && currentStep ? currentStep : null);
 
   // If the state is hidden, show just the button (even though we start in horizontal now)
   if (chatMachine.state.uiState === 'hidden') {

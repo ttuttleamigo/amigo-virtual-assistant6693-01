@@ -1,223 +1,103 @@
-import { useState, useReducer, useCallback } from 'react';
-import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
-import { FlowType } from '@/hooks/useConversationFlow';
+import { useReducer, useCallback } from 'react';
+import { FlowType, ConversationMessage } from '@/hooks/useConversationFlow';
+import { lookupSerialNumber, determineFlowFromModel } from '@/services/serialNumberService';
 
 export type ChatUIState = 'hidden' | 'horizontal' | 'modal' | 'sidebar';
+export type ChatMode = 'idle' | 'collecting_serial' | 'collecting_model';
 
-export type ChatMode = 
-  | 'idle'
-  | 'collecting_serial' 
-  | 'collecting_model'
-  | 'processing_lookup'
-  | 'generating_response'
-  | 'in_diagnostic_flow'
-  | 'showing_options';
-
-export interface ChatState {
-  // UI State
+interface ChatState {
   uiState: ChatUIState;
-  previousUIState: ChatUIState;
-  
-  // Chat Mode
-  mode: ChatMode;
-  
-  // Input State
   inputValue: string;
-  isInputDisabled: boolean;
-  
-  // Data State
-  productInfo: ProductInfo | null;
-  
-  // UI Control State
-  showInitialButtons: boolean;
   isTyping: boolean;
+  mode: ChatMode;
+  showInitialButtons: boolean;
+  showHelpOptions: boolean;
+  isInputDisabled: boolean;
 }
 
-export type ChatAction = 
-  | { type: 'SET_UI_STATE'; uiState: ChatUIState }
-  | { type: 'SET_PREVIOUS_UI_STATE'; previousUIState: ChatUIState }
-  | { type: 'SET_MODE'; mode: ChatMode }
-  | { type: 'SET_INPUT_VALUE'; inputValue: string }
-  | { type: 'SET_INPUT_DISABLED'; disabled: boolean }
-  | { type: 'SET_PRODUCT_INFO'; productInfo: ProductInfo | null }
-  | { type: 'SET_SHOW_INITIAL_BUTTONS'; show: boolean }
+type ChatAction = 
+  | { type: 'SET_UI_STATE'; state: ChatUIState }
+  | { type: 'SET_INPUT_VALUE'; value: string }
   | { type: 'SET_TYPING'; isTyping: boolean }
-  | { type: 'RESET_CHAT' }
+  | { type: 'SET_MODE'; mode: ChatMode }
+  | { type: 'SHOW_OPTIONS' }
+  | { type: 'SHOW_HELP_OPTIONS' }
   | { type: 'START_SERIAL_COLLECTION' }
   | { type: 'START_MODEL_COLLECTION' }
-  | { type: 'START_PROCESSING' }
-  | { type: 'SHOW_OPTIONS' }
-  | { type: 'AUTO_SHOW_MAIN_OPTIONS' }
-  | { type: 'ENTER_DIAGNOSTIC_FLOW' };
+  | { type: 'RESET_STATE' }
+  | { type: 'SET_INPUT_DISABLED'; disabled: boolean };
 
 const initialState: ChatState = {
   uiState: 'horizontal',
-  previousUIState: 'horizontal',
-  mode: 'idle',
   inputValue: '',
-  isInputDisabled: false,
-  productInfo: null,
+  isTyping: false,
+  mode: 'idle',
   showInitialButtons: false,
-  isTyping: false
+  showHelpOptions: false,
+  isInputDisabled: false,
 };
 
 const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
   switch (action.type) {
     case 'SET_UI_STATE':
-      return { ...state, uiState: action.uiState };
-    
-    case 'SET_PREVIOUS_UI_STATE':
-      return { ...state, previousUIState: action.previousUIState };
-    
-    case 'SET_MODE':
-      return { ...state, mode: action.mode };
-    
+      return { ...state, uiState: action.state };
     case 'SET_INPUT_VALUE':
-      return { ...state, inputValue: action.inputValue };
-    
-    case 'SET_INPUT_DISABLED':
-      return { ...state, isInputDisabled: action.disabled };
-    
-    case 'SET_PRODUCT_INFO':
-      return { ...state, productInfo: action.productInfo };
-    
-    case 'SET_SHOW_INITIAL_BUTTONS':
-      return { 
-        ...state, 
-        showInitialButtons: action.show,
-        // Clear input disabled when hiding buttons, set when showing
-        isInputDisabled: action.show
-      };
-    
+      return { ...state, inputValue: action.value };
     case 'SET_TYPING':
       return { ...state, isTyping: action.isTyping };
-    
-    case 'RESET_CHAT':
-      return {
-        ...initialState,
-        uiState: 'hidden'
-      };
-    
-    case 'START_SERIAL_COLLECTION':
-      return {
-        ...state,
-        mode: 'collecting_serial',
-        showInitialButtons: false,
-        isInputDisabled: false,
-        uiState: state.uiState === 'horizontal' ? 'modal' : state.uiState,
-        previousUIState: state.uiState === 'horizontal' ? 'modal' : state.previousUIState
-      };
-    
-    case 'START_MODEL_COLLECTION':
-      return {
-        ...state,
-        mode: 'collecting_model',
-        showInitialButtons: false,
-        isInputDisabled: false,
-        uiState: state.uiState === 'horizontal' ? 'modal' : state.uiState,
-        previousUIState: state.uiState === 'horizontal' ? 'modal' : state.previousUIState
-      };
-    
-    case 'START_PROCESSING':
-      return {
-        ...state,
-        mode: 'processing_lookup',
-        isInputDisabled: true,
-        isTyping: true,
-        showInitialButtons: false
-      };
-    
+    case 'SET_MODE':
+      return { ...state, mode: action.mode };
     case 'SHOW_OPTIONS':
-      return {
-        ...state,
-        mode: 'showing_options',
-        showInitialButtons: true,
-        isInputDisabled: true,
-        uiState: state.uiState === 'horizontal' ? 'modal' : state.uiState,
-        previousUIState: state.uiState === 'horizontal' ? 'modal' : state.previousUIState
+      return { 
+        ...state, 
+        showInitialButtons: true, 
+        showHelpOptions: false,
+        isInputDisabled: true 
       };
-    
-    case 'AUTO_SHOW_MAIN_OPTIONS':
-      return {
-        ...state,
-        mode: 'showing_options',
-        showInitialButtons: true,
-        isInputDisabled: true,
-        uiState: 'modal',
-        previousUIState: 'modal'
+    case 'SHOW_HELP_OPTIONS':
+      return { 
+        ...state, 
+        showInitialButtons: false, 
+        showHelpOptions: true,
+        isInputDisabled: true 
       };
-    
-    case 'ENTER_DIAGNOSTIC_FLOW':
-      return {
-        ...state,
-        mode: 'in_diagnostic_flow',
-        showInitialButtons: false,
-        isInputDisabled: true
+    case 'START_SERIAL_COLLECTION':
+      return { 
+        ...state, 
+        mode: 'collecting_serial', 
+        showInitialButtons: false, 
+        showHelpOptions: false,
+        isInputDisabled: false 
       };
-    
+    case 'START_MODEL_COLLECTION':
+      return { 
+        ...state, 
+        mode: 'collecting_model', 
+        showInitialButtons: false, 
+        showHelpOptions: false,
+        isInputDisabled: false 
+      };
+    case 'RESET_STATE':
+      return { 
+        ...state, 
+        mode: 'idle', 
+        showInitialButtons: false, 
+        showHelpOptions: false,
+        isInputDisabled: false 
+      };
+    case 'SET_INPUT_DISABLED':
+      return { ...state, isInputDisabled: action.disabled };
     default:
       return state;
   }
 };
 
-export interface ChatStateMachine {
-  state: ChatState;
-  dispatch: React.Dispatch<ChatAction>;
-  
-  // UI Actions
-  handleChatButtonClick: () => void;
-  handleModalToSidebar: () => void;
-  handleMinimize: () => void;
-  handleClose: () => void;
-  
-  // Input Actions
-  setInputValue: (value: string) => void;
-  
-  // Core Actions
-  handleSuggestedAction: (action: string) => Promise<void>;
-  handleSerialNumberSubmit: (serialNumber: string) => Promise<void>;
-  handleModelSubmit: (model: string) => Promise<void>;
-  
-  // Utility Functions
-  isSerialNumberFormat: (text: string) => boolean;
-  isModelFormat: (text: string) => boolean;
-}
-
 export const useChatStateMachine = (
-  addRegularMessage: (message: any) => void,
-  addRegularMessageWithTyping: (messages: string[], delay: number) => void,
+  addRegularMessage: (message: ConversationMessage) => void,
+  addRegularMessageWithTyping: (messages: string[], delay?: number) => void,
   startFlow: (flowType: FlowType) => void
-): ChatStateMachine => {
+) => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
-
-  // UI Action Handlers
-  const handleChatButtonClick = useCallback(() => {
-    dispatch({ type: 'SET_UI_STATE', uiState: 'horizontal' });
-    dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'horizontal' });
-  }, []);
-
-  const handleModalToSidebar = useCallback(() => {
-    setTimeout(() => {
-      dispatch({ type: 'SET_UI_STATE', uiState: 'sidebar' });
-      dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'sidebar' });
-    }, 250);
-  }, []);
-
-  const handleMinimize = useCallback(() => {
-    setTimeout(() => {
-      dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
-      dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
-    }, 250);
-  }, []);
-
-  const handleClose = useCallback(() => {
-    dispatch({ type: 'RESET_CHAT' });
-  }, []);
-
-  // Input Actions
-  const setInputValue = useCallback((value: string) => {
-    dispatch({ type: 'SET_INPUT_VALUE', inputValue: value });
-  }, []);
 
   // Utility Functions
   const isSerialNumberFormat = useCallback((text: string): boolean => {
@@ -238,86 +118,29 @@ export const useChatStateMachine = (
   }, []);
 
   // Fixed action handler to properly route to correct flows
-  const handleSuggestedAction = useCallback(async (action: string) => {
+  const handleSuggestedAction = useCallback((action: string) => {
     console.log('handleSuggestedAction called with:', action);
     
-    try {
-      // Add user message
-      const newMessage = {
+    if (action === "I need help with an Amigo cart repair") {
+      dispatch({ type: 'SET_UI_STATE', state: 'modal' });
+      
+      const userMessage: ConversationMessage = {
         id: Date.now().toString(),
         text: action,
-        sender: 'user' as const,
+        sender: 'user',
         timestamp: new Date()
       };
-      addRegularMessage(newMessage);
+      addRegularMessage(userMessage);
 
-      // Handle the specific button actions for serial/model collection
-      if (action === 'Enter serial number') {
-        addRegularMessageWithTyping([
-          "Please enter your cart's serial number. You can find it on a label, usually on the back or bottom of your cart:"
-        ], 1000);
-        
-        dispatch({ type: 'START_SERIAL_COLLECTION' });
-        return;
-      }
+      const botResponse = "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I can work with either:\n\nSerial number - for precise troubleshooting\nModel name - for general guidance\n\nWhich would you prefer to provide? Or if you need help finding either, just let me know!";
       
-      if (action === 'Enter model name') {
-        addRegularMessageWithTyping([
-          "Please enter your cart's model name (like SmartShopper, ValueShopper, Vista, or Max CR):"
-        ], 1000);
-        
-        dispatch({ type: 'START_MODEL_COLLECTION' });
-        return;
-      }
+      addRegularMessageWithTyping([botResponse], 1500);
       
-      if (action === "I'm not sure") {
-        addRegularMessageWithTyping([
-          "No problem! Let me help you with general troubleshooting steps that work for most Amigo carts."
-        ], 1000);
-        
-        setTimeout(() => {
-          startFlow('general');
-          dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
-        }, 2500);
-        return;
-      }
-
-      // Transition to modal ONLY for main action options
-      console.log('Transitioning to modal state');
-      dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
-      dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
-      
-      if (action === 'I need help with an Amigo cart repair') {
-        // Send as single message instead of array to prevent splitting
-        addRegularMessageWithTyping([
-          "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\n• Serial number (found on a label, usually on the back or bottom of your cart)\n• Model name (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!"
-        ], 1500);
-        
-        setTimeout(() => {
-          dispatch({ type: 'SHOW_OPTIONS' });
-        }, 3000);
-        
-      } else if (action === 'I need to buy a part for an Amigo cart') {
-        addRegularMessageWithTyping([
-          "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n• Call our parts department at 1-800-692-6446\n• Email parts@amigomobility.com\n• Visit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
-        ], 1500);
-        
-        dispatch({ type: 'SET_MODE', mode: 'idle' });
-        dispatch({ type: 'SET_INPUT_DISABLED', disabled: false });
-        
-      } else if (action === 'I have a different customer service need') {
-        // This one goes to contact agent flow according to contactAgentFlow.md
-        console.log('Starting contactAgent flow for general customer service');
-        setTimeout(() => {
-          startFlow('contactAgent');
-          dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
-        }, 500);
-      }
-      
-    } catch (error) {
-      console.error('Error in handleSuggestedAction:', error);
+      setTimeout(() => {
+        dispatch({ type: 'SHOW_OPTIONS' });
+      }, 2000);
     }
-  }, [addRegularMessage, addRegularMessageWithTyping, startFlow]);
+  }, [addRegularMessage, addRegularMessageWithTyping]);
 
   const handleSerialNumberSubmit = useCallback(async (serialNumber: string) => {
     const userMessage = {
@@ -373,9 +196,9 @@ export const useChatStateMachine = (
         dispatch({ type: 'SET_INPUT_DISABLED', disabled: false });
       }, 1500);
     }
-  }, [addRegularMessage, addRegularMessageWithTyping, startFlow]);
+  }, [addRegularMessage, addRegularMessageWithTyping, startFlow, dispatch]);
 
-  const handleModelSubmit = useCallback(async (model: string) => {
+  const handleModelSubmit = useCallback((model: string) => {
     const userMessage = {
       id: Date.now().toString(),
       text: `My model is: ${model}`,
@@ -394,20 +217,50 @@ export const useChatStateMachine = (
       startFlow(flowType);
       dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
     }, 2500);
-  }, [addRegularMessage, addRegularMessageWithTyping, startFlow]);
+  }, [addRegularMessage, addRegularMessageWithTyping, startFlow, dispatch]);
+
+  const handleHelpButtonClick = useCallback((action: string) => {
+    const userMessage: ConversationMessage = {
+      id: Date.now().toString(),
+      text: action,
+      sender: 'user',
+      timestamp: new Date()
+    };
+    addRegularMessage(userMessage);
+
+    if (action === "Help find serial number" || action === "I can't find it") {
+      addRegularMessageWithTyping([
+        "I can help you find your serial number! Here's where to look:\n\nMost Common Locations:\n• Back of the cart - Look for a white or silver label\n• Bottom/underside - May be on the base or frame\n• Near the battery compartment - Sometimes inside or nearby\n• On the controller - Some models have it there\n\nWhat to look for:\n• A label with \"S/N\" or \"Serial Number\"\n• Usually starts with letters like \"AMI\" followed by numbers\n• Typically 8-12 characters long\n\nOnce you find it, just type it here and I'll look up your cart information!"
+      ], 1500);
+      
+      setTimeout(() => {
+        dispatch({ type: 'START_SERIAL_COLLECTION' });
+      }, 2000);
+      
+    } else if (action === "Help identify model") {
+      addRegularMessageWithTyping([
+        "I can help you identify your Amigo model! Here are our main models:\n\nSmartShopper - Compact shopping cart, great for stores\nValueShopper - Affordable option with essential features\nVista - Mid-range model with enhanced comfort\nMax CR - Heavy-duty model for outdoor use\n\nWhere to find your model:\n• Look for a label on your cart (same place as serial number)\n• Check your paperwork or receipt\n• The model name is usually clearly marked\n\nJust tell me which model you have, or describe your cart and I can help identify it!"
+      ], 1500);
+      
+      setTimeout(() => {
+        dispatch({ type: 'START_MODEL_COLLECTION' });
+      }, 2000);
+    }
+  }, [addRegularMessage, addRegularMessageWithTyping, dispatch]);
+
+  const setInputValue = useCallback((value: string) => {
+    dispatch({ type: 'SET_INPUT_VALUE', value });
+  }, []);
 
   return {
     state,
     dispatch,
-    handleChatButtonClick,
-    handleModalToSidebar,
-    handleMinimize,
-    handleClose,
-    setInputValue,
+    isSerialNumberFormat,
+    isModelFormat,
     handleSuggestedAction,
     handleSerialNumberSubmit,
     handleModelSubmit,
-    isSerialNumberFormat,
-    isModelFormat
+    handleHelpButtonClick,
+    setInputValue
   };
 };
