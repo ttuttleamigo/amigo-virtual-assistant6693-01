@@ -1,4 +1,3 @@
-
 import { useConversationFlow } from './useConversationFlow';
 import { useChatStateMachine } from './useChatStateMachine';
 import { useChatViewManager } from './useChatViewManager';
@@ -10,7 +9,7 @@ export const useChat = () => {
   // 1. Call all our specialized hooks
   const conversationFlow = useConversationFlow();
   
-  const viewManager = useChatViewManager('closed'); // Start with closed view
+  const viewManager = useChatViewManager('horizontal'); // Start with horizontal view
 
   const chatMachine = useChatStateMachine(
     conversationFlow.addRegularMessage,
