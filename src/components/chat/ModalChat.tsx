@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import ModalHeader from './ModalHeader';
 import ChatInput from './ChatInput';
 import MessageList from './MessageList';
-import { useChat } from '@/hooks/useChat';
+import { useChatContext } from '@/context/ChatContext';
 
 const ModalChat = () => {
   const {
@@ -20,7 +19,7 @@ const ModalChat = () => {
     shouldShowButtons,
     downloadTranscript,
     clearChatHistory
-  } = useChat();
+  } = useChatContext();
 
   // Add state to control content visibility for smooth animation
   const [isContentVisible, setIsContentVisible] = useState(false);
