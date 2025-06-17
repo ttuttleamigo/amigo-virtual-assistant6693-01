@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useConversationFlow, FlowType } from './useConversationFlow';
 import { useChatStateMachine } from './useChatStateMachine';
+import { botMessages } from '@/data/botMessages';
 
 // Define the possible views our chat can be in
 type ChatView = 'closed' | 'horizontal' | 'modal' | 'sidebar';
@@ -66,9 +67,7 @@ export const useChat = () => {
       addRegularMessage(userMessage);
 
       // Show serial number entry guidance
-      addRegularMessageWithTyping([
-        "Please enter your cart's serial number below. You can find it on a label, usually on the back or bottom of your cart.\n\n**Where to look:**\n• Back of the cart (white or silver label)\n• Bottom/underside of the frame\n• Near the battery compartment\n• On the controller\n\n**What to look for:**\n• Label with \"S/N\" or \"Serial Number\"\n• Usually starts with \"AMI\" + numbers\n• Typically 8-12 characters long"
-      ], 1500);
+      addRegularMessageWithTyping([botMessages.serialNumberHelp], 1500);
 
       // Start serial number collection mode
       setTimeout(() => {
@@ -86,9 +85,7 @@ export const useChat = () => {
       addRegularMessage(userMessage);
 
       // Show model entry guidance
-      addRegularMessageWithTyping([
-        "I can help you identify your Amigo model! Here are our main models:\n\n**SmartShopper** - Compact shopping cart, great for stores\n**ValueShopper** - Affordable option with essential features\n**Vista** - Mid-range model with enhanced comfort\n**Max CR** - Heavy-duty model for outdoor use\n\n**Where to find your model:**\n• Look for a label on your cart (same place as serial number)\n• Check your paperwork or receipt\n• The model name is usually clearly marked\n\nJust tell me which model you have, or describe your cart and I can help identify it!"
-      ], 1500);
+      addRegularMessageWithTyping([botMessages.modelNameHelp], 1500);
 
       // Start model collection mode
       setTimeout(() => {
@@ -106,9 +103,7 @@ export const useChat = () => {
       addRegularMessage(userMessage);
 
       // Show guidance for finding both serial number and model
-      addRegularMessageWithTyping([
-        "No problem! I can help you find either your serial number or model name."
-      ], 1500);
+      addRegularMessageWithTyping([botMessages.imNotSureResponse], 1500);
 
       // Show options to help find either
       setTimeout(() => {
@@ -166,35 +161,27 @@ export const useChat = () => {
 
     // Handle help requests for finding serial number or model
     if (userInput.includes('help') && (userInput.includes('find') || userInput.includes('locate')) && userInput.includes('serial')) {
-      addRegularMessageWithTyping([
-        "I can help you find your serial number! Here's where to look:\n\n**Most Common Locations:**\n• **Back of the cart** - Look for a white or silver label\n• **Bottom/underside** - May be on the base or frame\n• **Near the battery compartment** - Sometimes inside or nearby\n• **On the controller** - Some models have it there\n\n**What to look for:**\n• A label with \"S/N\" or \"Serial Number\"\n• Usually starts with letters like \"AMI\" followed by numbers\n• Typically 8-12 characters long\n\nOnce you find it, just type it here and I'll look up your cart information!"
-      ], 1500);
+      addRegularMessageWithTyping([botMessages.serialNumberDetailedHelp], 1500);
       chatMachine.dispatch({ type: 'START_SERIAL_COLLECTION' });
       return;
     }
 
     if (userInput.includes('model') && (userInput.includes('help') || userInput.includes('what') || userInput.includes('which'))) {
-      addRegularMessageWithTyping([
-        "I can help you identify your Amigo model! Here are our main models:\n\nSmartShopper - Compact shopping cart, great for stores\nValueShopper - Affordable option with essential features\nVista - Mid-range model with enhanced comfort\nMax CR - Heavy-duty model for outdoor use\n\nWhere to find your model:\nLook for a label on your cart (same place as serial number)\nCheck your paperwork or receipt\nThe model name is usually clearly marked\n\nJust tell me which model you have, or describe your cart and I can help identify it!"
-      ], 1500);
+      addRegularMessageWithTyping([botMessages.modelIdentificationHelp], 1500);
       chatMachine.dispatch({ type: 'START_MODEL_COLLECTION' });
       return;
     }
 
     // Only trigger the general flow if we're not already expecting input
     if (!isInFlow && chatMachine.state.mode === 'idle') {
-      addRegularMessageWithTyping([
-        "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I can work with either:\n\nSerial number - for precise troubleshooting\nModel name - for general guidance\n\nWhich would you prefer to provide? Or if you need help finding either, just let me know!"
-      ], 1500);
+      addRegularMessageWithTyping([botMessages.initialTroubleshootingPrompt], 1500);
       
       setTimeout(() => {
         chatMachine.dispatch({ type: 'SHOW_OPTIONS' });
       }, 2000);
       
     } else if ((chatMachine.state.mode === 'collecting_serial' || chatMachine.state.mode === 'collecting_model') && !chatMachine.isSerialNumberFormat(chatMachine.state.inputValue) && !chatMachine.isModelFormat(chatMachine.state.inputValue)) {
-      addRegularMessageWithTyping([
-        "I didn't recognize that as a serial number or model name. \n\nFor serial numbers: Look for 6+ characters with letters and numbers (often starting with AMI)\nFor models: Try SmartShopper, ValueShopper, Vista, or Max CR\n\nNeed help finding either? Just ask \"help find serial number\" or \"help identify model\" and I'll guide you!"
-      ], 1500);
+      addRegularMessageWithTyping([botMessages.unrecognizedInput], 1500);
     }
   };
 
@@ -207,7 +194,7 @@ export const useChat = () => {
   // Create proper custom step with matching bot message when showing initial buttons
   const customStep = chatMachine.state.showInitialButtons ? {
     id: 'custom_serial_options',
-    botMessage: "For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\n• Serial number (found on a label, usually on the back or bottom of your cart)\n• Model name (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!",
+    botMessage: botMessages.initialOptionsPrompt,
     userOptions: [
       { text: "Serial number", nextStep: "" },
       { text: "Model name", nextStep: "" },
@@ -218,7 +205,7 @@ export const useChat = () => {
   // Handle serial number collection state with custom buttons
   const serialCollectionStep = chatMachine.state.mode === 'collecting_serial' ? {
     id: 'serial_collection',
-    botMessage: "Please enter your cart's serial number below. You can find it on a label, usually on the back or bottom of your cart.\n\n**Where to look:**\n• Back of the cart (white or silver label)\n• Bottom/underside of the frame\n• Near the battery compartment\n• On the controller\n\n**What to look for:**\n• Label with \"S/N\" or \"Serial Number\"\n• Usually starts with \"AMI\" + numbers\n• Typically 8-12 characters long",
+    botMessage: botMessages.serialNumberHelp,
     userOptions: [
       { text: "I can't find it", nextStep: "" }
     ]
@@ -227,7 +214,7 @@ export const useChat = () => {
   // Handle help options state
   const helpOptionsStep = chatMachine.state.showHelpOptions ? {
     id: 'help_options',
-    botMessage: "No problem! I can help you find either your serial number or model name.",
+    botMessage: botMessages.imNotSureResponse,
     userOptions: [
       { text: "Find serial number", nextStep: "" },
       { text: "Identify model", nextStep: "" }

@@ -1,7 +1,7 @@
-
 import { useReducer, useCallback } from 'react';
 import { FlowType, ConversationMessage } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel } from '@/services/serialNumberService';
+import { botMessages } from '@/data/botMessages';
 
 export type ChatUIState = 'hidden' | 'horizontal' | 'modal' | 'sidebar';
 export type ChatMode = 'idle' | 'collecting_serial' | 'collecting_model';
@@ -158,9 +158,7 @@ export const useChatStateMachine = (
       };
       addRegularMessage(userMessage);
 
-      const botResponse = "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I can work with either:\n\nSerial number - for precise troubleshooting\nModel name - for general guidance\n\nWhich would you prefer to provide? Or if you need help finding either, just let me know!";
-      
-      addRegularMessageWithTyping([botResponse], 1500);
+      addRegularMessageWithTyping([botMessages.repairHelpResponse], 1500);
       
       setTimeout(() => {
         dispatch({ type: 'SHOW_OPTIONS' });
@@ -178,7 +176,7 @@ export const useChatStateMachine = (
     addRegularMessage(userMessage);
 
     dispatch({ type: 'START_PROCESSING' });
-    addRegularMessageWithTyping(["Looking up your product information..."], 500);
+    addRegularMessageWithTyping([botMessages.lookingUpProduct], 500);
 
     try {
       const productData = await lookupSerialNumber(serialNumber);
@@ -188,9 +186,11 @@ export const useChatStateMachine = (
         
         const flowType = determineFlowFromModel(productData.model);
         
-        let successText = `Found your ${productData.model}!`;
+        let successText = botMessages.productFoundTemplate.replace('{model}', productData.model);
         if (productData.purchaseDate) {
-          successText += ` (Purchased: ${productData.purchaseDate})`;
+          successText = botMessages.productFoundWithDateTemplate
+            .replace('{model}', productData.model)
+            .replace('{purchaseDate}', productData.purchaseDate);
         }
         
         setTimeout(() => {
@@ -204,9 +204,7 @@ export const useChatStateMachine = (
         
       } else {
         setTimeout(() => {
-          addRegularMessageWithTyping([
-            "I couldn't find that serial number in our system. Let me help you with some alternatives:\n\nTry again - Double-check the serial number (it's usually on a label on the back or bottom of your cart)\nEnter your model - If you know your cart model (like SmartShopper, ValueShopper, Vista, or Max CR), I can help based on that\nGet help locating - I can guide you on where to find your serial number\nContact support - Call 1-800-692-6446 for direct assistance\n\nWhat would you prefer to do?"
-          ], 1000);
+          addRegularMessageWithTyping([botMessages.serialNotFound], 1000);
           
           dispatch({ type: 'SET_MODE', mode: 'idle' });
           dispatch({ type: 'SET_INPUT_DISABLED', disabled: false });
@@ -214,9 +212,7 @@ export const useChatStateMachine = (
       }
     } catch (error) {
       setTimeout(() => {
-        addRegularMessageWithTyping([
-          "I'm having trouble looking up that serial number right now. Let me offer some alternatives:\n\nTry again - This might be a temporary connection issue\nEnter your model - If you know your cart model, I can help based on that\nFind your serial number - I can help you locate it on your cart\nContact support - Call 1-800-692-6446 for immediate assistance\n\nWhat would you like to do?"
-        ], 1000);
+        addRegularMessageWithTyping([botMessages.lookupError], 1000);
         
         dispatch({ type: 'SET_MODE', mode: 'idle' });
         dispatch({ type: 'SET_INPUT_DISABLED', disabled: false });
@@ -235,9 +231,8 @@ export const useChatStateMachine = (
 
     const flowType = determineFlowFromModel(model);
     
-    addRegularMessageWithTyping([
-      `Great! I can help you with your ${model}. Let me start the troubleshooting process for you.`
-    ], 1000);
+    const responseText = botMessages.modelStartTroubleshooting.replace('{model}', model);
+    addRegularMessageWithTyping([responseText], 1000);
     
     setTimeout(() => {
       startFlow(flowType);
@@ -255,18 +250,14 @@ export const useChatStateMachine = (
     addRegularMessage(userMessage);
 
     if (action === "Help find serial number" || action === "I can't find it") {
-      addRegularMessageWithTyping([
-        "I can help you find your serial number! Here's where to look:\n\n**Most Common Locations:**\n• **Back of the cart** - Look for a white or silver label\n• **Bottom/underside** - May be on the base or frame\n• **Near the battery compartment** - Sometimes inside or nearby\n• **On the controller** - Some models have it there\n\n**What to look for:**\n• A label with \"S/N\" or \"Serial Number\"\n• Usually starts with letters like \"AMI\" followed by numbers\n• Typically 8-12 characters long\n\n**Still can't find it?**\n• Check your purchase receipt or documentation\n• Look for any stickers or labels with numbers and letters\n• Try different angles and lighting\n\nOnce you find it, please enter it below and I'll look up your cart information!"
-      ], 1500);
+      addRegularMessageWithTyping([botMessages.serialNumberExtendedHelp], 1500);
       
       setTimeout(() => {
         dispatch({ type: 'START_SERIAL_COLLECTION' });
       }, 2000);
       
     } else if (action === "Help identify model") {
-      addRegularMessageWithTyping([
-        "I can help you identify your Amigo model! Here are our main models:\n\nSmartShopper - Compact shopping cart, great for stores\nValueShopper - Affordable option with essential features\nVista - Mid-range model with enhanced comfort\nMax CR - Heavy-duty model for outdoor use\n\nWhere to find your model:\n• Look for a label on your cart (same place as serial number)\n• Check your paperwork or receipt\n• The model name is usually clearly marked\n\nJust tell me which model you have, or describe your cart and I can help identify it!"
-      ], 1500);
+      addRegularMessageWithTyping([botMessages.modelIdentificationHelp], 1500);
       
       setTimeout(() => {
         dispatch({ type: 'START_MODEL_COLLECTION' });
