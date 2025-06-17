@@ -194,18 +194,13 @@ export const useChatStateMachine = (
 ): ChatStateMachine => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
 
-  // Enhanced auto-transition logic - now handles button display scenarios
+  // Fixed auto-transition logic - only transition when buttons are actually needed
   useEffect(() => {
     console.log('🔥🔥🔥 ChatStateMachine - useEffect triggered');
     console.log('🔥🔥🔥 UI State:', state.uiState, 'Mode:', state.mode, 'ShowButtons:', state.showInitialButtons);
     
-    // Auto-transition to modal when in horizontal mode and need to show interactive content
-    if (state.uiState === 'horizontal' && state.mode === 'idle' && !state.showInitialButtons) {
-      console.log('🔥🔥🔥 ChatStateMachine - Auto-triggering main options and modal transition');
-      dispatch({ type: 'AUTO_SHOW_MAIN_OPTIONS' });
-    }
-    
-    // Also handle case where we're showing options but still in horizontal mode
+    // Only handle case where we're showing options but still in horizontal mode
+    // This happens when a conversation flow triggers buttons while in horizontal mode
     if (state.uiState === 'horizontal' && state.showInitialButtons) {
       console.log('🔥🔥🔥 ChatStateMachine - Buttons needed, transitioning to modal');
       dispatch({ type: 'SET_UI_STATE', uiState: 'modal' });
