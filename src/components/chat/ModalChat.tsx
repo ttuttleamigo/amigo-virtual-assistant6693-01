@@ -11,8 +11,8 @@ const ModalChat = () => {
     inputValue,
     setInputValue,
     sendMessage,
-    handleClose,
-    handleModalToSidebar,
+    closeChat,
+    openSidebar,
     isTyping,
     isInputDisabled,
     currentStep,
@@ -47,8 +47,8 @@ const ModalChat = () => {
       <div className="bg-transparent rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden">
         {/* Header - always visible for immediate interaction */}
         <ModalHeader
-          onClose={handleClose}
-          onModalToSidebar={handleModalToSidebar}
+          onClose={closeChat}
+          onModalToSidebar={openSidebar}
           onDownloadTranscript={downloadTranscript}
           onClearHistory={clearChatHistory}
           conversationHistory={conversationHistory}
