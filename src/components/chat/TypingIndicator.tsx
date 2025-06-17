@@ -15,7 +15,7 @@ const TypingIndicator = () => {
         <div className="flex flex-col space-y-6 pt-2 min-w-[400px] md:min-w-[600px]">
           <div 
             className="h-8 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 rounded-full animate-pulse w-full" 
-            style={{ animationDuration: '1.5s' }}
+            style={{ animationDuration: '1.2s' }}
           ></div>
           <div 
             className="h-8 bg-gradient-to-r from-blue-300 via-blue-400 to-blue-300 rounded-full animate-pulse w-4/5" 
@@ -23,7 +23,7 @@ const TypingIndicator = () => {
           ></div>
           <div 
             className="h-8 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-200 rounded-full animate-pulse w-3/5" 
-            style={{ animationDelay: '0.6s', animationDuration: '1.5s' }}
+            style={{ animationDelay: '0.6s', animationDuration: '1.8s' }}
           ></div>
         </div>
       </div>
