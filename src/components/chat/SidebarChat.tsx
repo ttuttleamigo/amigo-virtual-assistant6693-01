@@ -41,6 +41,9 @@ const SidebarChat = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [streamingPlaceholder, setStreamingPlaceholder] = useState('');
 
+  // Check if we're in serial collection mode
+  const isSerialCollectionMode = currentStep?.id === 'serial_collection';
+
   // Update streaming placeholder when typing
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -69,6 +72,7 @@ const SidebarChat = ({
 
   const getPlaceholderText = () => {
     if (isTyping) return streamingPlaceholder;
+    if (isSerialCollectionMode) return "Enter your serial number here...";
     if (isInputDisabled) return "Please select an option above";
     return "Type your message here...";
   };
