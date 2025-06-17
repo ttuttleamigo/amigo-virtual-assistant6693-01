@@ -6,6 +6,7 @@ import { vistaFlow } from '@/data/vistaFlow';
 import { maxCRFlow } from '@/data/maxCRFlow';
 import { contactAgentFlow } from '@/data/contactAgentFlow';
 import { endConversationFlow } from '@/data/endConversationFlow';
+import { useMessageTiming } from '@/components/visual/MessageTiming';
 
 export interface ConversationMessage {
   id: string;
@@ -61,6 +62,8 @@ export const useConversationFlow = () => {
   const [activeFlow, setActiveFlow] = useState<FlowType>('general');
   const [isTyping, setIsTyping] = useState(false);
   const [allowTextInput, setAllowTextInput] = useState(true);
+  
+  const { addSingleMessage } = useMessageTiming();
 
   // Load chat history from localStorage on component mount
   useEffect(() => {
@@ -112,22 +115,36 @@ export const useConversationFlow = () => {
     setConversationHistory(prev => prev.filter(msg => msg.id !== typingId));
   };
 
-  const addMessageWithTyping = (messages: string[], delay: number = 1500) => {
+  const addMessageWithTyping = (messages: string[], delay?: number) => {
     const typingId = addTypingMessage();
     
-    setTimeout(() => {
-      removeTypingMessage(typingId);
-      
-      const newMessages: ConversationMessage[] = messages.map((message, index) => ({
-        id: `bot-${Date.now()}-${index}`,
-        text: message,
-        sender: 'agent' as const,
-        timestamp: new Date(),
-        isFlowMessage: true
-      }));
+    addSingleMessage(
+      messages,
+      (content) => {
+        removeTypingMessage(typingId);
+        
+        const newMessages: ConversationMessage[] = Array.isArray(content) 
+          ? [content].flat().map((message, index) => ({
+              id: `bot-${Date.now()}-${index}`,
+              text: message,
+              sender: 'agent' as const,
+              timestamp: new Date(),
+              isFlowMessage: true
+            }))
+          : [{
+              id: `bot-${Date.now()}`,
+              text: content,
+              sender: 'agent' as const,
+              timestamp: new Date(),
+              isFlowMessage: true
+            }];
 
-      setConversationHistory(prev => [...prev, ...newMessages]);
-    }, delay);
+        setConversationHistory(prev => [...prev, ...newMessages]);
+      },
+      delay,
+      () => setIsTyping(true),
+      () => setIsTyping(false)
+    );
   };
 
   const startFlow = (flowType: FlowType = 'general') => {

@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { visualConfig } from '@/config/visualConfig';
 
 interface ButtonOption {
   text: string;
@@ -18,8 +19,8 @@ interface AnimatedButtonsProps {
 const AnimatedButtons = ({ 
   options, 
   onButtonClick, 
-  showDelay = 0,
-  fadeInDuration = 300,
+  showDelay = visualConfig.buttons.showDelay,
+  fadeInDuration = visualConfig.buttons.fadeInDuration,
   disabled = false 
 }: AnimatedButtonsProps) => {
   const [isVisible, setIsVisible] = useState(false);

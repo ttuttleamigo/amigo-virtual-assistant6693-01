@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { MessageCircle } from 'lucide-react';
-import AnimatedButtons from './AnimatedButtons';
+import ConversationLayout from '@/components/visual/ConversationLayout';
+import { ButtonConfig, buttonTemplates } from '@/config/buttonConfig';
+import { visualConfig } from '@/config/visualConfig';
 
 interface ButtonOption {
   text: string;
@@ -22,10 +23,11 @@ const MessageWithButtons = ({
   options = [], 
   onButtonClick,
   messageDelay = 0,
-  buttonDelay = 800,
+  buttonDelay = visualConfig.timing.buttonDelay,
   isModal = false 
 }: MessageWithButtonsProps) => {
   const [showMessage, setShowMessage] = useState(false);
+  const [showButtons, setShowButtons] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -35,35 +37,44 @@ const MessageWithButtons = ({
     return () => clearTimeout(timer);
   }, [messageDelay]);
 
+  useEffect(() => {
+    if (showMessage && options.length > 0) {
+      const timer = setTimeout(() => {
+        setShowButtons(true);
+      }, buttonDelay);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showMessage, options.length, buttonDelay]);
+
+  const convertToButtonConfig = (options: ButtonOption[]): ButtonConfig[] => {
+    return options.map((option, index) => ({
+      id: `option_${index}`,
+      text: option.text,
+      action: option.text
+    }));
+  };
+
+  const handleButtonClick = (button: ButtonConfig) => {
+    if (onButtonClick) {
+      const originalOption = options.find(opt => opt.text === button.text);
+      if (originalOption) {
+        const index = options.indexOf(originalOption);
+        onButtonClick(originalOption, index);
+      }
+    }
+  };
+
   if (!showMessage) return null;
 
   return (
-    <div className="space-y-4">
-      {/* Bot Message */}
-      <div className="flex justify-start">
-        <div className="flex items-start space-x-4 max-w-[75%]">
-          <div className={`${isModal ? 'w-10 h-10' : 'w-8 h-8'} rounded-full flex items-center justify-center flex-shrink-0 bg-white border-2 border-blue-100 shadow-sm`}>
-            <img 
-              src="/lovable-uploads/7a9d14cc-e93b-47a3-b3c8-c9ce3563866f.png" 
-              alt="Amigo" 
-              className={`${isModal ? 'w-6 h-6' : 'w-4 h-4'} object-contain`}
-            />
-          </div>
-          <div className={`${isModal ? 'px-6 py-4 text-sm' : 'p-3 text-sm'} rounded-2xl bg-white text-gray-800 rounded-tl-md border border-blue-100 shadow-sm leading-relaxed whitespace-pre-wrap`}>
-            {message}
-          </div>
-        </div>
-      </div>
-
-      {/* Animated Buttons */}
-      {options.length > 0 && onButtonClick && (
-        <AnimatedButtons
-          options={options}
-          onButtonClick={onButtonClick}
-          showDelay={buttonDelay}
-        />
-      )}
-    </div>
+    <ConversationLayout
+      message={message}
+      buttons={showButtons ? convertToButtonConfig(options) : []}
+      onButtonClick={handleButtonClick}
+      isModal={isModal}
+      showButtons={showButtons}
+    />
   );
 };
 
