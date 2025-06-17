@@ -134,7 +134,7 @@ const SidebarChat = ({
 
       {/* Messages - Scrollable */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 bg-gradient-to-b from-blue-50 to-white">
-        {/* Title and timestamp - now in scrollable area */}
+        {/* Title and timestamp */}
         <div className="text-center pb-4 border-b border-blue-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-2">
             How can <span className="text-blue-500">Amigo</span> help?
@@ -163,7 +163,7 @@ const SidebarChat = ({
         {isTyping && <TypingIndicator />}
 
         {currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && showButtons && (
-          <div className="space-y-2 animate-fade-in">
+          <div className="space-y-2">
             {currentStep.userOptions.map((option, index) => (
               <Button 
                 key={index} 
@@ -180,7 +180,7 @@ const SidebarChat = ({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input - Fixed at bottom - Always show */}
+      {/* Input - Fixed at bottom */}
       <div className="p-4 border-t border-blue-100 flex-shrink-0 bg-gradient-to-r from-blue-100 via-blue-50 to-white">
         <div className="relative">
           <Input 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { conversationFlow, ConversationStep } from '@/data/conversationFlow';
 import { smartShopperFlow } from '@/data/smartShopperFlow';
@@ -62,7 +61,6 @@ export const useConversationFlow = () => {
   const [activeFlow, setActiveFlow] = useState<FlowType>('general');
   const [isTyping, setIsTyping] = useState(false);
   const [allowTextInput, setAllowTextInput] = useState(true);
-  const [showButtons, setShowButtons] = useState(false);
 
   // Load chat history from localStorage on component mount
   useEffect(() => {
@@ -93,12 +91,7 @@ export const useConversationFlow = () => {
 
   const getCurrentStep = (): ConversationStep | null => {
     const flow = flowMap[activeFlow];
-    const step = flow[currentStep] || null;
-    // Only return step with buttons if we're ready to show them
-    if (step && step.userOptions && !showButtons) {
-      return { ...step, userOptions: [] };
-    }
-    return step;
+    return flow[currentStep] || null;
   };
 
   const addTypingMessage = () => {
@@ -110,7 +103,6 @@ export const useConversationFlow = () => {
       isFlowMessage: true
     };
     setIsTyping(true);
-    setShowButtons(false); // Hide buttons while typing
     setConversationHistory(prev => [...prev, typingMessage]);
     return typingMessage.id;
   };
@@ -120,7 +112,7 @@ export const useConversationFlow = () => {
     setConversationHistory(prev => prev.filter(msg => msg.id !== typingId));
   };
 
-  const addMessageWithTyping = (messages: string[], delay: number = 1500, showButtonsAfter: boolean = false) => {
+  const addMessageWithTyping = (messages: string[], delay: number = 1500) => {
     const typingId = addTypingMessage();
     
     setTimeout(() => {
@@ -135,20 +127,12 @@ export const useConversationFlow = () => {
       }));
 
       setConversationHistory(prev => [...prev, ...newMessages]);
-      
-      // Show buttons after a brief delay to allow message to be read
-      if (showButtonsAfter) {
-        setTimeout(() => {
-          setShowButtons(true);
-        }, 800);
-      }
     }, delay);
   };
 
   const startFlow = (flowType: FlowType = 'general') => {
     setActiveFlow(flowType);
     setIsInFlow(true);
-    setShowButtons(false);
     
     const startingStepName = getStartingStepName(flowType);
     setCurrentStep(startingStepName);
@@ -162,15 +146,11 @@ export const useConversationFlow = () => {
         ? startingStep.botMessage 
         : [startingStep.botMessage];
       
-      const hasButtons = startingStep.userOptions && startingStep.userOptions.length > 0;
-      addMessageWithTyping(botMessages, 1500, hasButtons);
+      addMessageWithTyping(botMessages, 1500);
     }
   };
 
   const handleUserChoice = (choice: string, nextStep: string) => {
-    // Hide buttons immediately when user makes choice
-    setShowButtons(false);
-    
     // Add user message
     const userMessage: ConversationMessage = {
       id: `user-${Date.now()}`,
@@ -193,8 +173,7 @@ export const useConversationFlow = () => {
         ? nextStepData.botMessage 
         : [nextStepData.botMessage];
       
-      const hasButtons = nextStepData.userOptions && nextStepData.userOptions.length > 0;
-      addMessageWithTyping(botMessages, 1000, hasButtons);
+      addMessageWithTyping(botMessages, 1000);
     }
   };
 
@@ -204,13 +183,11 @@ export const useConversationFlow = () => {
     setActiveFlow('general');
     setIsTyping(false);
     setAllowTextInput(true);
-    setShowButtons(false);
   };
 
   const clearChatHistory = () => {
     setConversationHistory([]);
     localStorage.removeItem(CHAT_HISTORY_KEY);
-    setShowButtons(false);
   };
 
   const addRegularMessage = (message: ConversationMessage) => {
@@ -218,7 +195,7 @@ export const useConversationFlow = () => {
   };
 
   const addRegularMessageWithTyping = (messages: string[], delay: number = 1500) => {
-    addMessageWithTyping(messages, delay, false);
+    addMessageWithTyping(messages, delay);
   };
 
   const setTextInputAllowed = (allowed: boolean) => {
@@ -257,7 +234,6 @@ export const useConversationFlow = () => {
     activeFlow,
     isTyping,
     allowTextInput,
-    showButtons,
     startFlow,
     handleUserChoice,
     resetFlow,
@@ -265,7 +241,6 @@ export const useConversationFlow = () => {
     addRegularMessageWithTyping,
     setTextInputAllowed,
     downloadTranscript,
-    clearChatHistory,
-    setShowButtons
+    clearChatHistory
   };
 };

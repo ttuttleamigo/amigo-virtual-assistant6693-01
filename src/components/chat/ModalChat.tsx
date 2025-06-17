@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { MessageCircle, X, Minimize2, Send, Download, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -193,12 +192,12 @@ const ModalChat = ({
           {isTyping && <TypingIndicator />}
 
           {currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && onFlowChoice && showButtons && (
-            <div className="space-y-3 mt-6 animate-fade-in">
+            <div className="space-y-3 mt-6">
               {currentStep.userOptions.map((option, index) => (
                 <Button
                   key={index}
                   onClick={() => handleButtonClick(option, index)}
-                  className="w-full justify-start text-left h-auto p-4 bg-blue-600 hover:bg-blue-700 text-white border-0 whitespace-normal break-words shadow-md rounded-xl font-medium text-sm leading-tight max-w-full"
+                  className="w-full justify-start text-left h-auto p-3 bg-blue-600 hover:bg-blue-700 text-white border-0 whitespace-normal break-words shadow-md rounded-lg font-medium text-sm leading-tight max-w-full"
                   style={{ wordBreak: 'break-word', hyphens: 'auto' }}
                 >
                   <span className="block">{option.text}</span>
