@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { conversationFlow, ConversationStep } from '@/data/conversationFlow';
 import { smartShopperFlow } from '@/data/smartShopperFlow';
@@ -78,6 +77,18 @@ export const useConversationFlow = () => {
     }
   }, [conversationHistory]);
 
+  // Helper function to get the starting step for each flow type
+  const getStartingStepName = (flowType: FlowType): string => {
+    switch (flowType) {
+      case 'contactAgent':
+        return 'contact_agent';
+      case 'endConversation':
+        return 'end_conversation';
+      default:
+        return 'greeting';
+    }
+  };
+
   const getCurrentStep = (): ConversationStep | null => {
     const flow = flowMap[activeFlow];
     return flow[currentStep] || null;
@@ -122,16 +133,21 @@ export const useConversationFlow = () => {
   const startFlow = (flowType: FlowType = 'general') => {
     setActiveFlow(flowType);
     setIsInFlow(true);
-    setCurrentStep('greeting');
+    
+    const startingStepName = getStartingStepName(flowType);
+    setCurrentStep(startingStepName);
     setAllowTextInput(false);
+    
     const flow = flowMap[flowType];
-    const greetingStep = flow.greeting;
+    const startingStep = flow[startingStepName];
     
-    const botMessages = Array.isArray(greetingStep.botMessage) 
-      ? greetingStep.botMessage 
-      : [greetingStep.botMessage];
-    
-    addMessageWithTyping(botMessages);
+    if (startingStep) {
+      const botMessages = Array.isArray(startingStep.botMessage) 
+        ? startingStep.botMessage 
+        : [startingStep.botMessage];
+      
+      addMessageWithTyping(botMessages);
+    }
   };
 
   const handleUserChoice = (choice: string, nextStep: string) => {
@@ -195,7 +211,7 @@ export const useConversationFlow = () => {
         return `[${timestamp}] ${sender}: ${msg.text}`;
       })
       .join('\n\n');
-
+    
     const header = `Amigo Chat Transcript\nGenerated: ${new Date().toLocaleString()}\nFlow: ${activeFlow}\nCurrent Step: ${currentStep}\n${'='.repeat(50)}\n\n`;
     
     const fullTranscript = header + transcript;
