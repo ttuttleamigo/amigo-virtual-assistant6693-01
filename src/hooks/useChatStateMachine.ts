@@ -237,7 +237,7 @@ export const useChatStateMachine = (
            /^(ss|vs|v|mc)\d*$/.test(cleanText);
   }, []);
 
-  // Fixed action handler to follow proper flow specifications
+  // Fixed action handler to properly route to correct flows
   const handleSuggestedAction = useCallback(async (action: string) => {
     console.log('handleSuggestedAction called with:', action);
     
@@ -251,7 +251,7 @@ export const useChatStateMachine = (
       };
       addRegularMessage(newMessage);
 
-      // Handle the specific button actions that should NOT transition to modal
+      // Handle the specific button actions for serial/model collection
       if (action === 'Enter serial number') {
         addRegularMessageWithTyping([
           "Please enter your cart's serial number. You can find it on a label, usually on the back or bottom of your cart:"
@@ -272,24 +272,13 @@ export const useChatStateMachine = (
       
       if (action === "I'm not sure") {
         addRegularMessageWithTyping([
-          "No problem! I can help you find your cart information. Here's what to look for:",
-          "",
-          "**Serial Number:**",
-          "• Check the back of your cart for a white or silver label",
-          "• Look on the bottom/underside of the cart",
-          "• Sometimes found near the battery compartment",
-          "• Usually starts with letters like 'AMI' followed by numbers",
-          "",
-          "**Model Name:**",
-          "• Often printed on the same label as the serial number",
-          "• Look for names like SmartShopper, ValueShopper, Vista, or Max CR",
-          "• May also be on your paperwork or receipt",
-          "",
-          "Once you find either piece of information, just type it here and I'll help you with troubleshooting!"
-        ], 1500);
+          "No problem! Let me help you with general troubleshooting steps that work for most Amigo carts."
+        ], 1000);
         
-        dispatch({ type: 'SET_MODE', mode: 'idle' });
-        dispatch({ type: 'SET_INPUT_DISABLED', disabled: false });
+        setTimeout(() => {
+          startFlow('general');
+          dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
+        }, 2500);
         return;
       }
 
