@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { useChatStateMachine } from '@/hooks/useChatStateMachine';
@@ -28,7 +27,11 @@ const ChatWidget = () => {
   const chatMachine = useChatStateMachine(
     addRegularMessage,
     addRegularMessageWithTyping,
-    startFlow
+    (flowType: FlowType) => {
+      // Clear chat machine typing state when starting a flow
+      chatMachine.dispatch({ type: 'SET_TYPING', isTyping: false });
+      startFlow(flowType);
+    }
   );
 
   const handleFlowChoice = (choice: string, nextStep: string) => {
@@ -110,6 +113,9 @@ const ChatWidget = () => {
     chatMachine.setInputValue('');
   };
 
+  // When in flow, prioritize conversation flow typing state over chat machine typing
+  const isTypingIndicatorVisible = isInFlow ? isTyping : (isTyping || chatMachine.state.isTyping);
+
   // Simplified input disabled state - state machine is single source of truth
   const isInputDisabled = chatMachine.state.isInputDisabled;
 
@@ -159,7 +165,7 @@ const ChatWidget = () => {
         isInFlow={isInFlow}
         currentStep={displayStep}
         onFlowChoice={customStep ? handleCustomButtonClick : handleFlowChoice}
-        isTyping={isTyping || chatMachine.state.isTyping}
+        isTyping={isTypingIndicatorVisible}
         isInputDisabled={isInputDisabled}
         onDownloadTranscript={downloadTranscript}
         onClearHistory={clearChatHistory}
@@ -180,7 +186,7 @@ const ChatWidget = () => {
         isInFlow={isInFlow}
         currentStep={displayStep}
         onFlowChoice={customStep ? handleCustomButtonClick : handleFlowChoice}
-        isTyping={isTyping || chatMachine.state.isTyping}
+        isTyping={isTypingIndicatorVisible}
         isInputDisabled={isInputDisabled}
         onDownloadTranscript={downloadTranscript}
         onClearHistory={clearChatHistory}
