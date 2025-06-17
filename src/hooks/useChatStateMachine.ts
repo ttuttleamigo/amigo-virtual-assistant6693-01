@@ -1,3 +1,4 @@
+
 import { useState, useReducer, useCallback } from 'react';
 import { lookupSerialNumber, determineFlowFromModel, ProductInfo } from '@/services/serialNumberService';
 import { FlowType } from '@/hooks/useConversationFlow';
@@ -257,20 +258,43 @@ export const useChatStateMachine = (
       dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
       
       if (action === 'I need help with an Amigo cart repair') {
-        // Show the proper response with options like in the images
+        // Send the first message
         addRegularMessageWithTyping([
-          "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.",
-          "",
-          "You can provide either:",
-          "Serial number (found on a label, usually on the back or bottom of your cart)",
-          "Model name (like SmartShopper, ValueShopper, Vista, or Max CR)",
-          "",
-          "If you're not sure where to find either, just let me know and I can help guide you!"
+          "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart."
         ], 1500);
         
+        // Send the second message after a delay
         setTimeout(() => {
-          dispatch({ type: 'SHOW_OPTIONS' });
-        }, 2000);
+          addRegularMessageWithTyping([
+            "You can provide either:"
+          ], 1000);
+        }, 2500);
+        
+        // Send the third message with options after another delay
+        setTimeout(() => {
+          addRegularMessageWithTyping([
+            "Serial number (found on a label, usually on the back or bottom of your cart)"
+          ], 1000);
+        }, 4000);
+        
+        // Send the fourth message
+        setTimeout(() => {
+          addRegularMessageWithTyping([
+            "Model name (like SmartShopper, ValueShopper, Vista, or Max CR)"
+          ], 1000);
+        }, 5500);
+        
+        // Send the final message and show options
+        setTimeout(() => {
+          addRegularMessageWithTyping([
+            "If you're not sure where to find either, just let me know and I can help guide you!"
+          ], 1000);
+          
+          // Show the option buttons after all messages are sent
+          setTimeout(() => {
+            dispatch({ type: 'SHOW_OPTIONS' });
+          }, 1500);
+        }, 7000);
         
       } else if (action === 'I need to buy a part for an Amigo cart') {
         addRegularMessageWithTyping([
