@@ -288,14 +288,9 @@ export const useChatStateMachine = (
       dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
       
       if (action === 'I need help with an Amigo cart repair') {
+        // Send as single message instead of array to prevent splitting
         addRegularMessageWithTyping([
-          "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.",
-          "",
-          "You can provide either:",
-          "• Serial number (found on a label, usually on the back or bottom of your cart)",
-          "• Model name (like SmartShopper, ValueShopper, Vista, or Max CR)",
-          "",
-          "If you're not sure where to find either, just let me know and I can help guide you!"
+          "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\n• Serial number (found on a label, usually on the back or bottom of your cart)\n• Model name (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!"
         ], 1500);
         
         setTimeout(() => {
@@ -304,12 +299,7 @@ export const useChatStateMachine = (
         
       } else if (action === 'I need to buy a part for an Amigo cart') {
         addRegularMessageWithTyping([
-          "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:",
-          "• Call our parts department at 1-800-692-6446",
-          "• Email parts@amigomobility.com", 
-          "• Visit our website at amigomobility.com/parts",
-          "",
-          "Please have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
+          "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n• Call our parts department at 1-800-692-6446\n• Email parts@amigomobility.com\n• Visit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
         ], 1500);
         
         dispatch({ type: 'SET_MODE', mode: 'idle' });
