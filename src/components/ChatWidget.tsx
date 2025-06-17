@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
 import { useChatStateMachine } from '@/hooks/useChatStateMachine';
@@ -38,6 +39,19 @@ const ChatWidget = () => {
   const handleClose = () => {
     chatMachine.handleClose();
     resetFlow();
+  };
+
+  // Enhanced custom button handler with detailed logging
+  const handleCustomButtonClick = (action: string) => {
+    console.log('🔥🔥🔥 ChatWidget - Custom button clicked:', action);
+    console.log('🔥🔥🔥 Current state before click:', chatMachine.state);
+    
+    // Call the state machine's action handler
+    chatMachine.handleSuggestedAction(action).then(() => {
+      console.log('🔥🔥🔥 State after action completed:', chatMachine.state);
+    }).catch((error) => {
+      console.error('🔥🔥🔥 Error in handleSuggestedAction:', error);
+    });
   };
 
   const sendMessage = () => {
@@ -139,6 +153,7 @@ const ChatWidget = () => {
   console.log('🔥 ChatWidget - showInitialButtons:', chatMachine.state.showInitialButtons);
   console.log('🔥 ChatWidget - customStep:', customStep);
   console.log('🔥 ChatWidget - displayStep:', displayStep);
+  console.log('🔥🔥🔥 ChatWidget - Button handler function:', handleCustomButtonClick);
 
   if (chatMachine.state.uiState === 'hidden') {
     return <ChatButton onClick={chatMachine.handleChatButtonClick} />;
@@ -168,7 +183,7 @@ const ChatWidget = () => {
         onModalToSidebar={chatMachine.handleModalToSidebar}
         isInFlow={isInFlow}
         currentStep={displayStep}
-        onFlowChoice={customStep ? chatMachine.handleSuggestedAction : handleFlowChoice}
+        onFlowChoice={customStep ? handleCustomButtonClick : handleFlowChoice}
         isTyping={isTyping || chatMachine.state.isTyping}
         isInputDisabled={isInputDisabled}
         onDownloadTranscript={downloadTranscript}
@@ -188,7 +203,7 @@ const ChatWidget = () => {
         onMinimize={chatMachine.handleMinimize}
         isInFlow={isInFlow}
         currentStep={displayStep}
-        onFlowChoice={customStep ? chatMachine.handleSuggestedAction : handleFlowChoice}
+        onFlowChoice={customStep ? handleCustomButtonClick : handleFlowChoice}
         isTyping={isTyping || chatMachine.state.isTyping}
         isInputDisabled={isInputDisabled}
         onDownloadTranscript={downloadTranscript}

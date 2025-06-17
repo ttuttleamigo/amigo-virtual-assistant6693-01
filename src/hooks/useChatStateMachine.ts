@@ -62,7 +62,7 @@ const initialState: ChatState = {
 };
 
 const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
-  console.log('🔥 ChatStateMachine - Action:', action.type, action);
+  console.log('🔥🔥🔥 ChatStateMachine - Action:', action.type, action);
   
   switch (action.type) {
     case 'SET_UI_STATE':
@@ -72,7 +72,7 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
       return { ...state, previousUIState: action.previousUIState };
     
     case 'SET_MODE':
-      console.log('🔥 ChatStateMachine - Mode change:', state.mode, '->', action.mode);
+      console.log('🔥🔥🔥 ChatStateMachine - Mode change:', state.mode, '->', action.mode);
       return { ...state, mode: action.mode };
     
     case 'SET_INPUT_VALUE':
@@ -85,6 +85,7 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
       return { ...state, productInfo: action.productInfo };
     
     case 'SET_SHOW_INITIAL_BUTTONS':
+      console.log('🔥🔥🔥 ChatStateMachine - Setting showInitialButtons to:', action.show);
       return { 
         ...state, 
         showInitialButtons: action.show,
@@ -137,7 +138,7 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
       };
     
     case 'AUTO_SHOW_MAIN_OPTIONS':
-      console.log('🔥 ChatStateMachine - Auto showing main options');
+      console.log('🔥🔥🔥 ChatStateMachine - Auto showing main options');
       return {
         ...state,
         mode: 'showing_options',
@@ -190,10 +191,13 @@ export const useChatStateMachine = (
 
   // Auto-show main options when transitioning from horizontal to modal/sidebar
   useEffect(() => {
+    console.log('🔥🔥🔥 ChatStateMachine - useEffect triggered');
+    console.log('🔥🔥🔥 UI State:', state.uiState, 'Mode:', state.mode, 'ShowButtons:', state.showInitialButtons);
+    
     if ((state.uiState === 'modal' || state.uiState === 'sidebar') && 
         state.mode === 'idle' && 
         !state.showInitialButtons) {
-      console.log('🔥 ChatStateMachine - Auto-triggering main options');
+      console.log('🔥🔥🔥 ChatStateMachine - Auto-triggering main options');
       dispatch({ type: 'AUTO_SHOW_MAIN_OPTIONS' });
     }
   }, [state.uiState, state.mode, state.showInitialButtons]);
@@ -249,62 +253,77 @@ export const useChatStateMachine = (
 
   // Core Action Handlers
   const handleSuggestedAction = useCallback(async (action: string) => {
-    console.log('🔥 ChatStateMachine - handleSuggestedAction:', action);
+    console.log('🔥🔥🔥 ChatStateMachine - handleSuggestedAction called with:', action);
+    console.log('🔥🔥🔥 ChatStateMachine - Current state before action:', state);
     
-    // Add user message
-    const newMessage = {
-      id: Date.now().toString(),
-      text: action,
-      sender: 'user' as const,
-      timestamp: new Date()
-    };
-    addRegularMessage(newMessage);
+    try {
+      // Add user message
+      const newMessage = {
+        id: Date.now().toString(),
+        text: action,
+        sender: 'user' as const,
+        timestamp: new Date()
+      };
+      addRegularMessage(newMessage);
 
-    if (action === 'Enter serial number') {
-      addRegularMessageWithTyping([
-        "Great! Please enter your serial number. You can find it on a label, usually on the back or bottom of your cart."
-      ], 1000);
+      if (action === 'Enter serial number') {
+        console.log('🔥🔥🔥 Handling: Enter serial number');
+        addRegularMessageWithTyping([
+          "Great! Please enter your serial number. You can find it on a label, usually on the back or bottom of your cart."
+        ], 1000);
+        
+        dispatch({ type: 'START_SERIAL_COLLECTION' });
+        
+      } else if (action === 'Enter model name') {
+        console.log('🔥🔥🔥 Handling: Enter model name');
+        addRegularMessageWithTyping([
+          "Perfect! Please enter your model name. Common models include SmartShopper, ValueShopper, Vista, or Max CR."
+        ], 1000);
+        
+        dispatch({ type: 'START_MODEL_COLLECTION' });
+        
+      } else if (action === "I'm not sure") {
+        console.log('🔥🔥🔥 Handling: I\'m not sure');
+        addRegularMessageWithTyping([
+          "No problem! I can help you find the information we need. Here are some options:\n\nI can guide you on where to find your serial number\nI can help you identify your model\nYou can contact our support team at 1-800-692-6446\n\nWhat would you prefer?"
+        ], 1500);
+        
+        dispatch({ type: 'SET_MODE', mode: 'idle' });
+        dispatch({ type: 'SET_SHOW_INITIAL_BUTTONS', show: false });
+        
+      } else if (action === 'I need help with an Amigo cart repair') {
+        console.log('🔥🔥🔥 Handling: I need help with an Amigo cart repair');
+        addRegularMessageWithTyping([
+          "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\nSerial number (found on a label, usually on the back or bottom of your cart)\nModel name (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!"
+        ], 1500);
+        
+        setTimeout(() => {
+          dispatch({ type: 'SHOW_OPTIONS' });
+        }, 2000);
+        
+      } else if (action === 'I need to buy a part for an Amigo cart') {
+        console.log('🔥🔥🔥 Handling: I need to buy a part for an Amigo cart');
+        addRegularMessageWithTyping([
+          "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n\nCall our parts department at 1-800-692-6446\nEmail parts@amigomobility.com\nVisit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
+        ], 1500);
+        
+        dispatch({ type: 'SET_INPUT_DISABLED', disabled: true });
+        
+      } else if (action === 'I have a different customer service need') {
+        console.log('🔥🔥🔥 Handling: I have a different customer service need');
+        setTimeout(() => {
+          startFlow('contactAgent');
+          dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
+        }, 1500);
+      } else {
+        console.warn('🔥🔥🔥 Unhandled action:', action);
+      }
       
-      dispatch({ type: 'START_SERIAL_COLLECTION' });
-      
-    } else if (action === 'Enter model name') {
-      addRegularMessageWithTyping([
-        "Perfect! Please enter your model name. Common models include SmartShopper, ValueShopper, Vista, or Max CR."
-      ], 1000);
-      
-      dispatch({ type: 'START_MODEL_COLLECTION' });
-      
-    } else if (action === "I'm not sure") {
-      addRegularMessageWithTyping([
-        "No problem! I can help you find the information we need. Here are some options:\n\nI can guide you on where to find your serial number\nI can help you identify your model\nYou can contact our support team at 1-800-692-6446\n\nWhat would you prefer?"
-      ], 1500);
-      
-      dispatch({ type: 'SET_MODE', mode: 'idle' });
-      dispatch({ type: 'SET_SHOW_INITIAL_BUTTONS', show: false });
-      
-    } else if (action === 'I need help with an Amigo cart repair') {
-      addRegularMessageWithTyping([
-        "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.\n\nYou can provide either:\nSerial number (found on a label, usually on the back or bottom of your cart)\nModel name (like SmartShopper, ValueShopper, Vista, or Max CR)\n\nIf you're not sure where to find either, just let me know and I can help guide you!"
-      ], 1500);
-      
-      setTimeout(() => {
-        dispatch({ type: 'SHOW_OPTIONS' });
-      }, 2000);
-      
-    } else if (action === 'I need to buy a part for an Amigo cart') {
-      addRegularMessageWithTyping([
-        "I can help you with ordering parts for your Amigo cart! You can order parts through several methods:\n\nCall our parts department at 1-800-692-6446\nEmail parts@amigomobility.com\nVisit our website at amigomobility.com/parts\n\nPlease have your cart's model number and serial number ready when ordering. Would you like help finding your serial number?"
-      ], 1500);
-      
-      dispatch({ type: 'SET_INPUT_DISABLED', disabled: true });
-      
-    } else if (action === 'I have a different customer service need') {
-      setTimeout(() => {
-        startFlow('contactAgent');
-        dispatch({ type: 'ENTER_DIAGNOSTIC_FLOW' });
-      }, 1500);
+      console.log('🔥🔥🔥 ChatStateMachine - Action handled successfully');
+    } catch (error) {
+      console.error('🔥🔥🔥 ChatStateMachine - Error in handleSuggestedAction:', error);
     }
-  }, [addRegularMessage, addRegularMessageWithTyping, startFlow]);
+  }, [addRegularMessage, addRegularMessageWithTyping, startFlow, state]);
 
   const handleSerialNumberSubmit = useCallback(async (serialNumber: string) => {
     console.log('🔥 ChatStateMachine - handleSerialNumberSubmit:', serialNumber);
