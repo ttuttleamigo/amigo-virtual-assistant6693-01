@@ -112,14 +112,14 @@ const ChatWidget = () => {
   // Simplified input disabled state - state machine is single source of truth
   const isInputDisabled = chatMachine.state.isInputDisabled;
 
-  // Simplified step display logic - remove conflicting conditions
+  // Updated step display logic to show proper serial number collection options
   const customStep = chatMachine.state.showInitialButtons ? {
-    id: 'custom_main_options',
+    id: 'custom_serial_options',
     botMessage: "",
     userOptions: [
-      { text: "I need help with an Amigo cart repair", nextStep: "" },
-      { text: "I need to buy a part for an Amigo cart", nextStep: "" },
-      { text: "I have a different customer service need", nextStep: "" }
+      { text: "Enter serial number", nextStep: "" },
+      { text: "Enter model name", nextStep: "" },
+      { text: "I'm not sure", nextStep: "" }
     ]
   } : null;
 

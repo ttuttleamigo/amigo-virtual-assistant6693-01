@@ -257,15 +257,20 @@ export const useChatStateMachine = (
       dispatch({ type: 'SET_PREVIOUS_UI_STATE', previousUIState: 'modal' });
       
       if (action === 'I need help with an Amigo cart repair') {
-        // Follow the proper flow - ask for serial number first
+        // Show the proper response with options like in the images
         addRegularMessageWithTyping([
-          "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I'll need your cart's serial number.",
-          "You can find it on a label, usually on the back or bottom of your cart. Please enter your serial number:"
-        ], 1000);
+          "I'd be happy to help you with your Amigo cart repair! For the most accurate troubleshooting steps, I'll need some information about your cart.",
+          "",
+          "You can provide either:",
+          "Serial number (found on a label, usually on the back or bottom of your cart)",
+          "Model name (like SmartShopper, ValueShopper, Vista, or Max CR)",
+          "",
+          "If you're not sure where to find either, just let me know and I can help guide you!"
+        ], 1500);
         
         setTimeout(() => {
-          dispatch({ type: 'START_SERIAL_COLLECTION' });
-        }, 2500);
+          dispatch({ type: 'SHOW_OPTIONS' });
+        }, 2000);
         
       } else if (action === 'I need to buy a part for an Amigo cart') {
         addRegularMessageWithTyping([
