@@ -206,8 +206,11 @@ const ChatWidget = () => {
     ]
   } : null;
 
-  const displayStep = customStep || currentStep;
+  // Fix the display step logic - don't show flow steps when expecting input
+  const shouldShowFlowStep = isInFlow && currentStep && !inputState.expectingSerialNumber && !inputState.expectingModel && !inputState.showInitialButtons;
+  const displayStep = customStep || (shouldShowFlowStep ? currentStep : null);
   
+  console.log('🔥 ChatWidget - shouldShowFlowStep:', shouldShowFlowStep);
   console.log('🔥 ChatWidget - displayStep:', displayStep);
   console.log('🔥 ChatWidget - customStep:', customStep);
 
