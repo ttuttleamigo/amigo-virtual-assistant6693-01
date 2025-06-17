@@ -41,10 +41,6 @@ const SidebarChat = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [streamingPlaceholder, setStreamingPlaceholder] = useState('');
 
-  // Debug logging for button rendering
-  console.log('🔥🔥🔥 SidebarChat - Rendering with currentStep:', currentStep);
-  console.log('🔥🔥🔥 SidebarChat - onFlowChoice function:', onFlowChoice);
-
   // Update streaming placeholder when typing
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -85,18 +81,9 @@ const SidebarChat = ({
     }
   };
 
-  // Enhanced button click handler with debugging
   const handleButtonClick = (option: any, index: number) => {
-    console.log('🔥🔥🔥 SidebarChat - Button clicked!');
-    console.log('🔥🔥🔥 SidebarChat - Option:', option);
-    console.log('🔥🔥🔥 SidebarChat - Index:', index);
-    console.log('🔥🔥🔥 SidebarChat - onFlowChoice function type:', typeof onFlowChoice);
-    
     if (onFlowChoice) {
-      console.log('🔥🔥🔥 SidebarChat - Calling onFlowChoice with:', option.text, option.nextStep);
       onFlowChoice(option.text, option.nextStep);
-    } else {
-      console.error('🔥🔥🔥 SidebarChat - onFlowChoice is not defined!');
     }
   };
 
@@ -171,16 +158,13 @@ const SidebarChat = ({
 
         {currentStep && currentStep.userOptions && currentStep.userOptions.length > 0 && (
           <div className="space-y-2">
-            <div className="text-xs text-gray-500 bg-yellow-100 p-2 rounded">
-              🔥🔥🔥 DEBUG: Rendering {currentStep.userOptions.length} buttons
-            </div>
             {currentStep.userOptions.map((option, index) => (
               <Button 
                 key={index} 
                 onClick={() => handleButtonClick(option, index)}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-md px-4 py-3 text-sm font-medium whitespace-normal text-left leading-relaxed min-h-[44px] h-auto shadow-md"
               >
-                🔥 {option.text}
+                {option.text}
               </Button>
             ))}
           </div>
