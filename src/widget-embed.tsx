@@ -2,6 +2,9 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter } from 'react-router-dom';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { ChatProvider } from './context/ChatContext';
 import ChatWidget from './components/ChatWidget';
 import './index.css';
 import './widget-embed.css';
@@ -20,7 +23,13 @@ const queryClient = new QueryClient({
 const AmigoWidget = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ChatWidget />
+      <BrowserRouter>
+        <TooltipProvider>
+          <ChatProvider>
+            <ChatWidget />
+          </ChatProvider>
+        </TooltipProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 };
