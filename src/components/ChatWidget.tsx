@@ -63,24 +63,7 @@ const ChatWidget = () => {
 
   // If the state is sidebar, show the sidebar chat
   if (uiState === 'sidebar') {
-    return (
-      <SidebarChat
-        conversationHistory={conversationHistory}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        sendMessage={sendMessage}
-        onClose={handleClose}
-        onMinimize={handleMinimize}
-        isInFlow={false}
-        currentStep={currentStep}
-        onFlowChoice={handleFlowChoice}
-        isTyping={isTyping}
-        isInputDisabled={isInputDisabled}
-        onDownloadTranscript={downloadTranscript}
-        onClearHistory={clearChatHistory}
-        showButtons={shouldShowButtons}
-      />
-    );
+    return <SidebarChat />;
   }
 
   return null;
