@@ -1,17 +1,13 @@
+
 import React from 'react';
 import { useConversationFlow, FlowType } from '@/hooks/useConversationFlow';
+import { useChatStateMachine } from '@/hooks/useChatStateMachine';
 import ChatButton from './chat/ChatButton';
 import HorizontalChat from './chat/HorizontalChat';
 import ModalChat from './chat/ModalChat';
 import SidebarChat from './chat/SidebarChat';
-import { useChatState, useChatInputState } from './chat/ChatState';
-import { useSerialNumberHandler } from './chat/SerialNumberHandler';
-import { useModelHandler } from './chat/ModelHandler';
-import { useSuggestedActionHandler } from './chat/SuggestedActionHandler';
 
 const ChatWidget = () => {
-  const chatStateManager = useChatState();
-  const inputState = useChatInputState();
   const { 
     currentStep, 
     conversationHistory, 
@@ -29,61 +25,11 @@ const ChatWidget = () => {
     clearChatHistory
   } = useConversationFlow();
 
-  // Initialize handlers
-  const { handleSerialNumberSubmit } = useSerialNumberHandler({
-    setChatState: chatStateManager.setChatState,
-    setPreviousState: chatStateManager.setPreviousState,
-    setProductInfo: inputState.setProductInfo,
+  const chatMachine = useChatStateMachine(
     addRegularMessage,
     addRegularMessageWithTyping,
-    startFlow,
-    setExpectingSerialNumber: inputState.setExpectingSerialNumber,
-    setExpectingModel: inputState.setExpectingModel,
-    setTextInputAllowed
-  });
-
-  const { handleModelSubmit } = useModelHandler({
-    setChatState: chatStateManager.setChatState,
-    setPreviousState: chatStateManager.setPreviousState,
-    addRegularMessage,
-    addRegularMessageWithTyping,
-    startFlow,
-    setExpectingModel: inputState.setExpectingModel,
-    setExpectingSerialNumber: inputState.setExpectingSerialNumber,
-    setTextInputAllowed
-  });
-
-  const { handleSuggestedAction } = useSuggestedActionHandler({
-    setChatState: chatStateManager.setChatState,
-    setPreviousState: chatStateManager.setPreviousState,
-    addRegularMessage,
-    addRegularMessageWithTyping,
-    startFlow,
-    setShowInitialButtons: inputState.setShowInitialButtons,
-    setTextInputAllowed,
-    setExpectingSerialNumber: inputState.setExpectingSerialNumber,
-    setAllowSerialNumberEntry: inputState.setAllowSerialNumberEntry,
-    setExpectingModel: inputState.setExpectingModel
-  });
-
-  // Function to check if a string looks like a serial number
-  const isSerialNumberFormat = (text: string): boolean => {
-    const cleanText = text.replace(/\s+/g, '').toUpperCase();
-    return /^[A-Z0-9]{6,}$/.test(cleanText) || /^\d{6,}$/.test(cleanText);
-  };
-
-  // Function to check if a string looks like a model name
-  const isModelFormat = (text: string): boolean => {
-    const cleanText = text.toLowerCase().trim();
-    return cleanText.includes('smartshopper') || 
-           cleanText.includes('smart shopper') ||
-           cleanText.includes('valueshopper') || 
-           cleanText.includes('value shopper') ||
-           cleanText.includes('vista') ||
-           cleanText.includes('max cr') ||
-           cleanText.includes('maxcr') ||
-           /^(ss|vs|v|mc)\d*$/.test(cleanText);
-  };
+    startFlow
+  );
 
   const handleFlowChoice = (choice: string, nextStep: string) => {
     console.log('🔥 ChatWidget - handleFlowChoice called:', choice, nextStep);
@@ -91,62 +37,49 @@ const ChatWidget = () => {
   };
 
   const handleClose = () => {
-    chatStateManager.handleClose();
+    chatMachine.handleClose();
     resetFlow();
-    inputState.setProductInfo(null);
-    inputState.setExpectingSerialNumber(false);
-    inputState.setExpectingModel(false);
-    inputState.setAllowSerialNumberEntry(false);
-    inputState.setShowInitialButtons(false);
   };
 
   const sendMessage = () => {
-    console.log('🔥 ChatWidget - sendMessage called with input:', inputState.inputValue);
-    console.log('🔥 Current states:');
-    console.log('  - expectingSerialNumber:', inputState.expectingSerialNumber);
-    console.log('  - allowSerialNumberEntry:', inputState.allowSerialNumberEntry);
-    console.log('  - expectingModel:', inputState.expectingModel);
-    console.log('  - allowTextInput:', allowTextInput);
-    console.log('  - isInFlow:', isInFlow);
-    console.log('  - showInitialButtons:', inputState.showInitialButtons);
+    console.log('🔥 ChatWidget - sendMessage called with input:', chatMachine.state.inputValue);
+    console.log('🔥 Current state:', chatMachine.state);
     
-    if (!inputState.inputValue.trim()) return;
+    if (!chatMachine.state.inputValue.trim()) return;
     
-    if (inputState.expectingSerialNumber && inputState.allowSerialNumberEntry && isSerialNumberFormat(inputState.inputValue)) {
+    // Handle different modes
+    if (chatMachine.state.mode === 'collecting_serial' && chatMachine.isSerialNumberFormat(chatMachine.state.inputValue)) {
       console.log('🔥 Processing as serial number');
-      handleSerialNumberSubmit(inputState.inputValue);
-      inputState.setInputValue('');
-      inputState.setAllowSerialNumberEntry(false);
+      chatMachine.handleSerialNumberSubmit(chatMachine.state.inputValue);
+      chatMachine.setInputValue('');
       return;
     }
     
-    if (inputState.expectingModel && isModelFormat(inputState.inputValue)) {
+    if (chatMachine.state.mode === 'collecting_model' && chatMachine.isModelFormat(chatMachine.state.inputValue)) {
       console.log('🔥 Processing as model name');
-      handleModelSubmit(inputState.inputValue);
-      inputState.setInputValue('');
+      chatMachine.handleModelSubmit(chatMachine.state.inputValue);
+      chatMachine.setInputValue('');
       return;
     }
     
     console.log('🔥 Processing as regular message');
     const newMessage = {
       id: Date.now().toString(),
-      text: inputState.inputValue,
+      text: chatMachine.state.inputValue,
       sender: 'user' as const,
       timestamp: new Date()
     };
     addRegularMessage(newMessage);
     
-    const userInput = inputState.inputValue.toLowerCase().trim();
-    inputState.setInputValue('');
+    const userInput = chatMachine.state.inputValue.toLowerCase().trim();
+    chatMachine.setInputValue('');
 
     // Handle help requests for finding serial number or model
     if (userInput.includes('help') && (userInput.includes('find') || userInput.includes('locate')) && userInput.includes('serial')) {
       addRegularMessageWithTyping([
         "I can help you find your serial number! Here's where to look:\n\nMost Common Locations:\nBack of the cart - Look for a white or silver label\nBottom/underside - May be on the base or frame\nNear the battery compartment - Sometimes inside or nearby\nOn the controller - Some models have it there\n\nWhat to look for:\nA label with \"S/N\" or \"Serial Number\"\nUsually starts with letters like \"AMI\" followed by numbers\nTypically 8-12 characters long\n\nOnce you find it, just type it here and I'll look up your cart information!"
       ], 1500);
-      inputState.setExpectingSerialNumber(true);
-      inputState.setAllowSerialNumberEntry(true);
-      setTextInputAllowed(true);
+      chatMachine.dispatch({ type: 'START_SERIAL_COLLECTION' });
       return;
     }
 
@@ -154,23 +87,21 @@ const ChatWidget = () => {
       addRegularMessageWithTyping([
         "I can help you identify your Amigo model! Here are our main models:\n\nSmartShopper - Compact shopping cart, great for stores\nValueShopper - Affordable option with essential features\nVista - Mid-range model with enhanced comfort\nMax CR - Heavy-duty model for outdoor use\n\nWhere to find your model:\nLook for a label on your cart (same place as serial number)\nCheck your paperwork or receipt\nThe model name is usually clearly marked\n\nJust tell me which model you have, or describe your cart and I can help identify it!"
       ], 1500);
-      inputState.setExpectingModel(true);
-      setTextInputAllowed(true);
+      chatMachine.dispatch({ type: 'START_MODEL_COLLECTION' });
       return;
     }
 
     // Only trigger the general flow if we're not already expecting input
-    if (!isInFlow && !inputState.expectingSerialNumber && !inputState.expectingModel) {
+    if (!isInFlow && chatMachine.state.mode === 'idle') {
       addRegularMessageWithTyping([
         "I can help you troubleshoot your Amigo cart. To provide the most accurate assistance, I can work with either:\n\nSerial number - for precise troubleshooting\nModel name - for general guidance\n\nWhich would you prefer to provide? Or if you need help finding either, just let me know!"
       ], 1500);
       
       setTimeout(() => {
-        inputState.setShowInitialButtons(true);
-        setTextInputAllowed(false);
+        chatMachine.dispatch({ type: 'SHOW_OPTIONS' });
       }, 2000);
       
-    } else if ((inputState.expectingSerialNumber || inputState.expectingModel) && !isSerialNumberFormat(inputState.inputValue) && !isModelFormat(inputState.inputValue)) {
+    } else if ((chatMachine.state.mode === 'collecting_serial' || chatMachine.state.mode === 'collecting_model') && !chatMachine.isSerialNumberFormat(chatMachine.state.inputValue) && !chatMachine.isModelFormat(chatMachine.state.inputValue)) {
       addRegularMessageWithTyping([
         "I didn't recognize that as a serial number or model name. \n\nFor serial numbers: Look for 6+ characters with letters and numbers (often starting with AMI)\nFor models: Try SmartShopper, ValueShopper, Vista, or Max CR\n\nNeed help finding either? Just ask \"help find serial number\" or \"help identify model\" and I'll guide you!"
       ], 1500);
@@ -178,25 +109,16 @@ const ChatWidget = () => {
   };
 
   const sendHorizontalMessage = () => {
-    if (!inputState.inputValue.trim()) return;
-    inputState.setInputValue('');
+    if (!chatMachine.state.inputValue.trim()) return;
+    chatMachine.setInputValue('');
   };
 
-  // DEBUG: Log the current state for input calculation
-  console.log('🔥 ChatWidget - Calculating isInputDisabled:');
-  console.log('  - allowTextInput:', allowTextInput);
-  console.log('  - isInFlow:', isInFlow);
-  console.log('  - currentStep:', currentStep);
-  console.log('  - showInitialButtons:', inputState.showInitialButtons);
-  console.log('  - expectingSerialNumber:', inputState.expectingSerialNumber);
-  console.log('  - allowSerialNumberEntry:', inputState.allowSerialNumberEntry);
-
-  const isInputDisabled = !allowTextInput || (isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0) || inputState.showInitialButtons;
-  
-  console.log('🔥 ChatWidget - Final isInputDisabled:', isInputDisabled);
+  // Calculate input disabled state
+  const isInputDisabled = chatMachine.state.isInputDisabled || 
+                         (isInFlow && currentStep && currentStep.userOptions && currentStep.userOptions.length > 0);
 
   // Create custom step with buttons when we should show initial buttons
-  const customStep = inputState.showInitialButtons ? {
+  const customStep = chatMachine.state.showInitialButtons ? {
     id: 'custom_help_options',
     botMessage: "",
     userOptions: [
@@ -206,49 +128,49 @@ const ChatWidget = () => {
     ]
   } : null;
 
-  // Fix the display step logic - only prevent flow steps when actively expecting manual input
-  const isExpectingManualInput = (inputState.expectingSerialNumber && inputState.allowSerialNumberEntry) || 
-                                 (inputState.expectingModel && allowTextInput) || 
-                                 inputState.showInitialButtons;
+  // Fix the display step logic
+  const isExpectingManualInput = (chatMachine.state.mode === 'collecting_serial') || 
+                                 (chatMachine.state.mode === 'collecting_model') || 
+                                 chatMachine.state.showInitialButtons;
   
   const shouldShowFlowStep = isInFlow && currentStep && !isExpectingManualInput;
   const displayStep = customStep || (shouldShowFlowStep ? currentStep : null);
   
+  console.log('🔥 ChatWidget - State machine mode:', chatMachine.state.mode);
   console.log('🔥 ChatWidget - isExpectingManualInput:', isExpectingManualInput);
   console.log('🔥 ChatWidget - shouldShowFlowStep:', shouldShowFlowStep);
   console.log('🔥 ChatWidget - displayStep:', displayStep);
-  console.log('🔥 ChatWidget - customStep:', customStep);
 
-  if (chatStateManager.chatState === 'hidden') {
-    return <ChatButton onClick={chatStateManager.handleChatButtonClick} />;
+  if (chatMachine.state.uiState === 'hidden') {
+    return <ChatButton onClick={chatMachine.handleChatButtonClick} />;
   }
 
-  if (chatStateManager.chatState === 'horizontal') {
+  if (chatMachine.state.uiState === 'horizontal') {
     return (
       <HorizontalChat
-        inputValue={inputState.inputValue}
-        setInputValue={inputState.setInputValue}
+        inputValue={chatMachine.state.inputValue}
+        setInputValue={chatMachine.setInputValue}
         sendMessage={sendHorizontalMessage}
         onClose={handleClose}
-        onSuggestedAction={handleSuggestedAction}
-        onSerialNumberSubmit={handleSerialNumberSubmit}
+        onSuggestedAction={chatMachine.handleSuggestedAction}
+        onSerialNumberSubmit={chatMachine.handleSerialNumberSubmit}
       />
     );
   }
 
-  if (chatStateManager.chatState === 'modal') {
+  if (chatMachine.state.uiState === 'modal') {
     return (
       <ModalChat
         conversationHistory={conversationHistory}
-        inputValue={inputState.inputValue}
-        setInputValue={inputState.setInputValue}
+        inputValue={chatMachine.state.inputValue}
+        setInputValue={chatMachine.setInputValue}
         sendMessage={sendMessage}
         onClose={handleClose}
-        onModalToSidebar={chatStateManager.handleModalToSidebar}
+        onModalToSidebar={chatMachine.handleModalToSidebar}
         isInFlow={isInFlow}
         currentStep={displayStep}
-        onFlowChoice={customStep ? handleSuggestedAction : handleFlowChoice}
-        isTyping={isTyping}
+        onFlowChoice={customStep ? chatMachine.handleSuggestedAction : handleFlowChoice}
+        isTyping={isTyping || chatMachine.state.isTyping}
         isInputDisabled={isInputDisabled}
         onDownloadTranscript={downloadTranscript}
         onClearHistory={clearChatHistory}
@@ -256,19 +178,19 @@ const ChatWidget = () => {
     );
   }
 
-  if (chatStateManager.chatState === 'sidebar') {
+  if (chatMachine.state.uiState === 'sidebar') {
     return (
       <SidebarChat
         conversationHistory={conversationHistory}
-        inputValue={inputState.inputValue}
-        setInputValue={inputState.setInputValue}
+        inputValue={chatMachine.state.inputValue}
+        setInputValue={chatMachine.setInputValue}
         sendMessage={sendMessage}
         onClose={handleClose}
-        onMinimize={chatStateManager.handleMinimize}
+        onMinimize={chatMachine.handleMinimize}
         isInFlow={isInFlow}
         currentStep={displayStep}
-        onFlowChoice={customStep ? handleSuggestedAction : handleFlowChoice}
-        isTyping={isTyping}
+        onFlowChoice={customStep ? chatMachine.handleSuggestedAction : handleFlowChoice}
+        isTyping={isTyping || chatMachine.state.isTyping}
         isInputDisabled={isInputDisabled}
         onDownloadTranscript={downloadTranscript}
         onClearHistory={clearChatHistory}

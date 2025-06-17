@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { conversationFlow, ConversationStep } from '@/data/conversationFlow';
 import { smartShopperFlow } from '@/data/smartShopperFlow';
@@ -35,7 +36,6 @@ const loadChatHistory = (): ConversationMessage[] => {
     const stored = localStorage.getItem(CHAT_HISTORY_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      // Convert timestamp strings back to Date objects
       return parsed.map((msg: any) => ({
         ...msg,
         timestamp: new Date(msg.timestamp)
@@ -62,7 +62,6 @@ export const useConversationFlow = () => {
   const [activeFlow, setActiveFlow] = useState<FlowType>('general');
   const [isTyping, setIsTyping] = useState(false);
   const [allowTextInput, setAllowTextInput] = useState(true);
-  const [showUserOptions, setShowUserOptions] = useState(false);
 
   // Load chat history from localStorage on component mount
   useEffect(() => {
@@ -93,7 +92,6 @@ export const useConversationFlow = () => {
       isFlowMessage: true
     };
     setIsTyping(true);
-    setShowUserOptions(false); // Hide options while typing
     setConversationHistory(prev => [...prev, typingMessage]);
     return typingMessage.id;
   };
@@ -118,11 +116,6 @@ export const useConversationFlow = () => {
       }));
 
       setConversationHistory(prev => [...prev, ...newMessages]);
-      
-      // Show user options after bot message is complete
-      setTimeout(() => {
-        setShowUserOptions(true);
-      }, 100);
     }, delay);
   };
 
@@ -130,12 +123,10 @@ export const useConversationFlow = () => {
     setActiveFlow(flowType);
     setIsInFlow(true);
     setCurrentStep('greeting');
-    setAllowTextInput(false); // Disable text input when in flow
-    setShowUserOptions(false); // Hide options initially
+    setAllowTextInput(false);
     const flow = flowMap[flowType];
     const greetingStep = flow.greeting;
     
-    // Add bot messages with typing delay
     const botMessages = Array.isArray(greetingStep.botMessage) 
       ? greetingStep.botMessage 
       : [greetingStep.botMessage];
@@ -144,8 +135,6 @@ export const useConversationFlow = () => {
   };
 
   const handleUserChoice = (choice: string, nextStep: string) => {
-    setShowUserOptions(false); // Hide options immediately when user makes choice
-    
     // Add user message
     const userMessage: ConversationMessage = {
       id: `user-${Date.now()}`,
@@ -175,11 +164,9 @@ export const useConversationFlow = () => {
   const resetFlow = () => {
     setIsInFlow(false);
     setCurrentStep('greeting');
-    // Don't clear conversation history on flow reset
     setActiveFlow('general');
     setIsTyping(false);
-    setAllowTextInput(true); // Re-enable text input when flow is reset
-    setShowUserOptions(false);
+    setAllowTextInput(true);
   };
 
   const clearChatHistory = () => {
@@ -225,7 +212,7 @@ export const useConversationFlow = () => {
   };
 
   return {
-    currentStep: showUserOptions ? getCurrentStep() : null, // Only return current step when options should be shown
+    currentStep: getCurrentStep(),
     conversationHistory,
     isInFlow,
     activeFlow,
