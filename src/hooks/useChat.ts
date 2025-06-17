@@ -22,7 +22,8 @@ export const useChat = () => {
     (flowType: FlowType) => {
       chatMachine.dispatch({ type: 'SET_TYPING', isTyping: false });
       conversationFlow.startFlow(flowType);
-    }
+    },
+    viewManager.setViewMode
   );
   console.log('[DEBUG] chatMachine initialized');
 

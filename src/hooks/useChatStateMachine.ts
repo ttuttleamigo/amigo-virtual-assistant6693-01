@@ -1,8 +1,8 @@
-
 import { useReducer, useCallback } from 'react';
 import { FlowType, ConversationMessage } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel } from '@/services/serialNumberService';
 import { botMessages } from '@/data/botMessages';
+import { ChatView } from './useChatViewManager';
 
 export type ChatUIState = 'hidden' | 'horizontal' | 'modal' | 'sidebar';
 export type ChatMode = 'idle' | 'collecting_serial' | 'collecting_model';
@@ -120,7 +120,8 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
 export const useChatStateMachine = (
   addRegularMessage: (message: ConversationMessage) => void,
   addRegularMessageWithTyping: (messages: string[], delay?: number) => void,
-  startFlow: (flowType: FlowType) => void
+  startFlow: (flowType: FlowType) => void,
+  setView: (view: ChatView) => void
 ) => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
 
@@ -165,9 +166,6 @@ export const useChatStateMachine = (
     if (action === "I need help with an Amigo cart repair") {
       console.log('[DEBUG] State Machine: Processing repair help request');
       
-      dispatch({ type: 'SET_UI_STATE', state: 'modal' });
-      console.log('[DEBUG] State Machine: Set UI state to modal');
-      
       const userMessage: ConversationMessage = {
         id: `${Date.now()}-${Math.random()}`,
         text: action,
@@ -187,14 +185,15 @@ export const useChatStateMachine = (
         console.log('[DEBUG] State Machine: Timeout triggered - about to dispatch SHOW_OPTIONS');
         console.log('[DEBUG] State Machine: Current state before SHOW_OPTIONS:', state);
         dispatch({ type: 'SHOW_OPTIONS' });
-        console.log('[DEBUG] State Machine: SHOW_OPTIONS dispatched');
+        setView('modal');
+        console.log('[DEBUG] State Machine: SHOW_OPTIONS dispatched and modal view set');
       }, 2000);
       
       console.log('[DEBUG] State Machine: handleSuggestedAction completed for repair help');
     } else {
       console.log('[DEBUG] State Machine: Unhandled action:', action);
     }
-  }, [addRegularMessage, addRegularMessageWithTyping, state]);
+  }, [addRegularMessage, addRegularMessageWithTyping, state, setView]);
 
   const handleSerialNumberSubmit = useCallback(async (serialNumber: string) => {
     const userMessage = {
