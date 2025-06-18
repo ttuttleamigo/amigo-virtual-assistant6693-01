@@ -1,3 +1,4 @@
+
 import { useReducer, useCallback } from 'react';
 import { FlowType, ConversationMessage } from '@/hooks/useConversationFlow';
 import { lookupSerialNumber, determineFlowFromModel } from '@/services/serialNumberService';
@@ -110,7 +111,15 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
     case 'SET_PRODUCT_INFO':
       return { ...state, productInfo: action.productInfo };
     case 'ENTER_DIAGNOSTIC_FLOW':
-      return { ...state, mode: 'idle', isTyping: false };
+      console.log('[DEBUG] State Machine Reducer: ENTER_DIAGNOSTIC_FLOW - clearing all button states');
+      return { 
+        ...state, 
+        mode: 'idle', 
+        isTyping: false,
+        showInitialButtons: false,
+        showHelpOptions: false,
+        isInputDisabled: false
+      };
     default:
       console.log('[DEBUG] State Machine Reducer: Unknown action type:', action);
       return state;
