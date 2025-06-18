@@ -29,7 +29,9 @@ export type ChatAction =
   | { type: 'SET_INPUT_DISABLED'; disabled: boolean }
   | { type: 'START_PROCESSING' }
   | { type: 'SET_PRODUCT_INFO'; productInfo: any }
-  | { type: 'ENTER_DIAGNOSTIC_FLOW' };
+  | { type: 'ENTER_DIAGNOSTIC_FLOW' }
+  | { type: 'API_ERROR' }
+  | { type: 'SHOW_FALLBACK_OPTIONS' };
 
 export interface ChatStateMachineProps {
   addRegularMessage: (message: ConversationMessage) => void;

@@ -32,14 +32,16 @@ export const lookupSerialNumber = async (serialNumber: string): Promise<ProductI
     // Format the serial number according to requirements
     const formattedSerialNumber = formatSerialNumber(serialNumber);
     
-    // NetSuite direct URL
-    const netsuiteUrl = `https://4086366.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=6223&deploy=1&compid=4086366&ns-at=AAEJ7tMQZmDLpO0msvndzhyIbhPPdD7U3fcHROrep1qJ6u8nu-w&snar=${formattedSerialNumber}`;
+    // Force use of Vite proxy in development environment
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.port === '8080';
+    
+    console.log('Looking up serial number:', formattedSerialNumber);
+    console.log('Development mode:', isDevelopment);
     
     // Use Vite proxy in development, CORS proxy in production
-    const isDevelopment = import.meta.env.DEV;
     const apiUrl = isDevelopment 
       ? `/api/netsuite/app/site/hosting/scriptlet.nl?script=6223&deploy=1&compid=4086366&ns-at=AAEJ7tMQZmDLpO0msvndzhyIbhPPdD7U3fcHROrep1qJ6u8nu-w&snar=${formattedSerialNumber}`
-      : `https://api.allorigins.win/get?url=${encodeURIComponent(netsuiteUrl)}`;
+      : `https://api.allorigins.win/get?url=${encodeURIComponent(`https://4086366.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=6223&deploy=1&compid=4086366&ns-at=AAEJ7tMQZmDLpO0msvndzhyIbhPPdD7U3fcHROrep1qJ6u8nu-w&snar=${formattedSerialNumber}`)}`;
     
     console.log(`Making request to: ${apiUrl}`);
     

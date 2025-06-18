@@ -119,16 +119,22 @@ export const useHandlers = (
         setTimeout(() => {
           addRegularMessageWithTyping([botMessages.serialNotFound], 1000);
           
-          dispatch({ type: 'SET_MODE', mode: 'idle' });
-          dispatch({ type: 'SET_INPUT_DISABLED', disabled: false });
+          setTimeout(() => {
+            addRegularMessageWithTyping(["Would you like to try entering your model name instead, or would you prefer to contact our support team directly?"], 1000);
+            dispatch({ type: 'SHOW_FALLBACK_OPTIONS' });
+          }, 2000);
         }, 1500);
       }
     } catch (error) {
+      console.error('Serial number lookup failed:', error);
+      dispatch({ type: 'API_ERROR' });
+      
       setTimeout(() => {
-        addRegularMessageWithTyping([botMessages.lookupError], 1000);
+        addRegularMessageWithTyping(["I'm having trouble looking up that serial number right now. Would you like to try entering your model name instead, or contact our support team?"], 1000);
         
-        dispatch({ type: 'SET_MODE', mode: 'idle' });
-        dispatch({ type: 'SET_INPUT_DISABLED', disabled: false });
+        setTimeout(() => {
+          dispatch({ type: 'SHOW_FALLBACK_OPTIONS' });
+        }, 1500);
       }, 1500);
     }
   }, [addRegularMessage, addRegularMessageWithTyping, startFlow, dispatch]);

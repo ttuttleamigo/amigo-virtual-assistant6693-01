@@ -87,6 +87,23 @@ export const chatReducer = (state: ChatState, action: ChatAction): ChatState => 
         showHelpOptions: false,
         isInputDisabled: false
       };
+    case 'API_ERROR':
+      console.log('[DEBUG] State Machine Reducer: API_ERROR - resetting state after error');
+      return {
+        ...state,
+        isTyping: false,
+        mode: 'idle',
+        isInputDisabled: false
+      };
+    case 'SHOW_FALLBACK_OPTIONS':
+      console.log('[DEBUG] State Machine Reducer: SHOW_FALLBACK_OPTIONS - showing fallback options');
+      return {
+        ...state,
+        showInitialButtons: true,
+        showHelpOptions: false,
+        isInputDisabled: true,
+        isTyping: false
+      };
     default:
       console.log('[DEBUG] State Machine Reducer: Unknown action type:', action);
       return state;
