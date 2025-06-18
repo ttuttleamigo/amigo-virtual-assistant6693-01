@@ -32,17 +32,25 @@ export const lookupSerialNumber = async (serialNumber: string): Promise<ProductI
     // Format the serial number according to requirements
     const formattedSerialNumber = formatSerialNumber(serialNumber);
     
-    // Better development environment detection - check if we're on localhost or preview domain
-    const isDevelopment = window.location.hostname === 'localhost' || 
-                         window.location.hostname === '127.0.0.1' || 
-                         window.location.hostname.includes('preview--') ||
-                         window.location.port === '5173' ||
-                         window.location.port === '8080';
+    // Enhanced development environment detection
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    
+    // Check for development environments more thoroughly
+    const isDevelopment = hostname === 'localhost' || 
+                         hostname === '127.0.0.1' || 
+                         hostname.includes('preview--') ||
+                         hostname.includes('.lovable.app') ||
+                         hostname.includes('.lovableproject.com') ||
+                         port === '5173' ||
+                         port === '8080' ||
+                         import.meta.env.DEV;
     
     console.log('Looking up serial number:', formattedSerialNumber);
     console.log('Development mode:', isDevelopment);
-    console.log('Current hostname:', window.location.hostname);
-    console.log('Current port:', window.location.port);
+    console.log('Current hostname:', hostname);
+    console.log('Current port:', port);
+    console.log('import.meta.env.DEV:', import.meta.env.DEV);
     
     // Use Vite proxy in development, CORS proxy in production
     const apiUrl = isDevelopment 
