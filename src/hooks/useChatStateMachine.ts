@@ -6,7 +6,7 @@ import { chatReducer, initialState } from './useChatStateMachine/reducer';
 import { useHandlers } from './useChatStateMachine/handlers';
 import { ChatStateMachineProps } from './useChatStateMachine/types';
 
-export { ChatUIState, ChatMode } from './useChatStateMachine/types';
+export type { ChatUIState, ChatMode } from './useChatStateMachine/types';
 
 export const useChatStateMachine = (
   addRegularMessage: (message: ConversationMessage) => void,
